@@ -151,7 +151,7 @@ button:disabled{opacity:.5}
 #msn span i{display:block;font-style:normal;font-size:clamp(44px,14vw,76px);line-height:1.1;margin-bottom:10px}
 #msn .m1{animation:msf1 2.5s linear .3s forwards}
 @keyframes msf1{0%{opacity:0}80%{opacity:.5}100%{opacity:0}}
-#msn .m2{animation:msf2 2s linear 2.8s forwards}
+#msn .m2{animation:msf2 2s linear 3.8s forwards}
 @keyframes msf2{from{opacity:0}to{opacity:.5}}
 @keyframes ltbg{0%,8%{background:#000}10%,100%{background:#050a1a}}
 @keyframes ltfl{0%,9%{opacity:0}10%{opacity:1}16%{opacity:.15}20%{opacity:.8}30%{opacity:.1}100%{opacity:0}}
@@ -1031,7 +1031,7 @@ async function gov(p){
 )]),c:'#1d9e75'}]);p.m=0;pop(p,debt);log(_TT("🏛️ {0}: the government wiped out the debt of {1}!",[`🏛️ `,`：行政が借金 `,` を帳消しに！`],[(p.n
 ),(yen(debt)
 )]));return}
-  const rate=.1,amt=Math.round(p.m*rate/10)*10,o=P.filter(x=>x!==p),fg=p.loan>0?Math.round(p.loan/2/10)*10:0;   // 前借りがあれば分配はしたうえで前借りを半減
+  const rate=.1,o=P.filter(x=>x!==p&&!x.done),amt=o.length?Math.round(p.m*rate/10)*10:0,fg=p.loan>0?Math.round(p.loan/2/10)*10:0;   // 前借りがあれば分配はしたうえで前借りを半減
   if(amt<=0&&!fg){log(_TT("🏛️ {0}: Government square… no money, so nothing happens",[`🏛️ `,`：行政マス…所持金がなく何も起きない`],[(p.n
 )]));return}
   const t1=amt>0?_TT("Distribute {0}% of your cash to each of the other {1} players, {2} apiece ({3} total)",[`所持金の`,`%を他の`,`人にひとり `,` ずつ分配（合計 `,`）`],[(rate*100
@@ -1134,7 +1134,7 @@ async function bj(p,st){
 async function bac(p,st,borrow,cons){
   const side=await ask(_T("Baccarat: who do you bet on?",'バカラ：どれに賭ける？'),[{l:_T("👤 Player",'👤 プレイヤー'),s:_T("Win +1× (Tie loses)",'勝ち +1倍（タイは負け）'),c:'#378add'},{l:_T("🏦 Banker",'🏦 バンカー'),s:_T("Win +0.95× (Tie loses)",'勝ち +0.95倍（タイは負け）'),c:'#e24b4a'},{l:_T("🤝 Tie",'🤝 タイ'),s:_T("Hit +8× / anything else is forfeited (pick a stake of ¥500–1,000. Only Casino King's 2× applies / Double Ticket and Baseless Confidence are void and their stock isn't used up)",'的中 +8倍／それ以外は没収（掛け金は500〜1,000円から選ぶ。カジノ王の2倍のみ有効／ダブルチケット・根拠なき自信は無効でストックも消費されない）'),c:'#1d9e75'}]);
   if(side===2){   // タイ：掛け金は毎回500〜1,000円（100円刻み）から選ぶ。倍額系の効果は受けず、ストックも消費しない
-    const km=p.king?2:1;   // カジノ王の2倍だけは掛かる
+    const km=1;   // カジノ王の2倍だけは掛かる
     const ch=await ask(_TT("🤝 Choose your Tie stake{0}",[`🤝 タイの掛け金を選んでください`,``],[(km>1?_T("<br><small>🎰 Casino King doubles the stake</small>",'<br><small>🎰カジノ王で掛け金2倍</small>'):''
 )]),[500,600,700,800,900,1000].map(v=>({l:yen(v*km),s:_TT("Hit: +{0} / Miss: -{1}",[`的中で +`,`／外れで -`,``],[(yen(v*km*8)
 ),(yen(v*km)
@@ -1519,26 +1519,26 @@ const GAMES6=['bj','hl','bac','rou','chin','horse'];
 async function crownCheck(p,g){
   p.gw=p.gw||{};p.gw[g]=1;
   if(p.king||!GAMES6.every(k=>p.gw[k]))return;
-  p.king=1;const o=P.filter(x=>x!==p);
+  p.king=1;const o=P.filter(x=>x!==p&&!x.done);
   await ask(_T("🎰 A Casino King is born!",'🎰 カジノ王の誕生！'),[{l:_TT("{0} becomes Casino King!",[``,`がカジノ王に！`],[(p.n
-)]),s:_TT("Won at all 6 kinds of gambling! {0} other players each pay {1} tribute / stakes for all future gambling are doubled",[`6種類のギャンブル全てで勝利！ 他の`,`人から上納金 `,` ずつ／今後のギャンブルの掛け金が2倍`],[(o.length
+)]),s:_TT("Won at all 6 kinds of gambling! {0} other players each pay {1} tribute",[`6種類のギャンブル全てで勝利！ 他の`,`人から上納金 `,` ずつ`],[(o.length
 ),(yen(5000)
 )]),c:'#e8a317'}]);
   o.forEach(x=>{add(x,-5000,_TT("🎰 Tribute to Casino King {0}",[`🎰 カジノ王`,`への上納金`],[(p.n
 )]),true);add(p,5000,_TT("🎰 Tribute from {0}",[`🎰 `,`から上納金`],[(x.n
 )]),true)});
-  log(_TT("🎰 {0}: earned the <b>Casino King</b> title! (stakes ×2)",[`🎰 `,`：<b>カジノ王</b>の称号を獲得！（掛け金2倍）`],[(p.n
+  log(_TT("🎰 {0}: earned the <b>Casino King</b> title!",[`🎰 `,`：<b>カジノ王</b>の称号を獲得！`],[(p.n
 )]));
 }
 function settleLoan(p){if(p.loan){const b=p.loan;p.loan=0;add(p,-b,_TT("💳 Advance of {0} settled at the goal",[`💳 前借り `,` をゴールで清算`],[(yen(b)
 )]),true)}}
 async function game(p,q){
-  const isH=q.g==='hl',dt=!isH&&p.it&&p.it.dbl>0,cf=isH?1:(p.conf?2:1)*(p.king?2:1)*(dt?2:1),qs=q.st*cf;   // ハイローはカジノ王の2倍のみ有効（ダブルチケット・根拠なき自信は無効で消費もしない）
+  const isH=q.g==='hl',dt=!isH&&p.it&&p.it.dbl>0,cf=isH?1:(p.conf?2:1)*(dt?2:1),qs=q.st*cf;   // ハイローはカジノ王の2倍のみ有効（ダブルチケット・根拠なき自信は無効で消費もしない）
   const i=await ask(isH?_TT("{0}: bet {1}? (fixed ¥500 each time)",[``,`：`,`を賭ける？（毎回500円固定）`],[(q.t
 ),(yen(500)
 )]):_TT("{0}: bet {1}?{2}",[``,`：`,`を賭ける？`,``],[(q.t
 ),(yen(qs)
-),(cf>1?_T(" (",'（')+[p.conf?_T("💪Baseless Confidence",'💪根拠なき自信'):'',p.king?_T("🎰Casino King",'🎰カジノ王'):'',dt?_T("🎟️Double Ticket",'🎟️ダブルチケット'):''].filter(Boolean).join('×')+_T(" = ×",'で')+cf+_T(")",'倍）'):''
+),(cf>1?_T(" (",'（')+[p.conf?_T("💪Baseless Confidence",'💪根拠なき自信'):'','',dt?_T("🎟️Double Ticket",'🎟️ダブルチケット'):''].filter(Boolean).join('×')+_T(" = ×",'で')+cf+_T(")",'倍）'):''
 )]),[{l:_T("Bet",'賭ける'),s:DESC[q.g],c:'#e8a317'},{l:_T("Pass",'やめておく'),c:'#888'}]);
   if(i!==0)return;
   const doCons=()=>{
@@ -1937,7 +1937,7 @@ async function germScene(){
 }
 async function baikinCheck(p){
   if(p.baikin||!['chl','syp','hiv','cand'].every(k=>p.hist&&p.hist[k]))return false;   // 感染歴が各性病（クラミジア・梅毒・HIV・カンジダ）一度ずつあればOK（人工肛門は対象外）
-  p.baikin=1;p.std={};p.cand=0;
+  p.baikin=1;p.bkNew=1;p.std={};p.cand=0;
   log(_TT("🦠 {0}: has now caught all of Chlamydia, Syphilis, HIV and Candida! Earned the <b class='pos'>Germ Man</b> title! Every STD currently held is cured (the title stays until the goal)",[`🦠 `,`：クラミジア・梅毒・HIV・カンジダの全てに感染した履歴がそろった！ <b class='pos'>バイキンマン</b>の称号を獲得！今かかっている性病は全て治った（称号はゴールまで消えない）`],[(p.n
 )]));
   await germScene();
@@ -1966,7 +1966,7 @@ async function baikinSpread(p){
     out.push(_TT("{0}: infected with <b class='neg'>{1}</b>!",[``,`：<b class='neg'>`,`</b>に感染！`],[(x.n
 ),(d.n
 )]));
-    if(await baikinCheck(x)){out.push(_TT("{0}: completed the infection history and became a Germ Man! (cures instantly, so no divorce)",[``,`：感染歴がそろいバイキンマンに！（即治癒なので離婚にならない）`],[(x.n
+    if(await baikinCheck(x)){x.bkNew=0;out.push(_TT("{0}: completed the infection history and became a Germ Man! (cures instantly, so no divorce)",[``,`：感染歴がそろいバイキンマンに！（即治癒なので離婚にならない）`],[(x.n
 )]));continue}
     if(wm){   // 感染が原因の離婚なので、攻撃を受けた本人が慰謝料 -10,000 を支払う（本人のターンを待たずその場で成立）
       const prev=actor;actor=x;await divorce(x);actor=prev;
@@ -1981,14 +1981,14 @@ async function baikinSpread(p){
   await ask(_T("🦠 Germ Man's infection attack!",'🦠 バイキンマンの感染攻撃！'),[{l:_TT("{0} spread STDs to everyone else",[``,`が他の全員に性病をばらまいた`],[(p.n
 )]),s:out.map(t=>t.replace(/<[^>]+>/g,'')).join(_T(" / ",'／')),c:'#1d9e75'}]);
 }
-// メンエスのオプション演出：画面が真っ暗になり「オプションってありますか？」→暗転→オプション料金の発表（タダ25%／1000〜5000円 各10%／6000〜10000円 各5%）
+// メンエスのオプション演出：画面が真っ暗になり「裏オプションってありますか？」→暗転→オプション料金の発表（タダ25%／1000〜5000円 各10%／6000〜10000円 各5%）
 async function menesuOption(){
   const r=Math.random()*100,fee=r<25?0:r<75?1000*(1+Math.floor((r-25)/10)):6000+1000*Math.floor((r-75)/5);
   const f=document.createElement('div');f.id='msn';
-  f.innerHTML=`<span class='m1'><i>👴🏻</i>${_T("Do you have any options?",'オプションってありますか？')}</span><span class='m2'><i>👩🏻</i>${fee?_TT("If you give me {0}…",[``,`円くれるなら…`],[(fee)]):_T("It's free… 💕",'タダでいいですよ…💕')}</span>`;
+  f.innerHTML=`<span class='m1'><i>👴🏻</i>${_T("Do you have any secret options?",'裏オプションってありますか？')}</span><span class='m2'><i>👩🏻</i>${fee?_TT("If you give me {0}…",[``,`円くれるなら…`],[(fee)]):_T("It's free… 💕",'タダでいいですよ…💕')}</span>`;
   document.body.appendChild(f);
-  snd(70,2.4,'sine',.05,.3);snd(494,.5,'sine',.03,2.8);
-  await sleep(6100);f.remove();
+  snd(70,2.4,'sine',.05,.3);snd(494,.5,'sine',.03,3.8);
+  await sleep(7100);f.remove();
   return{fee};
 }
 async function fuzoku(p,q){
@@ -1999,7 +1999,7 @@ async function fuzoku(p,q){
   p.fstop=1;   // 実際に風俗に行った（大賢者の条件を失う）
   let opt=null;if(F.opt&&Math.random()<.5)opt=await menesuOption();   // メンエス：50%でオプション演出（オプションなら料金に加算＋他の風俗と同じ感染リスク）
   let free=0;
-  if(!F.gain){if(p.master)free=1;else if(p.tk){free=2;p.tk=0}}
+  if(!F.gain){if(p.grand)free=1;else if(p.tk){free=2;p.tk=0}}
   if(free)log(free===2?_TT("🎫 {0}: used the free nightlife coupon! {1} is free",[`🎫 `,`：次回風俗無料券を使用！ `,`は無料`],[(p.n
 ),(F.n
 )]):_TT("{0} {1}: {2} is free thanks to the Nightlife Master perk",[``,` `,`：風俗マスター特典で `,`は無料`],[(p.grand?'🌟':'👑'
@@ -2010,7 +2010,7 @@ async function fuzoku(p,q){
 )]),true);
   else{
     // マスターが複数いる場合（階級が違っても）全員にペナルティを適用：割増は全員分を合算、上納は各マスターへそれぞれ
-    const base0=1000*rnd(F.lo,F.hi),base=base0+(opt?opt.fee:0),FN=F.n+(opt?_TT(" · fee {0} + option {1}",[`・料金`,`＋オプション`,``],[(yen(base0)),(yen(opt.fee))]):''),ot=P.filter(x=>x!==p&&mrate(x)),sr=ot.reduce((a,x)=>a+mrate(x),0);
+    const base0=1000*rnd(F.lo,F.hi),base=Math.round((base0+(opt?opt.fee:0))*((p.master&&!p.grand)?.5:1)/10)*10,FN=F.n+(opt?_TT(" · fee {0} + option {1}",[`・料金`,`＋オプション`,``],[(yen(base0)),(yen(opt.fee))]):'')+((p.master&&!p.grand)?_T(" · half price (Nightlife Master)",'・半額（風俗マスター特典）'):''),ot=P.filter(x=>x!==p&&!x.done&&mrate(x)),sr=ot.reduce((a,x)=>a+mrate(x),0);
     if(!ot.length)add(p,-base,_TT("Nightlife ({0})",[`風俗（`,`）`],[(FN
 )]),true);
     else{
@@ -2148,7 +2148,7 @@ async function fuzoku(p,q){
     await lightningScene(_T("Nightlife Master",'風俗マスター'));
     p.master=1;log(_TT("👑 {0}: conquered Pink salon, Delivery health, Soapland and Men's esthetic! Earned the <b class='pos'>Nightlife Master</b> title",[`👑 `,`：ピンサロ・デリヘル・ソープ・メンエスを制覇！ <b class='pos'>風俗マスター</b>の称号を獲得`],[(p.n
 )]));
-    await ask(_T("👑 Nightlife Master is born!",'👑 風俗マスター誕生！'),[{l:_T("Earned the Nightlife Master title!",'風俗マスターの称号を獲得！'),s:_T("Your own nightlife (except Uri-sen) is completely free. When another player lands on a nightlife square they pay 25% more, and you receive 25% of the regular price",'自分の風俗（売り専を除く）は全額タダ。他のプレイヤーが風俗マスに止まると、その人の支払いが25%増しになり、さらに正規料金の25%を受け取れます'),c:'#c2185b'}]);
+    await ask(_T("👑 Nightlife Master is born!",'👑 風俗マスター誕生！'),[{l:_T("Earned the Nightlife Master title!",'風俗マスターの称号を獲得！'),s:_T("Your own nightlife (except Uri-sen) is half price. When another player lands on a nightlife square they pay 25% more, and you receive 25% of the regular price",'自分の風俗（売り専を除く）は半額。他のプレイヤーが風俗マスに止まると、その人の支払いが25%増しになり、さらに正規料金の25%を受け取れます'),c:'#c2185b'}]);
   }
 }
 async function divorce(p){
@@ -2428,7 +2428,7 @@ $('roll').onclick=async()=>{
     if(!p.boss&&(p.pk||0)>0){const v=-2000*p.pk;add(p,v,_TT("🍼 \"Baby Maker\" title goal bonus ({0} × −¥2,000)",[`🍼 称号「孕ませマン」ゴールボーナス（`,`人×−2,000円）`],[(p.pk)]),true);gsT.push({e:'🍼',t:_T("Baby Maker",'孕ませマン'),v})}
     gs={start:gsS,steps:gsT};
     ps.forEach(q=>q.owner=null);
-  }else{await land(p);stdTick(p);if(!p.done)await birthTick(p);if(p.baikin)await baikinSpread(p)}
+  }else{await land(p);stdTick(p);if(!p.done)await birthTick(p);if(p.baikin&&p.bkNew){p.bkNew=0;await baikinSpread(p)}}
   while(p.pend.length)await roseScene(p.pend.shift());
   if(p.div){p.div=0;await divorce(p)}
   if(gs)await settleShow(p,gs);else await turnSum(p,m0);
