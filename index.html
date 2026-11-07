@@ -2233,7 +2233,7 @@ async function kidTitle(p){
 const kidTotal=p=>Math.round((p.cc||0)/500)+(p.pk||0)+(p.ape||0);
 const bigDad=p=>{if(!p.bd&&kidTotal(p)>=3)p.bd=1;return !!p.bd};
 async function birthTick(p){
-  if(!(p.wed||Object.keys(p.fm||{}).length)||Math.random()>=.2)return;   // 通常結婚でも風俗嬢との結婚でも、毎ターン20%の抽選
+  if(!(p.wed||Object.keys(p.fm||{}).length)||Math.random()>=.15)return;   // 通常結婚でも風俗嬢との結婚でも、毎ターン20%の抽選
   const tw=Math.random()<.2,k=tw?2:1;
   p.kids=(p.kids||0)+k;p.cc=(p.cc||0)+500*k;
   add(p,5000*k,_TT("👶 {0} baby shower gift (from now on parenting cost -{1} more every turn / total {2})",[`👶 `,`出産祝い（以後 毎ターン子育て金-`,`が増加／合計 `,`）`],[(tw?_T("Twins are born!",'双子が誕生！'):_T("A child is born!",'子供が誕生！')
