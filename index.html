@@ -1472,7 +1472,7 @@ async function horse(p,st){
   await sleep(900);
   if(g1)bgmMute(0);
   {   // ゴール後は着順を表示したまま、タップするまで次へ進まない（NPCは少し見せて自動で進む）
-    const medal=['🥇','🥈','🥉'],mark=i=>mine.has(i)?_T(" <span class=\"rm\">◀ Your horse</span>",'　<span class="rm">◀ あなたの馬</span>'):'';
+    const medal=['🥇','🥈','🥉'],mark=i=>mine.has(i)?_T(" <span class=\"rm\">◀ Bet</span>",'　<span class="rm">◀ 購入馬</span>'):'';
     $('gm').insertAdjacentHTML('beforeend',_TT("<div id='rk'>{0}</div><div class='tapn'>👆 Tap for the verdict</div>",[`<div id='rk'>`,`</div><div class='tapn'>👆 タップで結果発表へ</div>`],[(ord.slice(0,3).map((h,r)=>_TT("<div>{0} Place {1}　<b>#{2}</b> {3}{4}</div>",[`<div>`,` `,`着　<b>`,`</b>番 `,``,`</div>`],[(medal[r]
 ),(r+1
 ),(h+1
@@ -1500,7 +1500,7 @@ async function horse(p,st){
 ),(me+1
 ),(names[me]
 ),(rk+1
-)]):_TT("🐎 1st place was #{0} {1}… (your horse finished in position {2})",[`🐎 1着は `,`番 `,`…（あなたの馬は`,`着）`],[(win+1
+)]):_TT("🐎 1st place was #{0} {1}… (your bet finished in position {2})",[`🐎 1着は `,`番 `,`…（購入馬は`,`着）`],[(win+1
 ),(names[win]
 ),(rk+1
 )]));
