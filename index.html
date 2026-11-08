@@ -2174,7 +2174,7 @@ async function fuzoku(p,q){
   }
   if(p.fv[sub]===3){
     const ad=sub==='uri',mine=!ad0(sub)&&!!p.fm[sub];let pays=true;if(!mine&&p.single)pays=await supLottery(ad?_T("adopted",'養子'):_T("child",'子供'),[_T("😠 Child support dispute…",'😠 養育費で揉める…'),ad?_T("You adopted a child with someone who isn't your spouse… so you'll argue over child support…",'結婚していない相手と養子を迎えました…養育費を出すか出さないかで揉めます…'):_T("A child was born with someone who isn't your spouse… so you'll argue over child support…",'結婚していない相手との間に子供ができました…養育費を出すか出さないかで揉めます…')]);   // 結婚している相手との子供＝子育て金／結婚していない（相手が違う）場合は親権のない養育費
-    if(mine)p.cc=(p.cc||0)+500;else if(pays){p.sup=(p.sup||0)+800;p.pk=(p.pk||0)+1}else p.ape=(p.ape||0)+1;
+    if(mine)p.cc=(p.cc||0)+500;else if(pays){p.sup=(p.sup||0)+800;if(ad)p.adk=(p.adk||0)+1;else p.pk=(p.pk||0)+1}else p.ape=(p.ape||0)+1;   // 養子（売り専）は血のつながりがないので、養育費はかかるが「孕ませマン」の子供の数には数えない（adk）
     const nm=mine?_T("Parenting cost",'子育て金'):_T("Child support",'養育費'),tt=mine?p.cc:p.sup;
     if(!mine&&!pays)log(_TT("🐒 {0}: visited the same {1} 3 times, {2}, but won't pay child support! (no cost per turn / counts toward the \"Monkey\" title)",[`🐒 `,`：同じ`,`に3回通い、`,`が、養育費は払わないことに！（毎ターンの費用なし・称号「猿」の対象）`],[(p.n
 ),(F.n
