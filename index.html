@@ -2687,7 +2687,9 @@ function NETclose(){
   try{NET.peer&&NET.peer.destroy()}catch(e){}NET.peer=null;NET.role=null;NET.code='';NET.playing=false;NET.redraw=null;
   const b=document.getElementById('netroot');if(b)b.remove()}
 // ---- ゲスト ----
-function NETjoin(code,name){return new Promise(async(ok,ng)=>{
+// フレンドも参加した瞬間からBGM・効果音がONで始まるようにする（「参加」タップの操作中に音声を起こす）
+function NETaudioKick(){try{SND=true;const s=document.getElementById('snd');if(s)s.textContent='🔊';BGMX=0;bgmStart();if(AC&&AC.state!=='running'){AC.resume().catch(()=>{});try{const b=AC.createBuffer(1,1,22050),o=AC.createBufferSource();o.buffer=b;o.connect(AC.destination);o.start(0)}catch(e){}}bgmVol()}catch(e){}}
+function NETjoin(code,name){NETaudioKick();return new Promise(async(ok,ng)=>{
   try{await NETloadLib()}catch(e){return ng(new Error('lib'))}
   code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(code.length!==4)return ng(new Error('code'));
   const peer=new Peer(undefined,NETopts());let done=false;
@@ -2696,7 +2698,7 @@ function NETjoin(code,name){return new Promise(async(ok,ng)=>{
   peer.on('error',e=>fail(e));
   peer.on('open',()=>{
     const c=peer.connect(NETPFX+code,{reliable:true});
-    c.on('open',()=>{c.send({t:'hello',name});NET.role='guest';NET.peer=peer;NET.conn=c;NET.code=code;NET.name=NETclean(name)||_T("Friend",'フレンド');NET.myId=peer.id;clearTimeout(to);done=true;NETguestInit(c);try{NETsndCheck()}catch(e){}ok()});
+    c.on('open',()=>{c.send({t:'hello',name});NET.role='guest';NET.peer=peer;NET.conn=c;NET.code=code;NET.name=NETclean(name)||_T("Friend",'フレンド');NET.myId=peer.id;clearTimeout(to);done=true;NETguestInit(c);NETaudioKick();try{NETsndCheck()}catch(e){}ok()});
     c.on('data',m=>NETguestMsg(m));
     c.on('close',()=>NETguestLost());c.on('error',()=>NETguestLost())})})}
 function NETguestLost(){if(NET.role!=='guest')return;NET.role='lost';NETbanner(_T("⚠ Disconnected from the host (tap to reload)",'⚠ ホストとの接続が切れました（タップで再読み込み）'),'off',()=>location.reload())}
