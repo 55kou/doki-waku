@@ -1826,7 +1826,7 @@ async function lampLottery(head,aL,bL,aC,bC,aR,bR,aS,bS){   // 2択のランプ�
   return last===0;
 }
 // 抽選の前に状況を説明してタップを待つ／抽選の結果を絵文字つきで見せる
-const kidNow=p=>'👶'.repeat(Math.min(12,Math.round((p.cc||0)/500)))+'👦'.repeat(Math.min(12,p.pk||0))+'🐒'.repeat(Math.min(12,p.ape||0));
+const kidNow=p=>'👶'.repeat(Math.min(12,Math.round((p.cc||0)/500)))+'👦'.repeat(Math.min(12,p.pk||0))+'🐒'.repeat(Math.min(12,p.ape||0))+'🧒'.repeat(Math.min(12,p.adk||0));
 async function kidIntro(title,text){await ask(title,[{l:text,s:_T("Tap to start the lottery",'タップすると抽選が始まります'),c:'#555'}])}
 async function kidResult(p,title,emo,n,line,sub,c){await ask(title,[{l:emo.repeat(Math.min(n,12))+' '+line,s:sub+(sub?' / ':'')+_T("Your children now: ",'いまのあなたの子供：')+(kidNow(p)||_T("none",'なし'))+_T("  (👶 custody kept / 👦 child support / 🐒 no support)",'  （👶親権あり・👦養育費・🐒養育費なし）'),c}])}
 // 独身宣言中の子供・離婚時の子供：養育費を「払う／払わない」をランプ点滅で抽選（true＝払う）
@@ -1900,7 +1900,7 @@ const plHTML=(p,k)=>{
   const L=[],sep=_T(", ",'・');
   L.push(`${JE[p.job]||''} ${p.job||'―'}${p.done?' 🏁':''}`);
   if(p.loan)L.push(_T("💳Advance ",'💳前借り ')+yen(p.loan));
-  const kd=[...'👶'.repeat(Math.round((p.cc||0)/500)),...'👦'.repeat(p.pk||0),...'🐒'.repeat(p.ape||0)],
+  const kd=[...'👶'.repeat(Math.round((p.cc||0)/500)),...'👦'.repeat(p.pk||0),...'🐒'.repeat(p.ape||0),...'🧒'.repeat(p.adk||0)],
     m3=[Object.keys(p.fm).length?'🏩':'',p.wed?'💍':'',p.single?_T("🚫Bachelor Pledge",'🚫独身宣言'):''].filter(Boolean).join(' ');
   if(m3||kd.length)L.push(m3+(kd.length?(m3?' ':'')+'<span style="word-break:break-all;line-height:1.25">'+kd.join('')+'</span>':''));
   const stt=[p.prep?'💊':'',p.conf?'💪':'',p.sage?'🧘':'',p.gold?'🌟':'',p.tk?'🎫':''].filter(Boolean).join(' '),
@@ -2295,10 +2295,16 @@ async function kidTitle(p){
 )]),c:'#c2185b'}])}
   await bossCheck(p)}
 // ビッグダディ：子供の種類を問わず合計5人（子育て金の子＋養育費の子＋養育費を払わない子）になった瞬間に獲得。子供は減らないので、剥奪されない
-const kidTotal=p=>Math.round((p.cc||0)/500)+(p.pk||0)+(p.ape||0);
+const kidTotal=p=>Math.round((p.cc||0)/500)+(p.pk||0)+(p.ape||0)+(p.adk||0);
 const bigDad=p=>{if(!p.bd&&kidTotal(p)>=5)p.bd=1;return !!p.bd};
 async function birthTick(p){
   if(!(p.wed||Object.keys(p.fm||{}).length)||Math.random()>=.10)return;   // 通常結婚でも風俗嬢との結婚でも、毎ターン10%の抽選
+  {const sp=[...(p.wed?['n']:[]),...Object.keys(p.fm||{})],who=sp[Math.random()*sp.length|0];
+   if(who==='uri'){   // 売り専ボーイとの結婚：子供は必ず養子（双子なし・子育て金なし）
+    p.adk=(p.adk||0)+1;p.kids=(p.kids||0)+1;
+    add(p,5000,_TT("🧒 {0} adopted a child (no parenting cost / total adopted {1})",[`🧒 `,`養子を迎えた（子育て金なし／養子 合計`,`人）`],[(p.adk)]));
+    await ask(_T("🧒 You adopted a child!",'🧒 養子を迎えた！'),[{l:_T("Adopted a child! Gift +¥5,000",'養子を迎えた！お祝い +¥5,000'),s:_T("No parenting cost / counts as a child",'子育て金はかからない／子供の人数には数える'),c:'#c2185b'}]);
+    await kidTitle(p);return}}
   const tw=Math.random()<.2,k=tw?2:1;if(tw)p.twin=1;
   p.kids=(p.kids||0)+k;p.cc=(p.cc||0)+500*k;
   add(p,5000*k,_TT("👶 {0} baby shower gift (from now on parenting cost -{1} more every turn / total {2})",[`👶 `,`出産祝い（以後 毎ターン子育て金-`,`が増加／合計 `,`）`],[(tw?_T("Twins are born!",'双子が誕生！'):_T("A child is born!",'子供が誕生！')
