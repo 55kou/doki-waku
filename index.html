@@ -1804,12 +1804,12 @@ async function lampLottery(head,aL,bL,aC,bC,aR,bR,aS,bS){   // 2択のランプ�
   let d=70;
   for(let i=1;i<=k;i++){
     const on=i%2===1?0:1;$('dl0').classList.toggle('on',on===0);$('dl1').classList.toggle('on',on===1);
-    snd(on?520:660,.06,'square',.05);
+    snd(on?520:660,.06,'square',.0325);
     if(i>k-8)d*=1.28;else if(i>k-14)d*=1.1;
     await sleep(d);
   }
   const last=k%2===1?0:1;
-  $('dl'+last).classList.add('win');snd(last===0?aS:bS,.25,'triangle',.1);snd(last===0?aS*1.33:bS*.8,.35,'triangle',.1,.15);
+  $('dl'+last).classList.add('win');snd(last===0?aS:bS,.25,'triangle',.065);snd(last===0?aS*1.33:bS*.8,.35,'triangle',.065,.15);
   $('dlt').textContent=last===0?aR:bR;
   await sleep(1800);$('ov').classList.remove('show');
   return last===0;
@@ -1839,12 +1839,12 @@ async function duelRoulette(p,o){
   let d=70;
   for(let i=1;i<=k;i++){
     const on=i%2===1?0:1;$('dl0').classList.toggle('on',on===0);$('dl1').classList.toggle('on',on===1);
-    snd(on?520:660,.06,'square',.05);
+    snd(on?520:660,.06,'square',.0325);
     if(i>k-8)d*=1.28;else if(i>k-14)d*=1.1;
     await sleep(d);
   }
   const last=k%2===1?0:1;   // 最後に点いていた方（=w）
-  $('dl'+last).classList.add('win');snd(784,.25,'triangle',.1);snd(1047,.35,'triangle',.1,.15);
+  $('dl'+last).classList.add('win');snd(784,.25,'triangle',.065);snd(1047,.35,'triangle',.065,.15);
   $('dlt').textContent=_TT("🏆 {0} wins!",[`🏆 `,` の勝利！`],[(last===0?p.n:o.n
 )]);
   await sleep(1800);$('ov').classList.remove('show');
