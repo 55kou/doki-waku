@@ -2673,19 +2673,24 @@ function ACHopen(){
 let ACHq=[],ACHbusy=false;
 // 解除ポップアップ：3秒表示→2秒かけてバッジが埋まる。上辺の緑のバーは右から左へ5秒で伸びる
 async function ACHtoast(){if(ACHbusy)return;ACHbusy=true;
-  while(ACHq.length){const a=ACHq.shift(),ti=ACHtier(a.rate);const b=document.createElement('div');b.id='achP';b.className='t'+ti;b.setAttribute('data-nosync','1');
-    b.innerHTML=`<div class='pb'></div><div class='pr'><div class='at'><em>🏅 ${_T("ACHIEVEMENT UNLOCKED",'実績解除')}</em><b>${a.t}</b><i>${ACHrate(a.rate)}</i><div class='as'>${a.s}</div></div><div class='ab'><div class='gm'>${ACHgem(ti)}</div></div></div>`;
+  while(ACHq.length){const qi=ACHq.shift(),a=qi.a,who=qi.who,ti=ACHtier(a.rate);const b=document.createElement('div');b.id='achP';b.className='t'+ti;b.setAttribute('data-nosync','1');
+    b.innerHTML=`<div class='pb'></div><div class='pr'><div class='at'><em>🏅 ${_T("ACHIEVEMENT UNLOCKED",'実績解除')}${who?' ・ '+who.replace(/[<>&]/g,''):''}</em><b>${a.t}</b><i>${ACHrate(a.rate)}</i><div class='as'>${a.s}</div></div><div class='ab'><div class='gm'>${ACHgem(ti)}</div></div></div>`;
     document.body.appendChild(b);await new Promise(r=>setTimeout(r,60));b.classList.add('show');
     try{snd(784,.12,'triangle',.08);snd(1047,.14,'triangle',.08,.1)}catch(e){}
     await new Promise(r=>setTimeout(r,3000));
     try{[1047,1319,1568,2093].forEach((f,k)=>snd(f,.35,'triangle',.07,k*.35))}catch(e){}
     await new Promise(r=>setTimeout(r,2000));b.classList.remove('show');await new Promise(r=>setTimeout(r,520));b.remove()}
   ACHbusy=false}
-function ACHunlock(id){const G=ACHget();if(G[id])return;const a=ACHDEF().find(x=>x.id===id);if(!a)return;G[id]=Date.now();ACHset(G);ACHq.push(a);ACHtoast();const o=document.getElementById('achv');if(o){const y=o.scrollTop;o.remove();ACHopen();const n=document.getElementById('achv');if(n)n.scrollTop=y}}
+function ACHpopup(id,who){const a=ACHDEF().find(x=>x.id===id);if(!a)return;ACHq.push({a,who});ACHtoast()}   // 実績の解除ポップアップ（オンライン中は全員の画面に出る）
+function ACHunlock(id,quiet,who){const G=ACHget();if(G[id])return;const a=ACHDEF().find(x=>x.id===id);if(!a)return;G[id]=Date.now();ACHset(G);if(!quiet)ACHpopup(id,who);const o=document.getElementById('achv');if(o){const y=o.scrollTop;o.remove();ACHopen();const n=document.getElementById('achv');if(n)n.scrollTop=y}}
 // 達成した本人にだけ届ける（オンライン中のフレンドの実績は、そのフレンドの端末で解除される）
 function ACHgive(p,i,id){
   p.ach=p.ach||{};if(p.ach[id])return;p.ach[id]=1;
-  if(typeof NET!=='undefined'&&NET.role==='host'&&i!==0){const g=NET.guests.find(x=>x.c&&x.c.peer===p.net);if(g){try{g.c.send({t:'ach',id})}catch(e){}}return}
+  const on=typeof NET!=='undefined'&&NET.role==='host'&&NET.guests.length,who=on?p.n:'';
+  if(on){   // オンライン：ポップアップは全員に出す。実績の記録（解除）は達成した本人の端末だけ
+    try{NETbc({t:'achp',id,who})}catch(e){}ACHpopup(id,who);
+    if(i!==0){const g=NET.guests.find(x=>x.c&&x.c.peer===p.net);if(g){try{g.c.send({t:'ach',id})}catch(e){}}return}
+    ACHunlock(id,true);return}
   ACHunlock(id)}
 function ACHscan(){try{if(!P)return;const D=ACHDEF();P.forEach((p,i)=>{if(p.npc)return;D.forEach(a=>{if(a.ok(p))ACHgive(p,i,a.id)})})}catch(e){}}
 function ACHrecv(r,g,a){try{if(!r||!g||r===g||!(a>0))return;r.rcv=r.rcv||{};const k=P.indexOf(g);r.rcv[k]=(r.rcv[k]||0)+a}catch(e){}}   // 他のプレイヤーからもらった累計額（山賊用）
@@ -2894,7 +2899,8 @@ function NETguestMsg(m){
   else if(m.t==='logr')NETlogShow(m);
   else if(m.t==='f'){try{follow({c:m.c})}catch(e){}}
   else if(m.t==='pulse'){try{camPulse(m.c)}catch(e){}}
-  else if(m.t==='ach'){try{ACHunlock(m.id)}catch(e){}}
+  else if(m.t==='ach'){try{ACHunlock(m.id,true)}catch(e){}}
+  else if(m.t==='achp'){try{ACHpopup(m.id,m.who)}catch(e){}}
   else if(m.t==='bgm'){try{bgmMute(m.on)}catch(e){}}
   else if(m.t==='s'){try{NETsndCheck();snd(...m.a.map(v=>v===null?undefined:v))}catch(e){}}
   else if(m.t==='you'){NET.myId=m.id;NET.name=m.name;NET.code=m.code;NETbannerUpd()}
