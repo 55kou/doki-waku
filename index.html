@@ -300,6 +300,10 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 #gm .gb{max-width:100%}
 .cd{width:calc(56px*var(--cs,1));height:calc(82px*var(--cs,1));background:#fff;border-radius:8px;color:#222;font-weight:900;font-size:calc(21px*var(--cs,1));display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 8px #0008;animation:dl .35s}
 .cd.r{color:#d22}.cd.b{background:repeating-linear-gradient(45deg,#3a4fd0,#3a4fd0 6px,#2a3aa0 6px,#2a3aa0 12px);color:#fff;border:3px solid #fff}
+/* バスト：トランプをグレーにして、赤い「BUST」を浮かび上がらせる */
+.hand.bust{position:relative}.hand.bust .cd{filter:grayscale(1) brightness(.62);transition:filter .4s}
+.hand.bust::after{content:'BUST';position:absolute;left:0;right:0;top:50%;text-align:center;font-weight:900;letter-spacing:.08em;font-size:clamp(26px,9vw,44px);color:#ff2a2a;text-shadow:0 0 10px #ff2a2a99,0 2px 0 #fff,0 0 3px #000,0 4px 10px #000;transform:translateY(-50%) rotate(-8deg);pointer-events:none;animation:bustup .6s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes bustup{from{opacity:0;transform:translateY(10%) rotate(-8deg) scale(.4)}to{opacity:1;transform:translateY(-50%) rotate(-8deg) scale(1)}}
 @keyframes dl{from{transform:translateY(-120px) rotate(-30deg);opacity:0}}
 .gb{position:relative;z-index:1;display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center}.gb button{padding:12px 16px}
 .lab{position:relative;z-index:1;color:#fff;font-weight:800;margin:8px 0 2px;text-shadow:0 2px 0 #000;font-size:13px}
@@ -1101,7 +1105,7 @@ async function bj(p,st){
   const txt=s=>{$('gs').textContent=s};
   const lab=i=>H.length>1?_TT("Hand {0}",[`ハンド`,``],[(i+1
 )]):p.n;
-  const sh=()=>{setHand('dh',D.slice(0,nd),i=>hd&&i===1);H.forEach((h,i)=>{setHand('ph'+i,dealing?h.c.slice(0,dn[i]||0):h.c,()=>0);const e=$('l'+i),bet=h.r+h.pd,fr=h.fr||0;if(e)e.innerHTML=`${lab(i)}　${chipSvg(bet,p.c)}${fr?chipSvg(fr,'#2f6fe0'):''}<b style='color:#ffd54f'> 💰${yen(bet+fr)}</b>${fr?_TT("<small>(of which Free Bet {0})</small>",[`<small>（うち Free Bet `,`）</small>`],[(yen(fr)
+  const sh=()=>{setHand('dh',D.slice(0,nd),i=>hd&&i===1);{const e=$('dh');if(e)e.classList.toggle('bust',!hd&&bv(D.slice(0,nd))>21)}H.forEach((h,i)=>{setHand('ph'+i,dealing?h.c.slice(0,dn[i]||0):h.c,()=>0);{const e=$('ph'+i);if(e)e.classList.toggle('bust',bv(dealing?h.c.slice(0,dn[i]||0):h.c)>21)}const e=$('l'+i),bet=h.r+h.pd,fr=h.fr||0;if(e)e.innerHTML=`${lab(i)}　${chipSvg(bet,p.c)}${fr?chipSvg(fr,'#2f6fe0'):''}<b style='color:#ffd54f'> 💰${yen(bet+fr)}</b>${fr?_TT("<small>(of which Free Bet {0})</small>",[`<small>（うち Free Bet `,`）</small>`],[(yen(fr)
 )]):''}`});bjFit()};   // ハンドごとに今の賭け金を表示
   for(const[a,b,y]of(mh?[[1,0,0],[1,1,0],[1,1,1],[2,1,1],[2,2,1],[2,2,2]]:[[1,0,0],[1,0,1],[2,0,1],[2,0,2]])){dn=[a,b];nd=y;sh();snd(420,.1,'triangle',.1);await sleep(mh?650:900)}
   dealing=false;
