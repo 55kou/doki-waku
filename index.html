@@ -59,8 +59,10 @@ button:disabled{opacity:.5}
 #ltn .lsub{position:absolute;left:0;right:0;top:60%;text-align:center;font-weight:900;font-size:clamp(14px,4.2vw,34px);color:#ffb0cf;letter-spacing:.12em;opacity:0;text-shadow:0 0 12px #ff2d6f,0 2px 0 #3a0620;animation:ltsub7 10.4s linear forwards}
 #ltn .lemb{position:absolute;bottom:-6vh;font-size:5vh;opacity:0;animation:lemb 3s ease-in forwards}
 @keyframes lemb{0%{opacity:0;transform:translateY(0)}20%{opacity:.9}100%{opacity:0;transform:translateY(-90vh)}}
-#germ{position:fixed;inset:0;z-index:99999;overflow:hidden;pointer-events:none;background:#0a0604;animation:gmbg 6.9s linear forwards}
-@keyframes gmbg{0%{opacity:0}6%{opacity:1}92%{opacity:1}100%{opacity:0}}
+#germ{position:fixed;inset:0;z-index:99999;overflow:hidden;pointer-events:none;background:#0a0604;animation:gmbg 9.5s linear forwards}
+#germ::after{content:'';position:absolute;inset:0;background:#000;opacity:0;z-index:5;animation:gmbk 9.5s linear forwards}   /* 文字が全部出てから2秒キープ→1.5秒かけて暗転 */
+@keyframes gmbg{0%{opacity:0}4.3%{opacity:1}100%{opacity:1}}
+@keyframes gmbk{0%,84.2%{opacity:0}100%{opacity:1}}
 #germ .gd{position:absolute;inset:0;background:radial-gradient(circle at 18% 22%,#3b2a08cc 0,transparent 32%),radial-gradient(circle at 82% 30%,#1d3a0acc 0,transparent 36%),radial-gradient(circle at 30% 82%,#4a1008cc 0,transparent 34%),radial-gradient(circle at 76% 80%,#2b2a06cc 0,transparent 38%),radial-gradient(ellipse at 50% 50%,transparent 40%,#000 100%);opacity:0;animation:gmdirt 3.2s ease-in forwards}
 @keyframes gmdirt{0%{opacity:0}100%{opacity:1}}
 #germ .gs{position:absolute;left:50%;top:44%;width:min(86vw,58vh);height:min(86vw,58vh);margin:calc(min(86vw,58vh)/-2) 0 0 calc(min(86vw,58vh)/-2);animation:gmzoom 6.9s linear forwards}
@@ -1933,7 +1935,7 @@ async function germScene(){
   [0.6,1.1,1.5,2.0,2.4,2.9].forEach((t,i)=>snd(600-i*55,.1,'triangle',.05,t));   // 子供の笑い声のような不気味な下降音
   snd(36,.9,'sawtooth',.16,3.2);snd(1500,.35,'square',.08,3.2);snd(1100,.3,'square',.07,3.28);
   [196,185,174].forEach((fq,i)=>snd(fq,1.2,'triangle',.06,3.9+i*.5));
-  await new Promise(r=>setTimeout(r,7000));f.remove();
+  await new Promise(r=>setTimeout(r,9500));f.remove();
 }
 async function baikinCheck(p){
   if(p.baikin||!['chl','syp','hiv','cand'].every(k=>p.hist&&p.hist[k]))return false;   // 感染歴が各性病（クラミジア・梅毒・HIV・カンジダ）一度ずつあればOK（人工肛門は対象外）
