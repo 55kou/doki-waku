@@ -2970,11 +2970,13 @@ function NMdecorate(cfg,draw){
     const hb=document.createElement('button');hb.setAttribute('data-howto','1');hb.style.cssText='background:#2f6db5;text-align:center;margin-top:8px;font-size:14px';hb.textContent=_T("📖 How to play",'📖 遊び方');hb.onclick=()=>window.open(MANUAL_URL,'_blank');box.insertBefore(hb,go)}
   const seats=[];for(let i=0;i<cfg.n;i++)if(!cfg.npc[i]&&(!cfg.online||i===0))seats.push(i);
   if(!seats.length)return;
+  const paint=()=>{box.querySelectorAll('[data-p],[data-fs]').forEach(b=>{const i=+(b.dataset.p??b.dataset.fs);if(cfg.npc[i]||!seats.includes(i))return;const nm=cfg.names&&cfg.names[i]?NETclean(cfg.names[i]):'';const tn=[...b.childNodes].find(n=>n.nodeType===3&&n.textContent.trim());if(tn)tn.textContent=' '+(nm||(_T("Player ",'プレイヤー')+(i+1)))})};   // 保存した名前を、席のボタンにも反映
+  paint();
   const w=document.createElement('div');
   w.innerHTML=`<button data-nmt style='background:#555;text-align:center;margin-top:8px;font-size:13px'>${_T("✏️ Change player names",'✏️ プレイヤー名を変える')}${cfg.nmOpen?' ▲':' ▼'}</button>`+(cfg.nmOpen?seats.map(i=>`<input class='nin' data-nm='${i}' maxlength='8' placeholder='${_T("Player ",'プレイヤー')}${i+1}' value='${NETclean(cfg.names[i]||'')}' style='border-color:${COL[i]}'>`).join(''):'');
   box.insertBefore(w,go);
   w.querySelector('[data-nmt]').onclick=()=>{cfg.nmOpen=!cfg.nmOpen;draw()};
-  w.querySelectorAll('[data-nm]').forEach(inp=>inp.oninput=()=>{cfg.names[+inp.dataset.nm]=inp.value.slice(0,8);NMsave(cfg.names)})}
+  w.querySelectorAll('[data-nm]').forEach(inp=>inp.oninput=()=>{cfg.names[+inp.dataset.nm]=inp.value.slice(0,8);NMsave(cfg.names);paint()})}
 function NETdecorate(cfg,draw,res){
   const box=$('box'),lang=box.querySelector('[data-lang]');
   if(!cfg.online||NET.role!=='host'){
