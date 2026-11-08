@@ -463,11 +463,12 @@ const FZW={pin:.21,del:.21,soap:.21,uri:.16,men:.21};   // 各風俗の出現確
 const limFz=(a,mx=2)=>{   // 同じ種類の風俗は1区画に2つまで（パタヤも同じ）。超えた分は別の種類に変更。全種類が上限まで埋まっていたら緑マスに
   const c={},ok=k=>(c[k]||0)<mx;
   a.forEach((x,i)=>{if(!x||x.k!=='fz')return;
-    if(!ok(x.sub)){const al=Object.keys(FZW).filter(ok);if(!al.length){a[i]=grn(false);return}
+    if(!ok(x.sub)){const al=Object.keys(FZW).filter(k=>ok(k)&&!(NU&&k==='uri'));if(!al.length){a[i]=grn(false);return}
       let r=Math.random()*al.reduce((t,k)=>t+FZW[k],0);x.sub=al.find(k=>(r-=FZW[k])<=0)||al[al.length-1]}
     c[x.sub]=(c[x.sub]||0)+1});
   return a};
-const mkFz=()=>{let r=Math.random(),sub='men';for(const k of Object.keys(FZW)){if((r-=FZW[k])<0){sub=k;break}}return{k:'fz',t:'風俗',sub}};
+let NU=false;   // 序盤の生成中だけtrue：売り専は序盤には絶対に出ない
+const mkFz=()=>{const ks=Object.keys(FZW).filter(k=>!(NU&&k==='uri')),tw=ks.reduce((s,k)=>s+FZW[k],0);let r=Math.random()*tw,sub=ks[ks.length-1];for(const k of ks){if((r-=FZW[k])<0){sub=k;break}}return{k:'fz',t:'風俗',sub}};
 
 const ad0=s=>s==='uri';   // 売り専：結婚の有無に関係なく、3回通うと「親権なし・養育費がかかる養子」
 function sq(j){
@@ -531,7 +532,7 @@ function mainSeg(j,last){
 function build(){
   const S=[],names=[_T("Early",'序盤'),_T("Mid 1",'中盤1'),_T("Mid 2",'中盤2'),_T("Mid 3",'中盤3'),_T("Mid 4",'中盤4'),_T("Late",'終盤'),_T("To the Goal",'ゴールへ')];
   for(let j=0;j<7;j++){
-    GP=2*j/12;{const c=mainSeg(j,j===6);S.push({name:names[j],sp:c.sp,c})}
+    GP=2*j/12;{NU=(j===0);const c=mainSeg(j,j===6);NU=false;S.push({name:names[j],sp:c.sp,c})}
     GP=(2*j+1)/12;if(j<6)S.push({name:_T("Fork ",'第')+(j+1)+_T("",'分岐'),A:route(false),B:route(true)});
   }
   return S;
