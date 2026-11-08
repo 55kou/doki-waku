@@ -2191,7 +2191,7 @@ async function hospital(p){
 ),(ks.map(x=>x.n).join(_T(", ",'・'))
 )]));
 }
-// 通常の結婚・風俗嬢との結婚のどちらでも、毎ターン終了時に20%で子供が誕生（さらに20%で双子）。出産マスと同じく出産祝い+5,000円と子育て金-500円/ターン（双子は2倍）
+// 通常の結婚・風俗嬢との結婚のどちらでも、毎ターン終了時に10%で子供が誕生（さらに20%で双子）。出産マスと同じく出産祝い+5,000円と子育て金-500円/ターン（双子は2倍）
 // 養育費まわりの称号：猿＝養育費を払わない子供がいる（ゴール −5,000円×人数）／孕ませマン＝養育費を払っている子供がいる（ゴール −2,000円×人数）。両方いる場合は猿（降格）
 const monkey=p=>(p.ape||0)>0,haramase=p=>(p.pk||0)>0;
 // ボス猿誕生：猿・孕ませマン・ビッグダディの絵文字が円状に回りながら中心の光に吸い込まれ、ホワイトアウト→黄金のラメ背景に「ボス猿」（約11.5秒）
@@ -2206,18 +2206,18 @@ async function bossScene(){
   [523,659,784,1047,1319,1568].forEach((fq,i)=>{snd(fq,.5,'square',.05,7.4+i*.1);snd(fq/2,.5,'triangle',.06,7.4+i*.1)});
   await new Promise(r=>setTimeout(r,11500));f.remove();
 }
-// ボス猿：猿・孕ませマン・ビッグダディを全て持った上で、子供が累計5人以上になると、その3つが一つにまとまる（ゴールボーナスは一律+25,000円）
+// ボス猿：猿・孕ませマン・ビッグダディを全て持った上で、子供が累計7人以上になると、その3つが一つにまとまる（ゴールボーナスは一律+25,000円）
 async function bossCheck(p){
-  if(p.boss||!(monkey(p)&&haramase(p)&&bigDad(p)&&kidTotal(p)>=5))return;   // 3つの称号をすべて持った上で、子供が累計5人以上
+  if(p.boss||!(monkey(p)&&haramase(p)&&bigDad(p)&&kidTotal(p)>=7))return;   // 3つの称号をすべて持った上で、子供が累計7人以上
   p.boss=1;
   log(_TT("🐵 {0}: Monkey, Baby Maker and Big Daddy merged into <b class='pos'>Boss Monkey</b>! (goal bonus +¥25,000)",[`🐵 `,`：猿・孕ませマン・ビッグダディの3つの称号が <b class='pos'>ボス猿</b> に統合！（ゴールボーナス +25,000円）`],[(p.n)]));
   await bossScene();
-  await ask(_T("🐵 \"Boss Monkey\" is born!",'🐵 称号「ボス猿」誕生！'),[{l:_T("Monkey + Baby Maker + Big Daddy → Boss Monkey!",'猿＋孕ませマン＋ビッグダディ → ボス猿！'),s:_T("With all three titles and 5+ children in total, they become one. Goal bonus: a flat +¥25,000 (the three titles' separate bonuses and penalties no longer apply)",'3つの称号をすべて持ち、子供が累計5人以上になったので一つに。ゴールボーナスは一律 +25,000円（3つの称号それぞれのボーナス・マイナスはなくなる）'),c:'#e8a317'}]);
+  await ask(_T("🐵 \"Boss Monkey\" is born!",'🐵 称号「ボス猿」誕生！'),[{l:_T("Monkey + Baby Maker + Big Daddy → Boss Monkey!",'猿＋孕ませマン＋ビッグダディ → ボス猿！'),s:_T("With all three titles and 7+ children in total, they become one. Goal bonus: a flat +¥25,000 (the three titles' separate bonuses and penalties no longer apply)",'3つの称号をすべて持ち、子供が累計7人以上になったので一つに。ゴールボーナスは一律 +25,000円（3つの称号それぞれのボーナス・マイナスはなくなる）'),c:'#e8a317'}]);
 }
 async function kidTitle(p){
   if(bigDad(p)&&!p.bdl){p.bdl=1;log(_TT("👨‍👧‍👦 {0}: now has {1} children in total! Earned the \"Big Daddy\" title (goal bonus +¥15,000 · can't be stripped)",[`👨‍👧‍👦 `,`：子供が合計`,`人に！ 称号「ビッグダディ」を獲得（ゴールボーナス +15,000円・剥奪されない）`],[(p.n
 ),(kidTotal(p)
-)]));await ask(_T("👨‍👧‍👦 \"Big Daddy\" title",'👨‍👧‍👦 称号「ビッグダディ」'),[{l:_T("Three children… earned the \"Big Daddy\" title!",'子供が3人に…称号「ビッグダディ」を獲得！'),s:_T("Any kind of child counts, 3 in total / goal bonus +¥15,000 / can't be stripped",'子供の種類は問わず合計3人／ゴールボーナス +15,000円／剥奪されない'),c:'#e8a317'}])}
+)]));await ask(_T("👨‍👧‍👦 \"Big Daddy\" title",'👨‍👧‍👦 称号「ビッグダディ」'),[{l:_T("Five children… earned the \"Big Daddy\" title!",'子供が5人に…称号「ビッグダディ」を獲得！'),s:_T("Any kind of child counts, 5 in total / goal bonus +¥15,000 / can't be stripped",'子供の種類は問わず合計5人／ゴールボーナス +15,000円／剥奪されない'),c:'#e8a317'}])}
   const hs=monkey(p),hh=haramase(p);
   if(hs&&!p.ks){p.ks=1;const t=_TT("A child with unpaid support! Earned the \"Monkey\" title",[`養育費を払わない子供ができた！ 称号「猿」を獲得`],[]);log(_TT("🐒 {0}: {1} (goal bonus −¥5,000 × {2})",[`🐒 `,`：`,`（ゴールボーナス −5,000円×`,`人）`],[(p.n
 ),(t
@@ -2229,11 +2229,11 @@ async function kidTitle(p){
 )]));await ask(_T("🍼 \"Baby Maker\" title",'🍼 称号「孕ませマン」'),[{l:_T("A child with paid support… \"Baby Maker\" title",'養育費を払う子供ができた…称号「孕ませマン」'),s:_TT("Goal bonus: children with paid support {0} × −¥2,000",[`ゴールボーナス：養育費を払っている子供 `,`人 × −2,000円`],[(p.pk
 )]),c:'#c2185b'}])}
   await bossCheck(p)}
-// ビッグダディ：子供の種類を問わず合計3人（子育て金の子＋養育費の子＋養育費を払わない子）になった瞬間に獲得。子供は減らないので、剥奪されない
+// ビッグダディ：子供の種類を問わず合計5人（子育て金の子＋養育費の子＋養育費を払わない子）になった瞬間に獲得。子供は減らないので、剥奪されない
 const kidTotal=p=>Math.round((p.cc||0)/500)+(p.pk||0)+(p.ape||0);
-const bigDad=p=>{if(!p.bd&&kidTotal(p)>=3)p.bd=1;return !!p.bd};
+const bigDad=p=>{if(!p.bd&&kidTotal(p)>=5)p.bd=1;return !!p.bd};
 async function birthTick(p){
-  if(!(p.wed||Object.keys(p.fm||{}).length)||Math.random()>=.15)return;   // 通常結婚でも風俗嬢との結婚でも、毎ターン20%の抽選
+  if(!(p.wed||Object.keys(p.fm||{}).length)||Math.random()>=.10)return;   // 通常結婚でも風俗嬢との結婚でも、毎ターン10%の抽選
   const tw=Math.random()<.2,k=tw?2:1;
   p.kids=(p.kids||0)+k;p.cc=(p.cc||0)+500*k;
   add(p,5000*k,_TT("👶 {0} baby shower gift (from now on parenting cost -{1} more every turn / total {2})",[`👶 `,`出産祝い（以後 毎ターン子育て金-`,`が増加／合計 `,`）`],[(tw?_T("Twins are born!",'双子が誕生！'):_T("A child is born!",'子供が誕生！')
