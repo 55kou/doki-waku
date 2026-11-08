@@ -2282,7 +2282,7 @@ async function bossScene(){
 }
 // ビッグダディ誕生：その人の子供の絵文字（種類と数そのまま）が円状に回りながら中心に吸い込まれ→ホワイトアウト→「ビッグダディ」＋上に👨‍👧‍👦・下に子供の絵文字を横並び（約12秒）
 async function bigDadScene(p){
-  const kids=[...'👶'.repeat(Math.round((p.cc||0)/500)),...'👦'.repeat((p.pk||0)+(p.adk||0)),...'🐒'.repeat(p.ape||0)].slice(0,12),n=kids.length||1;
+  const kids=[...'👶'.repeat(Math.round((p.cc||0)/500)),...'👦'.repeat((p.pk||0)+(p.adk||0)),...'🐒'.repeat(p.ape||0)].slice(0,5),n=kids.length||1;   // ビッグダディは5人で獲得＝演出は常に5個（双子で6人になった時も5個）
   const f=document.createElement('div');f.id='bossm';f.className='bdm';
   const em=kids.map((e,i)=>`<div class='bsa' style='transform:rotate(${(i*360/n).toFixed(1)}deg)'><div class='bse'>${e}</div></div>`).join('');
   const sp=Array.from({length:46},()=>`<span class='bsp' style='left:${(Math.random()*96).toFixed(1)}%;top:${(Math.random()*96).toFixed(1)}%;font-size:${(10+Math.random()*22).toFixed(0)}px;animation-delay:${(7+Math.random()*2.4).toFixed(2)}s;animation-duration:${(.9+Math.random()*1.2).toFixed(2)}s'>${Math.random()<.5?'✦':'•'}</span>`).join('');
