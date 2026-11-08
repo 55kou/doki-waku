@@ -2675,8 +2675,13 @@ function ACHgem(tier){
 #achP .at{flex:1;min-width:0}#achP .at em{display:block;font-style:normal;font-size:10.5px;color:#ffd23f;font-weight:800;letter-spacing:.08em;margin-bottom:2px}
 #achP .at b{font-size:17px}#achP .at i{font-style:normal;font-size:12px;opacity:.75;margin-left:8px}
 #achP .as{font-size:12px;opacity:.8;margin-top:3px;line-height:1.35}
-#achP .gm{clip-path:inset(100% 0 0 0);animation:achfill 2s ease-out 3s forwards}
-@keyframes achfill{0%{clip-path:inset(100% 0 0 0);filter:brightness(2.2) drop-shadow(0 0 10px var(--tg))}100%{clip-path:inset(0 0 0 0);filter:brightness(1) drop-shadow(0 3px 6px #000a) drop-shadow(0 0 8px var(--tg))}}`;document.head.appendChild(s)})();
+#achP .ab{overflow:visible}
+#achP .gm{opacity:0;transform-origin:50% 50%;animation:achpop .75s cubic-bezier(.2,1.5,.4,1) 3s forwards}
+@keyframes achpop{0%{opacity:0;transform:scale(.15);filter:brightness(5) drop-shadow(0 0 22px #fff)}35%{opacity:1;transform:scale(1.22);filter:brightness(2.6) drop-shadow(0 0 26px #fff) drop-shadow(0 0 14px var(--tg))}100%{opacity:1;transform:scale(1);filter:brightness(1) drop-shadow(0 3px 6px #000a) drop-shadow(0 0 8px var(--tg))}}
+#achP .ab::before{content:'';position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#fff 12%,var(--tg) 38%,transparent 70%);opacity:0;transform:scale(.1);pointer-events:none;animation:achflash .9s ease-out 3s forwards}
+@keyframes achflash{0%{opacity:0;transform:scale(.1)}12%{opacity:1;transform:scale(.55)}100%{opacity:0;transform:scale(1.5)}}
+#achP .ab::after{content:'';position:absolute;right:-7px;top:-9px;width:34px;height:34px;background:#fff;clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);filter:drop-shadow(0 0 5px #fff);opacity:0;transform:scale(0) rotate(0);pointer-events:none;animation:achglint .7s ease-out 3.55s forwards}
+@keyframes achglint{0%{opacity:0;transform:scale(0) rotate(-40deg)}45%{opacity:1;transform:scale(1.15) rotate(10deg)}100%{opacity:0;transform:scale(.3) rotate(50deg)}}`;document.head.appendChild(s)})();
 
 // ===== ☰ メニュー（実績・説明書・最初から・音量スライダー） =====
 const MANUAL_URL='https://55kou.github.io/doki-waku/manual.html';
@@ -2716,7 +2721,7 @@ async function ACHtoast(){if(ACHbusy)return;ACHbusy=true;
     document.body.appendChild(b);await new Promise(r=>setTimeout(r,60));b.classList.add('show');
     try{snd(784,.12,'triangle',.08);snd(1047,.14,'triangle',.08,.1)}catch(e){}
     await new Promise(r=>setTimeout(r,3000));
-    try{[1047,1319,1568,2093].forEach((f,k)=>snd(f,.35,'triangle',.07,k*.35))}catch(e){}
+    try{[1500,2200,3200,4400].forEach((f,k)=>snd(f,.09,'sawtooth',.045,k*.035));snd(3136,.6,'triangle',.07,.12);snd(4186,.7,'sine',.06,.14);snd(6272,.25,'sine',.035,.55)}catch(e){}   // シャキーン（光が生まれる瞬間）＋キラッ
     await new Promise(r=>setTimeout(r,2000));b.classList.remove('show');await new Promise(r=>setTimeout(r,520));b.remove()}
   ACHbusy=false}
 function ACHpopup(id,who){const a=ACHDEF().find(x=>x.id===id);if(!a)return;ACHq.push({a,who});ACHtoast()}   // 実績の解除ポップアップ（オンライン中は全員の画面に出る）
