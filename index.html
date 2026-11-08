@@ -171,9 +171,14 @@ button:disabled{opacity:.5}
 #bossm.bdm{background:radial-gradient(circle at 50% 50%,#2b4a9e 0,#101f55 72%)}   /* ビッグダディ誕生：青と紺の中間色の背景→ホワイトアウト→淡い空色に称号 */
 #bossm.bdm .bsg{background:radial-gradient(circle,#fff 0,#e3efff 14%,#8fb8ff88 34%,transparent 66%)}
 #bossm.bdm .bse{filter:drop-shadow(0 0 14px #8fb8ff)}
-#bossm.bdm .bsb{background:linear-gradient(160deg,#f6faff 0%,#cfe2ff 55%,#eaf3ff 100%);animation:bsbin .1s 6.3s forwards}
-#bossm.bdm .bsp{color:#fff;text-shadow:0 0 8px #fff,0 0 14px #6f9bff}
-#bossm.bdm .bst b{background:linear-gradient(180deg,#7ea6ff 0%,#2a4cae 50%,#0b1e5c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px #fff) drop-shadow(0 5px 0 #07123a);-webkit-text-stroke:2px #07123a;font-size:clamp(40px,13vw,120px);white-space:nowrap}
+#bossm.bdm .bsb{background:linear-gradient(170deg,#d9f1ff 0%,#8fd0ff 50%,#5db7f5 100%);animation:bsbin .1s 6.3s forwards}
+#bossm.bdm .bsp{color:#fff;text-shadow:0 0 8px #fff,0 0 14px #4aa8f0}
+#bossm.bdm .bst b{position:relative;display:inline-block;color:#fff;-webkit-text-stroke:7px #1f7fd6;paint-order:stroke fill;text-shadow:0 0 10px #fff,0 5px 0 #1a5fae;font-size:clamp(40px,13vw,120px);white-space:nowrap;font-weight:900;animation:bdglow 1.8s ease-in-out 8.2s infinite}
+@keyframes bdglow{0%,100%{filter:drop-shadow(0 0 6px #fff8)}50%{filter:drop-shadow(0 0 22px #fff) drop-shadow(0 0 40px #bfe9ff)}}
+#bossm.bdm .bst b::after{content:attr(data-t);position:absolute;left:0;top:0;-webkit-text-stroke:0;text-shadow:none;color:transparent;background:linear-gradient(105deg,transparent 38%,#fff 48%,#e6f7ff 52%,transparent 62%) -150% 0/250% 100% no-repeat;-webkit-background-clip:text;background-clip:text;animation:bdsh 2.4s ease-in-out 8.2s infinite}
+@keyframes bdsh{0%{background-position:-150% 0}60%,100%{background-position:150% 0}}
+#bossm.bdm .bst b .bdsp{position:absolute;font-size:.42em;line-height:1;color:#fff;-webkit-text-stroke:0;text-shadow:0 0 10px #fff,0 0 18px #7fd0ff;opacity:0;animation:bdtw 1.8s ease-in-out 8.2s infinite;pointer-events:none}
+@keyframes bdtw{0%,100%{opacity:0;transform:scale(.2) rotate(0)}40%{opacity:1;transform:scale(1.1) rotate(45deg)}70%{opacity:0;transform:scale(.4) rotate(90deg)}}
 #bossm.bdm .bde{font-size:clamp(60px,22vw,160px);line-height:1.05;filter:drop-shadow(0 4px 10px #1a3a8f88)}
 #bossm.bdm .bdk{display:flex;flex-wrap:wrap;justify-content:center;gap:1.2vmin;margin-top:8px;font-size:clamp(30px,10vw,76px);line-height:1.1;padding:0 4vw}
 #bossm .bst b{display:block;font-size:clamp(60px,24vw,200px);font-weight:900;line-height:1.1;background:linear-gradient(180deg,#fff9d6 0%,#ffd23f 45%,#a86a00 60%,#ffe27a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px #fff6) drop-shadow(0 6px 0 #5a3400);-webkit-text-stroke:2px #7a4b00}
@@ -2280,13 +2285,13 @@ async function bossScene(){
   [523,659,784,1047,1319,1568].forEach((fq,i)=>{snd(fq,.5,'square',.05,7.4+i*.1);snd(fq/2,.5,'triangle',.06,7.4+i*.1)});
   await new Promise(r=>setTimeout(r,12200));f.remove();
 }
-// ビッグダディ誕生：その人の子供の絵文字（種類と数そのまま）が円状に回りながら中心に吸い込まれ→ホワイトアウト→「ビッグダディ」＋上に👨‍👧‍👦・下に子供の絵文字を横並び（約12秒）
+// ビッグダディ誕生：その人の子供の絵文字（種類と数そのまま）が円状に回りながら中心に吸い込まれ→ホワイトアウト→「ビッグダディ」＋上に🧔‍♂️・下に子供の絵文字を横並び（約12秒）
 async function bigDadScene(p){
   const kids=[...'👶'.repeat(Math.round((p.cc||0)/500)),...'👦'.repeat((p.pk||0)+(p.adk||0)),...'🐒'.repeat(p.ape||0)].slice(0,6),n=kids.length||1;   // ビッグダディは5人で獲得＝演出は5個（双子で一度に6人になった時だけ6個）
   const f=document.createElement('div');f.id='bossm';f.className='bdm';
   const em=kids.map((e,i)=>`<div class='bsa' style='transform:rotate(${(i*360/n).toFixed(1)}deg)'><div class='bse'>${e}</div></div>`).join('');
   const sp=Array.from({length:46},()=>`<span class='bsp' style='left:${(Math.random()*96).toFixed(1)}%;top:${(Math.random()*96).toFixed(1)}%;font-size:${(10+Math.random()*22).toFixed(0)}px;animation-delay:${(7+Math.random()*2.4).toFixed(2)}s;animation-duration:${(.9+Math.random()*1.2).toFixed(2)}s'>${Math.random()<.5?'✦':'•'}</span>`).join('');
-  f.innerHTML=`<div class='bsg'></div><div class='bsr'>${em}</div><div class='bsb'>${sp}</div><div class='bsw'></div><div class='bst'><div class='bde'>👨‍👧‍👦</div><b>${_T("Big Daddy",'ビッグダディ')}</b><div class='bdk'>${kids.join('')}</div></div>`;
+  f.innerHTML=`<div class='bsg'></div><div class='bsr'>${em}</div><div class='bsb'>${sp}</div><div class='bsw'></div><div class='bst'><div class='bde'>🧔‍♂️</div><b data-t='${_T("Big Daddy",'ビッグダディ')}'>${_T("Big Daddy",'ビッグダディ')}<i class='bdsp' style='left:-2%;top:-30%'>✦</i><i class='bdsp' style='right:4%;top:-22%;animation-delay:9.1s'>✦</i><i class='bdsp' style='left:46%;bottom:-26%;animation-delay:9.8s;font-size:.3em'>✦</i></b><div class='bdk'>${kids.join('')}</div></div>`;
   document.body.appendChild(f);
   for(let k=0;k<44;k++)snd(90+k*k*1.1,.16,'sine',.04+k*.0012,k*.135);
   snd(60,1.2,'sawtooth',.12,6);[1047,1319,1568,2093].forEach((fq,i)=>snd(fq,.9,'triangle',.07,6.1+i*.06));
