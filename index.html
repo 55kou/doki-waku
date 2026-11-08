@@ -587,7 +587,7 @@ const ICON={st:'🚩',pay:'💰',wed:'💍',baby:'👶',goal:'🏁',gam:'🎰',e
 const JE={'会社員':'💼','公務員':'🏛️','起業家':'🚀','ギャンブラー':'🎩'};
 const FACE='⚀⚁⚂⚃⚄⚅',sd=n=>{$('dice').textContent=FACE[n-1]};
 let SND=true,AC;
-function snd(f,t=.1,ty='square',v=.07,w=0){if(!SND)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain(),s=AC.currentTime+w;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+t);o.connect(g);g.connect(AC.destination);o.start(s);o.stop(s+t)}catch(e){}}
+function snd(f,t=.1,ty='square',v=.07,w=0){if(!SND)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume().catch(()=>{});const o=AC.createOscillator(),g=AC.createGain(),s=AC.currentTime+w;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+t);o.connect(g);g.connect(AC.destination);o.start(s);o.stop(s+t)}catch(e){}}
 $('snd').onclick=()=>{SND=!SND;$('snd').textContent=SND?'🔊':'🔇';bgmVol()};
 const BPM=77,BEAT=60/BPM,BAR=BEAT*4,NBARS=96,BK=[0,5,10,3,8,3,10,5,0,7,2,7];
 const BP=[[[2,'m'],[7,'d'],[0,'M'],[9,'d']],[[4,'m'],[9,'d'],[2,'m'],[7,'d']],[[0,'M'],[5,'M'],[4,'m'],[9,'d']],[[0,'M'],[9,'m'],[2,'m'],[7,'d']],[[2,'m'],[7,'d'],[0,'M'],[5,'M']],[[5,'m'],[10,'d'],[0,'M'],[0,'M']]];
@@ -2696,7 +2696,7 @@ function NETjoin(code,name){return new Promise(async(ok,ng)=>{
   peer.on('error',e=>fail(e));
   peer.on('open',()=>{
     const c=peer.connect(NETPFX+code,{reliable:true});
-    c.on('open',()=>{c.send({t:'hello',name});NET.role='guest';NET.peer=peer;NET.conn=c;NET.code=code;NET.name=NETclean(name)||_T("Friend",'フレンド');NET.myId=peer.id;clearTimeout(to);done=true;NETguestInit(c);ok()});
+    c.on('open',()=>{c.send({t:'hello',name});NET.role='guest';NET.peer=peer;NET.conn=c;NET.code=code;NET.name=NETclean(name)||_T("Friend",'フレンド');NET.myId=peer.id;clearTimeout(to);done=true;NETguestInit(c);try{NETsndCheck()}catch(e){}ok()});
     c.on('data',m=>NETguestMsg(m));
     c.on('close',()=>NETguestLost());c.on('error',()=>NETguestLost())})})}
 function NETguestLost(){if(NET.role!=='guest')return;NET.role='lost';NETbanner(_T("⚠ Disconnected from the host (tap to reload)",'⚠ ホストとの接続が切れました（タップで再読み込み）'),'off',()=>location.reload())}
@@ -2722,6 +2722,21 @@ function NETguestInit(c){
     let x=t;while(x&&x!==document.body&&!x.__gid)x=x.parentNode;if(!x||x===document.body)return;
     try{NET.conn.send({t:'ev',type:'tap',i:x.__gid,x:e.clientX,y:e.clientY})}catch(_){}
   },true)}
+// フレンド側：ブラウザの自動再生制限で音が止まっている間は「タップで音を出す」を出す（タップの瞬間に解除）
+function NETsndCheck(){
+  if(NET.role!=='guest'||!SND)return;
+  try{bgmStart()}catch(e){}
+  if(AC&&AC.state==='running'){const h=document.getElementById('sndhint');if(h)h.remove();return}
+  try{AC&&AC.resume().catch(()=>{})}catch(e){}
+  if(document.getElementById('sndhint'))return;
+  const h=document.createElement('div');h.id='sndhint';h.setAttribute('data-nosync','1');
+  h.style.cssText='position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:99999;background:#d81b60;color:#fff;font-weight:700;font-size:15px;padding:12px 22px;border-radius:999px;box-shadow:0 4px 16px #0009;cursor:pointer';
+  h.textContent=_T("🔇 Tap to turn sound on",'🔇 タップして音を出す');
+  const done=()=>{try{bgmStart();AC&&AC.resume().catch(()=>{});const b=AC.createBuffer(1,1,22050),o=AC.createBufferSource();o.buffer=b;o.connect(AC.destination);o.start(0)}catch(e){}
+    snd(880,.12,'triangle',.1);setTimeout(()=>{if(AC&&AC.state==='running')h.remove()},400)};
+  h.addEventListener('pointerup',done);h.addEventListener('click',done);
+  document.body.appendChild(h);
+  const iv=setInterval(()=>{if(!h.isConnected){clearInterval(iv);return}if(AC&&AC.state==='running'){h.remove();clearInterval(iv)}},500)}
 function NETguestMsg(m){
   if(!m||typeof m!=='object')return;
   if(m.t==='snap')NETgsnap(m);
@@ -2729,7 +2744,7 @@ function NETguestMsg(m){
   else if(m.t==='logr')NETlogShow(m);
   else if(m.t==='f'){try{follow({c:m.c})}catch(e){}}
   else if(m.t==='pulse'){try{camPulse(m.c)}catch(e){}}
-  else if(m.t==='s'){try{snd(...m.a.map(v=>v===null?undefined:v))}catch(e){}}
+  else if(m.t==='s'){try{NETsndCheck();snd(...m.a.map(v=>v===null?undefined:v))}catch(e){}}
   else if(m.t==='you'){NET.myId=m.id;NET.name=m.name;NET.code=m.code;NETbannerUpd()}
   else if(m.t==='ctl'){const was=NET.lastCtl===NET.myId;NET.lastCtl=m.who;NETbannerUpd();if(m.who===NET.myId&&!was){snd(880,.15,'triangle',.12);snd(1175,.25,'triangle',.12,.15);try{navigator.vibrate&&navigator.vibrate(200)}catch(e){}}}}
 // ---- ホストが操作権のない間は、ホスト自身のタップも受け付けない ----
