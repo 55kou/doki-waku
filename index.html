@@ -375,7 +375,7 @@ z-index:15;display:none;flex-direction:column;align-items:center;gap:20px;cursor
 <h1>🎲 ドキドキワクワク勝負師すごろく</h1>
 
 <div class="sticky"><div class="players" id="pls"></div>
-<div class="ctl"><div class="dice" id="dice" style="display:none">-</div><button id="roll">サイコロ</button><button id="reset" style="position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;background:#555;padding:4px 8px;font-size:11px;border-radius:8px;box-shadow:none;opacity:.8">最初から</button><button id="snd" style="position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:70px;background:#555;padding:4px 8px;font-size:11px;border-radius:8px;box-shadow:none;opacity:.8">🔊</button></div>
+<div class="ctl"><div class="dice" id="dice" style="display:none">-</div><button id="roll">サイコロ</button><button id="reset" style="position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;background:#555;padding:4px 8px;font-size:11px;border-radius:8px;box-shadow:none;opacity:.8">最初から</button><button id="snd" style="position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:70px;background:#555;padding:4px 8px;font-size:11px;border-radius:8px;box-shadow:none;opacity:.8">🔊</button><button id="achb" style="position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:108px;background:#555;padding:4px 8px;font-size:11px;border-radius:8px;box-shadow:none;opacity:.8">🏅</button></div>
 <div class="log" id="log"></div></div>
 <div id="board"></div>
 <div id="rdie"><div class="scene"><div class="cube" id="cube"></div></div><div class="cap" id="rcap">サイコロをタップ！</div></div>
@@ -614,6 +614,7 @@ const JE={'会社員':'💼','公務員':'🏛️','起業家':'🚀','ギャン
 const FACE='⚀⚁⚂⚃⚄⚅',sd=n=>{$('dice').textContent=FACE[n-1]};
 let SND=true,AC;
 function snd(f,t=.1,ty='square',v=.07,w=0){if(!SND)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume().catch(()=>{});const o=AC.createOscillator(),g=AC.createGain(),s=AC.currentTime+w;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+t);o.connect(g);g.connect(AC.destination);o.start(s);o.stop(s+t)}catch(e){}}
+$('achb').onclick=()=>ACHopen();
 $('snd').onclick=()=>{SND=!SND;$('snd').textContent=SND?'🔊':'🔇';bgmVol()};
 const BPM=77,BEAT=60/BPM,BAR=BEAT*4,NBARS=96,BK=[0,5,10,3,8,3,10,5,0,7,2,7];
 const BP=[[[2,'m'],[7,'d'],[0,'M'],[9,'d']],[[4,'m'],[9,'d'],[2,'m'],[7,'d']],[[0,'M'],[5,'M'],[4,'m'],[9,'d']],[[0,'M'],[9,'m'],[2,'m'],[7,'d']],[[2,'m'],[7,'d'],[0,'M'],[5,'M']],[[5,'m'],[10,'d'],[0,'M'],[0,'M']]];
@@ -2162,7 +2163,7 @@ async function fuzoku(p,q){
   // 称号「一途」：違う種類を挟まず同じ種類の風俗に3回連続（風俗マス以外は数えない・途切れない）
   p.streak=(p.last===sub)?(p.streak||0)+1:1;p.last=sub;
   if(p.streak>=3&&!p.ichizu){
-    p.ichizu=1;const hadC=p.cand;p.cand=0;
+    p.ichizu=1;p.ihad=1;const hadC=p.cand;p.cand=0;
     log(_TT("💞 {0}: visited {1} 3 times in a row, devoted! Earned the <b class='pos'>Devoted</b> title{2}",[`💞 `,`：`,`に3回連続で一途に通った！ <b class='pos'>一途</b>の称号を獲得`,``],[(p.n
 ),(FM[sub]
 ),(hadC?_T(" (Candida cured)",'（カンジダが治った）'):''
@@ -2188,7 +2189,7 @@ async function fuzoku(p,q){
     await ask(_T("👑 Nightlife Master is born!",'👑 風俗マスター誕生！'),[{l:_T("Earned the Nightlife Master title!",'風俗マスターの称号を獲得！'),s:_T("Your own nightlife (except Uri-sen) is half price. When another player lands on a nightlife square they pay 25% more, and you receive 25% of the regular price",'自分の風俗（売り専を除く）は半額。他のプレイヤーが風俗マスに止まると、その人の支払いが25%増しになり、さらに正規料金の25%を受け取れます'),c:'#c2185b'}]);
   }
 }
-async function divorce(p){
+async function divorce(p){p.hdiv=1;
   const ws=[...(p.wed?[_T("Spouse",'結婚相手')]:[]),...Object.keys(p.fm).map(k=>FM[k])],hadC=p.cand,hadO=p.ost,hadI=p.ichizu;
   p.wed=0;p.fm={};p.cand=0;p.ost=0;p.ichizu=0;p.streak=0;p.last=null;   // 離婚で「一途」は剥奪＆連続記録もリセット（同じ条件でまた何度でも獲得できる）
   await ask(_T("💔 Divorce…",'💔 離婚…'),[{l:_TT("Caught an STD and divorced {0}!",[`性病に感染して `,` と離婚！`],[(ws.join(_T(", ",'・'))
@@ -2272,7 +2273,7 @@ const kidTotal=p=>Math.round((p.cc||0)/500)+(p.pk||0)+(p.ape||0);
 const bigDad=p=>{if(!p.bd&&kidTotal(p)>=5)p.bd=1;return !!p.bd};
 async function birthTick(p){
   if(!(p.wed||Object.keys(p.fm||{}).length)||Math.random()>=.10)return;   // 通常結婚でも風俗嬢との結婚でも、毎ターン10%の抽選
-  const tw=Math.random()<.2,k=tw?2:1;
+  const tw=Math.random()<.2,k=tw?2:1;if(tw)p.twin=1;
   p.kids=(p.kids||0)+k;p.cc=(p.cc||0)+500*k;
   add(p,5000*k,_TT("👶 {0} baby shower gift (from now on parenting cost -{1} more every turn / total {2})",[`👶 `,`出産祝い（以後 毎ターン子育て金-`,`が増加／合計 `,`）`],[(tw?_T("Twins are born!",'双子が誕生！'):_T("A child is born!",'子供が誕生！')
 ),(yen(500*k)
@@ -2470,7 +2471,7 @@ $('roll').onclick=async()=>{
   while(p.pend.length)await roseScene(p.pend.shift());
   if(p.div){p.div=0;await divorce(p)}
   if(gs)await settleShow(p,gs);else await turnSum(p,m0);
-  MH.push(P.map(x=>x.m));
+  MH.push(P.map(x=>x.m));ACHscan();
   if(P.every(x=>x.done)){over=true;actor=null;render();finish();return}
   do{cur=(cur+1)%P.length}while(P[cur].done);
   setGold();render();await camTo(P[cur]);busy=false;render();npcKick();
@@ -2576,11 +2577,78 @@ function resultScreen(rk){
   });
 }
 async function finish(){
-  const rk=[...P].sort((a,b)=>b.m-a.m);
+  const rk=[...P].sort((a,b)=>b.m-a.m);ACHfinish(rk);
   log(_T("🎉 Everyone has finished!",'🎉 全員ゴール！'));
   await resultScreen(rk);
   init();
 }
+// ===== 実績：端末ごとに保存。解除されるのは達成した本人（人間のプレイヤー）だけで、同じ卓の他のプレイヤーには影響しない =====
+const ACHK='dokiwaku_ach';let ACHmem={};
+const ACHget=()=>{try{return JSON.parse(localStorage.getItem(ACHK)||'{}')||{}}catch(e){return ACHmem}};
+const ACHset=o=>{ACHmem=o;try{localStorage.setItem(ACHK,JSON.stringify(o))}catch(e){}};
+// rate＝ゲーム1回あたりの達成確率の目安（NPC対戦の実測＋推定）。期待値が高い順に自動で並べる
+const ACHDEF=()=>[
+ {id:'goal',ic:'🏁',rate:100,ok:p=>!!p.done,t:_T("Goal!",'ゴール到達'),s:_T("Reach the goal square",'ゴールマスにたどり着く')},
+ {id:'fz1',ic:'🏮',rate:95,ok:p=>!!p.fstop,t:_T("First visit",'初めての風俗'),s:_T("Visit nightlife for the first time",'はじめて風俗に行く')},
+ {id:'wed',ic:'💍',rate:92,ok:p=>{if(p.wed||Object.keys(p.fm||{}).length)p.aw=1;return !!p.aw},t:_T("Married",'結婚した'),s:_T("Get married (a marriage square or a nightlife partner)",'結婚マス、または風俗嬢と結婚する')},
+ {id:'kid1',ic:'👶',rate:90,ok:p=>kidTotal(p)>=1,t:_T("A child is born",'子供が産まれた'),s:_T("Have your first child",'はじめての子供ができる')},
+ {id:'sti',ic:'🦠',rate:85,ok:p=>!!(p.hist&&Object.keys(p.hist).length),t:_T("Caught something",'性病にかかった'),s:_T("Catch any STD at least once",'どれかの性病に一度かかる')},
+ {id:'plus',ic:'💴',rate:69,ok:p=>!!p.done&&p.m>0,t:_T("In the black",'黒字でゴール'),s:_T("Reach the goal with more than ¥0",'所持金プラスでゴールする')},
+ {id:'pk',ic:'🍼',rate:51,ok:p=>haramase(p),t:_T("Baby Maker",'孕ませマン'),s:_T("Have a child who pays child support",'養育費を払っている子供がいる')},
+ {id:'bd',ic:'👨‍👧‍👦',rate:52,ok:p=>bigDad(p),t:_T("Big Daddy",'ビッグダディ'),s:_T("Have 5 children in total",'子供が合計5人になる')},
+ {id:'master',ic:'👑',rate:50,ok:p=>!!p.master,t:_T("Nightlife Master",'風俗マスター'),s:_T("Visit the pink salon, delivery health, soapland and Menesu",'ピンサロ・デリヘル・ソープ・メンエスの4店に通う')},
+ {id:'twin',ic:'👶👶',rate:45,ok:p=>!!p.twin,t:_T("Twins!",'双子誕生'),s:_T("Have twins",'双子が産まれる')},
+ {id:'grand',ic:'🌟',rate:43,ok:p=>!!p.grand,t:_T("Grand Nightlife Master",'グランド風俗マスター'),s:_T("Visit all 5 venues, including uri-sen",'売り専を含む5店すべてに通う')},
+ {id:'first',ic:'🥇',rate:33,ok:p=>fin.indexOf(p)===0,t:_T("First to the goal",'ゴール一番乗り'),s:_T("Be the first player to reach the goal",'最初にゴールする')},
+ {id:'win',ic:'🏆',rate:33,ok:()=>false,t:_T("Champion",'優勝'),s:_T("Finish with the most money",'最終所持金が1位になる')},
+ {id:'red',ic:'💸',rate:30,ok:p=>!!p.done&&p.m<0,t:_T("In the red",'借金ゴール'),s:_T("Reach the goal with less than ¥0",'所持金マイナスでゴールする')},
+ {id:'div',ic:'💔',rate:25,ok:p=>!!p.hdiv,t:_T("Divorced",'離婚'),s:_T("Get divorced",'離婚する')},
+ {id:'big',ic:'💰',rate:15,ok:p=>!!p.done&&p.m>=50000,t:_T("¥50,000 club",'5万円超えでゴール'),s:_T("Reach the goal with ¥50,000 or more",'所持金5万円以上でゴールする')},
+ {id:'ichizu',ic:'💞',rate:10,ok:p=>!!p.ichizu||!!p.ihad,t:_T("Devoted",'一途'),s:_T("Visit the same kind of venue 3 times in a row",'同じ種類の風俗に3回連続で通う')},
+ {id:'ape',ic:'🐒',rate:10,ok:p=>monkey(p),t:_T("Monkey",'猿'),s:_T("Have a child who doesn't pay child support",'養育費を払わない子供がいる')},
+ {id:'baikin',ic:'🦠',rate:8,ok:p=>!!p.baikin,t:_T("Germ Man",'バイキンマン'),s:_T("Catch each of chlamydia, syphilis, HIV and candidiasis at least once",'クラミジア・梅毒・HIV・カンジダにそれぞれ一度は感染する')},
+ {id:'boss',ic:'🐵',rate:5,ok:p=>!!p.boss,t:_T("Boss Monkey",'ボス猿'),s:_T("Hold Monkey, Baby Maker and Big Daddy with 7+ children",'猿・孕ませマン・ビッグダディを持ち、子供が累計7人以上')},
+ {id:'sage',ic:'🧙',rate:2,ok:p=>!!p.done&&!p.fstop,t:_T("Great Sage",'大賢者'),s:_T("Reach the goal without ever visiting nightlife",'一度も風俗に行かずにゴールする')},
+ {id:'king',ic:'🎰',rate:2,ok:p=>!!p.king,t:_T("Casino King",'カジノ王'),s:_T("Win at all 6 kinds of gambling",'6種類のギャンブルすべてで勝つ')},
+ {id:'mil',ic:'💎',rate:1,ok:p=>!!p.done&&p.m>=100000,t:_T("¥100,000 club",'10万円超えでゴール'),s:_T("Reach the goal with ¥100,000 or more",'所持金10万円以上でゴールする')}
+];
+const ACHrate=r=>r>=10?Math.round(r)+'%':r>=1?r.toFixed(1).replace('.0','')+'%':'1%未満';
+(()=>{const s=document.createElement('style');s.textContent=`
+#achv{position:fixed;inset:0;z-index:100000;background:#0b0f2a;color:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#achv .ah{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 10px;background:linear-gradient(#151a45,#0b0f2aee);border-bottom:1px solid #ffffff1f}
+#achv .ah b{font-size:18px}#achv .ah small{display:block;font-size:11px;opacity:.65;margin-top:2px}
+#achv .ax{background:#555;color:#fff;border:0;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700}
+#achv .al{padding:10px 12px 40px}
+#achv .ar{display:flex;align-items:center;gap:12px;margin:8px 0;padding:12px 14px;border-radius:16px;background:#ffffff0f;border:1px solid #ffffff12}
+#achv .ar.on{background:linear-gradient(90deg,#ffd23f22,#ffffff12);border-color:#ffd23f66}
+#achv .at{flex:1;min-width:0}
+#achv .at b{font-size:16px}#achv .at i{font-style:normal;font-size:12px;opacity:.7;margin-left:8px}
+#achv .as{font-size:11.5px;opacity:.7;margin-top:3px;line-height:1.35}
+#achv .ab{flex:none;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;background:#080b20;box-shadow:inset 3px 3px 7px #000a,inset -2px -2px 5px #ffffff14}
+#achv .ar.on .ab{background:radial-gradient(circle at 35% 30%,#fff6c8,#ffd23f 45%,#c98a00);box-shadow:0 3px 8px #000a,inset 0 0 0 2px #fff8,inset 0 -4px 8px #8a5200aa;filter:none}
+#achv .an{font-size:10.5px;opacity:.5;text-align:center;padding:8px 0 0}
+#achT{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 10px);transform:translate(-50%,-140%);z-index:100001;background:linear-gradient(90deg,#ffd23f,#ffb300);color:#3a2500;font-weight:800;font-size:14px;padding:10px 18px;border-radius:999px;box-shadow:0 6px 18px #000a;transition:transform .45s cubic-bezier(.2,1.4,.4,1);white-space:nowrap;pointer-events:none}
+#achT.show{transform:translate(-50%,0)}`;document.head.appendChild(s)})();
+function ACHopen(){
+  if(document.getElementById('achv'))return;
+  const D=ACHDEF().sort((a,b)=>b.rate-a.rate),G=ACHget(),n=D.filter(a=>G[a.id]).length;
+  const v=document.createElement('div');v.id='achv';v.setAttribute('data-nosync','1');
+  v.innerHTML=`<div class='ah'><div><b>🏅 ${_T("Achievements",'実績')} ${n} / ${D.length}</b><small>${_T("Sorted by how likely you are to get it in one game",'1ゲームで達成できそうな確率の高い順')}</small></div><button class='ax'>${_T("Close",'閉じる')}</button></div><div class='al'>${D.map(a=>`<div class='ar${G[a.id]?' on':''}'><div class='at'><b>${a.t}</b><i>${ACHrate(a.rate)}</i><div class='as'>${a.s}</div></div><div class='ab'>${G[a.id]?a.ic:''}</div></div>`).join('')}<div class='an'>${_T("Rates are estimates from NPC simulations (chance per game)",'％はNPC対戦のシミュレーションなどからの目安（1ゲームあたりの達成確率）')}</div></div>`;
+  document.body.appendChild(v);v.querySelector('.ax').onclick=()=>v.remove();v.querySelector('.ax').addEventListener('pointerup',()=>v.remove())}
+let ACHq=[],ACHbusy=false;
+async function ACHtoast(){if(ACHbusy)return;ACHbusy=true;
+  while(ACHq.length){const a=ACHq.shift();let b=document.getElementById('achT');if(!b){b=document.createElement('div');b.id='achT';b.setAttribute('data-nosync','1');document.body.appendChild(b)}
+    b.textContent='🏅 '+_T("Achievement unlocked: ",'実績解除：')+a.t;await new Promise(r=>setTimeout(r,60));b.classList.add('show');try{snd(784,.12,'triangle',.08);snd(1047,.12,'triangle',.08,.1);snd(1319,.3,'triangle',.08,.2)}catch(e){}
+    await new Promise(r=>setTimeout(r,2800));b.classList.remove('show');await new Promise(r=>setTimeout(r,500))}
+  ACHbusy=false}
+function ACHunlock(id){const G=ACHget();if(G[id])return;const a=ACHDEF().find(x=>x.id===id);if(!a)return;G[id]=Date.now();ACHset(G);ACHq.push(a);ACHtoast();const o=document.getElementById('achv');if(o){const y=o.scrollTop;o.remove();ACHopen();const n=document.getElementById('achv');if(n)n.scrollTop=y}}
+// 達成した本人にだけ届ける（オンライン中のフレンドの実績は、そのフレンドの端末で解除される）
+function ACHgive(p,i,id){
+  p.ach=p.ach||{};if(p.ach[id])return;p.ach[id]=1;
+  if(typeof NET!=='undefined'&&NET.role==='host'&&i!==0){const g=NET.guests.find(x=>x.c&&x.c.peer===p.net);if(g){try{g.c.send({t:'ach',id})}catch(e){}}return}
+  ACHunlock(id)}
+function ACHscan(){try{if(!P)return;const D=ACHDEF();P.forEach((p,i)=>{if(p.npc)return;D.forEach(a=>{if(a.id!=='win'&&a.ok(p))ACHgive(p,i,a.id)})})}catch(e){}}
+function ACHfinish(rk){try{const w=rk[0];if(w&&!w.npc){const i=P.indexOf(w);ACHgive(w,i,'win')}}catch(e){}}
 // ===== オンライン対戦：ホストの画面をフレンドに映し（DOM差分＋効果音）、フレンドの操作をホストへ送る方式 =====
 const NET={role:null,peer:null,code:'',guests:[],conn:null,playing:false,redraw:null,lastCtl:null,myId:'',name:'',mo:null,seat:-1};
 const NETQ=new URLSearchParams(location.search);
@@ -2756,6 +2824,8 @@ function NETguestInit(c){
     const t=e.target;if(!t||!t.closest)return;
     if(t.closest('#netroot'))return;
     if(t.closest('#netlv')){if(t.closest('#netlvx')||t.id==='netlv'){const v=document.getElementById('netlv');if(v)v.classList.remove('show')}return}
+    if(t.closest('#achv'))return;
+    if(t.closest('#achb')){ACHopen();return}
     if(t.closest('#snd')){SND=!SND;const s=document.getElementById('snd');if(s)s.textContent=SND?'🔊':'🔇';bgmVol();return}
     const pl=t.closest('.pl');
     if(pl&&pl.parentNode&&pl.parentNode.id==='pls'){try{NET.conn.send({t:'log',i:[...pl.parentNode.children].indexOf(pl)})}catch(_){}return}
@@ -2784,6 +2854,7 @@ function NETguestMsg(m){
   else if(m.t==='logr')NETlogShow(m);
   else if(m.t==='f'){try{follow({c:m.c})}catch(e){}}
   else if(m.t==='pulse'){try{camPulse(m.c)}catch(e){}}
+  else if(m.t==='ach'){try{ACHunlock(m.id)}catch(e){}}
   else if(m.t==='bgm'){try{bgmMute(m.on)}catch(e){}}
   else if(m.t==='s'){try{NETsndCheck();snd(...m.a.map(v=>v===null?undefined:v))}catch(e){}}
   else if(m.t==='you'){NET.myId=m.id;NET.name=m.name;NET.code=m.code;NETbannerUpd()}
@@ -2791,7 +2862,7 @@ function NETguestMsg(m){
 // ---- ホストが操作権のない間は、ホスト自身のタップも受け付けない ----
 ['click','pointerup','pointerdown','mouseup','mousedown'].forEach(ty=>addEventListener(ty,e=>{
   if(NET.role!=='host'||!e.isTrusted||NETctrl()==='host')return;
-  const t=e.target;if(t&&t.closest&&t.closest('#netroot,#snd,#lv,#lvx'))return;
+  const t=e.target;if(t&&t.closest&&t.closest('#netroot,#snd,#achb,#achv,#lv,#lvx'))return;
   e.stopImmediatePropagation();e.preventDefault()},true));
 // ---- 効果音をフレンドにも流す ----
 {const _f=follow;follow=function(p){if(NET.role==='host'&&NET.guests.length){const c=p.c;setTimeout(()=>NETbc({t:'f',c}),40)}return _f.apply(this,arguments)}}
@@ -2826,6 +2897,7 @@ function NMsave(a){try{localStorage.setItem('sugoroku_names',JSON.stringify(a))}
 function NMname(cfg,i){const nm=cfg.names&&cfg.names[i]?NETclean(cfg.names[i]):'';return(cfg.npc[i]||!nm)?(cfg.npc[i]?'NPC':_T("Player",'プレイヤー'))+(i+1):nm}
 function NMdecorate(cfg,draw){
   const box=$('box'),go=box.querySelector('[data-go]');if(!go)return;
+  {const ab=document.createElement('button');ab.setAttribute('data-ach','1');ab.style.cssText='background:#b8860b;text-align:center;margin-top:8px;font-size:14px';ab.textContent=_T("🏅 Achievements",'🏅 実績');ab.onclick=ACHopen;box.insertBefore(ab,go)}
   const seats=[];for(let i=0;i<cfg.n;i++)if(!cfg.npc[i]&&(!cfg.online||i===0))seats.push(i);
   if(!seats.length)return;
   const w=document.createElement('div');
