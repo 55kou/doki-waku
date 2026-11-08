@@ -2498,7 +2498,7 @@ async function peekShow(p){
   // オフライン：盤面・自分のプロフが見えるよう、画面下に小さな一覧バーだけを出す（暗幕なし・スクロールできる）
   await new Promise(r=>{
     const b=document.createElement('div');b.id='pkb';b.setAttribute('data-nosync','1');
-    b.innerHTML=`<div class='pkh'>👀 ${_T("The squares ahead",'この先のマス目')}<small> ${_T("(scroll to see the board)",'（盤面・プロフはスクロールで確認できます）')}</small></div><div class='pkg'>${ln.join('')}</div><button>${_T("Back to choosing",'選びなおす')}</button>`;
+    b.innerHTML=`<div class='pkh'>👀 ${_T("The squares ahead",'この先のマス目')}</div><div class='pkg'>${ln.join('')}</div><button>${_T("Back to choosing",'選びなおす')}</button>`;
     b.querySelector('button').onclick=()=>{b.remove();document.body.classList.remove('pkon');r()};
     document.body.appendChild(b);document.body.classList.add('pkon');
   });
