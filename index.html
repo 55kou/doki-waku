@@ -886,7 +886,7 @@ async function rou(p,st){
   const nm=col===2?'🟢':col===0?'🔴':'⚫';
   ROUH.push(n);rhUpd();
   if(mode===2){
-    const hc=put[n],pay=hc*36*c1,net=pay-5*c1,hit=hc>0;
+    const hc=put[n],pay=hc*36*c1,net=pay-5*c1,hit=hc>0;if(hit)p.ten1=1;   // 実績：一点賭けの的中
     const detail=_TT("<div class='cd1'>Number: <b>{0} {1}</b></div><div class='cd1'>Your chips: <b>{2}</b></div><div class='cd2 {3}'>{4}</div><div class='cd3'>{5}</div><div class='cd4'>👆 Tap to close</div>",[`<div class='cd1'>出た数字：<b>`,` `,`</b></div><div class='cd1'>あなたのチップ：<b>`,`</b></div><div class='cd2 `,`'>`,`</div><div class='cd3'>`,`</div><div class='cd4'>👆 タップで閉じる</div>`],[(nm),(n),(putText),(hit?'w':'l'),(hit?_T("🎉 HIT!",'🎉 的中！'):_T("💧 MISS…",'💧 ハズレ…')),(hit?_TT("{0} winning chip(s) × 36 × {1} = <b class='pos'>{2}</b><br>5 chips placed −{3}<br>Net <b class='{4}'>{5}{6}</b>",[``,`枚の当たりチップ × 36倍 × 1枚`,` ＝ <b class='pos'>`,`</b><br>賭けた5枚 −`,`<br>差し引き <b class='`,`'>`,``,`</b>`],[(hc),(yen(c1)),(yen(pay)),(yen(5*c1)),(net>=0?'pos':'neg'),(net>=0?'+':'-'),(yen(Math.abs(net)))]):_TT("None of the chips hit. 5 chips placed <b class='neg'>−{0}</b>",[`当たったチップはなし。賭けた5枚 <b class='neg'>−`,`</b>`],[(yen(5*c1))]))]);
     return finale(net/st,st,`${nm} ${n}  ${hit?_T("HIT!",'的中！'):_T("MISS…",'ハズレ…')}`,false,detail,true);
   }
@@ -1001,6 +1001,7 @@ async function chin(p,st){
   const x=pr.m*dr.m;   // 役が重なったら倍率は掛け合わせ（例：ヒフミ×シゴロ＝2×2＝4倍）
   if(pr.rk>dr.rk)res=x;
   else if(pr.rk<dr.rk)res=-x;
+  if(pr.rk===200){p.pinzo=1;if(res>0&&x>=10)p.pinzo10=1}   // 実績：ピンゾロ／ピンゾロで10倍以上の配当で勝つ
   const u=st%100?10:100,vv=Math.round(res*st/u)*u,gbv=res>0&&p.job==='ギャンブラー'?Math.round(vv*1.2/10)*10:0;
   const detail=_TT("<div class='cd1'>Dealer: <b>{0}</b>　Hand multiplier ×{1}</div><div class='cd1'>{2}: <b>{3}</b>　Hand multiplier ×{4}</div><div class='cd2 {5}'>{6}</div><div class='cd3'>{7}</div><div class='cd4'>👆 Tap to close</div>",[`<div class='cd1'>ディーラー：<b>`,`</b>　役の倍率 ×`,`</div><div class='cd1'>`,`：<b>`,`</b>　役の倍率 ×`,`</div><div class='cd2 `,`'>`,`</div><div class='cd3'>`,`</div><div class='cd4'>👆 タップで閉じる</div>`],[(dr.n
 ),(dr.m
@@ -1071,7 +1072,7 @@ async function gov(p){
   await ask(_T("🏛️ Government Square",'🏛️ 行政マス'),[{l:fg&&amt>0?_T("After distributing, your advance is halved!",'分配のうえ、前借りが半減！'):fg?_T("Advance halved!",'前借りが半減！'):_TT("Distribute {0}% of your cash to the other {1} players",[`所持金の`,`%を他の`,`人に`],[(rate*100
 ),(o.length
 )]),s:[t1,t2].filter(Boolean).join(_T(" / ",'／')),c:fg?'#1d9e75':'#e24b4a'}]);   // 該当するものは全て適用（選択ではない）
-  if(amt>0){p.m-=amt*o.length;pop(p,-amt*o.length);o.forEach(x=>{x.m=Math.min(CAP,x.m+amt);pop(x,amt)});
+  if(amt>0){p.m-=amt*o.length;pop(p,-amt*o.length);o.forEach(x=>{x.m=Math.min(CAP,x.m+amt);pop(x,amt);ACHrecv(x,p,amt)});
     log(_TT("🏛️ {0}: {1}% of cash to {2}, <b class='neg'>{3}</b> each",[`🏛️ `,`：所持金の`,`%を`,`にそれぞれ <b class='neg'>`,`</b>`],[(p.n
 ),(rate*100
 ),(o.map(x=>x.n).join(_T(", ",'・'))
@@ -1142,7 +1143,7 @@ async function bj(p,st){
 )]));$('l0').textContent=_T("Hand 1",'ハンド1');sh();await sleep(500);await tease(3);h.c.push(draw());H[kk].c.push(draw());sh();snd(520,.12,'triangle',.1);await sleep(500)}
       }
     }
-    hd=false;
+    hd=false;if(FB&&H.length>=4)p.fb4=1;   // 実績：フリーベットで4ハンド以上
     if(H.some(h=>!h.nat&&bv(h.c)<=21)){txt(_T("Dealer's turn…",'ディーラーのターン…'));await tease(6);sh();snd(700,.2,'triangle',.12);await sleep(800);
       while(bv(D)<17){txt(_T("Dealer draws a card…",'ディーラーがカードを引く…'));await tease(5);D.push(draw());nd=D.length;sh();snd(450,.12,'triangle',.1);await sleep(700)}}
     else{sh();await sleep(300)}
@@ -1471,7 +1472,7 @@ async function horse(p,st){
     document.querySelectorAll('#rk,.tapn').forEach(e=>e.remove());
   }
   if(md===2){
-    const top=ord.slice(0,3),hits=tix.filter(t=>t[0]===top[0]&&t[1]===top[1]&&t[2]===top[2]),hit=hits[0],pay=hit?Math.round(100*odT(hit))*hits.length:0;
+    const top=ord.slice(0,3),hits=tix.filter(t=>t[0]===top[0]&&t[1]===top[1]&&t[2]===top[2]),hit=hits[0],pay=hit?Math.round(100*odT(hit))*hits.length:0;if(hit&&odT(hit)>=300)p.ooana=1;   // 実績：三連単300倍以上
     return finale((pay-spent)/st,st,hit?_TT("🏆 Trifecta HIT!! {0} (payout {1} / {2}×)",[`🏆 三連単的中！！ `,`（払戻 `,`／`,`倍）`],[(hit.map(x=>x+1).join('→')+(hits.length>1?_T(` ×${hits.length} tickets`,` ×${hits.length}枚`):'')
 ),(yen(pay)
 ),(odT(hit).toFixed(1)
@@ -1562,7 +1563,7 @@ async function crownCheck(p,g){
 )]),s:_TT("Won at all 6 kinds of gambling! {0} other players each pay {1} tribute",[`6種類のギャンブル全てで勝利！ 他の`,`人から上納金 `,` ずつ`],[(o.length
 ),(yen(5000)
 )]),c:'#e8a317'}]);
-  o.forEach(x=>{add(x,-5000,_TT("🎰 Tribute to Casino King {0}",[`🎰 カジノ王`,`への上納金`],[(p.n
+  o.forEach(x=>{ACHrecv(p,x,5000);add(x,-5000,_TT("🎰 Tribute to Casino King {0}",[`🎰 カジノ王`,`への上納金`],[(p.n
 )]),true);add(p,5000,_TT("🎰 Tribute from {0}",[`🎰 `,`から上納金`],[(x.n
 )]),true)});
   log(_TT("🎰 {0}: earned the <b>Casino King</b> title!",[`🎰 `,`：<b>カジノ王</b>の称号を獲得！`],[(p.n
@@ -1579,6 +1580,7 @@ async function game(p,q){
 ),(cf>1?_T(" (",'（')+[p.conf?_T("💪Baseless Confidence",'💪根拠なき自信'):'','',dt?_T("🎟️Double Ticket",'🎟️ダブルチケット'):''].filter(Boolean).join('×')+_T(" = ×",'で')+cf+_T(")",'倍）'):''
 )]),[{l:_T("Bet",'賭ける'),s:DESC[q.g],c:'#e8a317'},{l:_T("Pass",'やめておく'),c:'#888'}]);
   if(i!==0)return;
+  p.gcnt=(p.gcnt||0)+1;   // 実績用：ギャンブルに挑んだ回数
   const doCons=()=>{
     if(p.conf){p.conf=0;log(_TT("💪 {0}: Baseless Confidence doubles the stake",[`💪 `,`：根拠なき自信で掛け金が2倍`],[(p.n
 )]))}
@@ -1856,7 +1858,7 @@ async function duel(p){
 )]),c:p.c},{l:_TT("🏆 {0} wins",[`🏆 `,` の勝ち`],[(o.n
 )]),c:o.c},{l:_T("🎲 Decide at random",'🎲 ランダムで決める'),s:_T("Victory lamps flash alternately → whoever it stops on wins",'勝利ランプが交互に点滅→止まった方が勝ち'),c:'#6b7a8f'}]);
   if(i===2)i=await duelRoulette(p,o);
-  if(i===0){add(o,-prize,_TT("⚔️ Lost the duel (taken by {0})",[`⚔️ 直接対決に敗北（`,`に奪われた）`],[(p.n
+  if(i===0){ACHrecv(p,o,prize);add(o,-prize,_TT("⚔️ Lost the duel (taken by {0})",[`⚔️ 直接対決に敗北（`,`に奪われた）`],[(p.n
 )]),true);add(p,prize,_TT("Won the duel! Took it from {0}",[`直接対決に勝利！`,`から奪い取った`],[(o.n
 )]))}
   else log(_TT("⚔️ {0} defended the duel! (no reward)",[`⚔️ `,`が直接対決を防衛！（報酬なし）`],[(o.n
@@ -2063,7 +2065,7 @@ async function fuzoku(p,q){
 ),(mt.n
 ),(mrate(mt)*100
 )]),true);
-        mt.m=Math.min(CAP,mt.m+tr);pop(mt,tr);log(_TT("{0} {1}: received <b class='pos'>+{3}</b> as {2}",[``,` `,`：`,`として <b class='pos'>+`,`</b> を受け取った`],[(mt.grand?'🌟':'👑'
+        mt.m=Math.min(CAP,mt.m+tr);pop(mt,tr);ACHrecv(mt,p,tr);log(_TT("{0} {1}: received <b class='pos'>+{3}</b> as {2}",[``,` `,`：`,`として <b class='pos'>+`,`</b> を受け取った`],[(mt.grand?'🌟':'👑'
 ),(mt.n
 ),(nmOf(mt)
 ),(yen(tr)
@@ -2577,7 +2579,7 @@ function resultScreen(rk){
   });
 }
 async function finish(){
-  const rk=[...P].sort((a,b)=>b.m-a.m);ACHfinish(rk);
+  const rk=[...P].sort((a,b)=>b.m-a.m);
   log(_T("🎉 Everyone has finished!",'🎉 全員ゴール！'));
   await resultScreen(rk);
   init();
@@ -2586,60 +2588,98 @@ async function finish(){
 const ACHK='dokiwaku_ach';let ACHmem={};
 const ACHget=()=>{try{return JSON.parse(localStorage.getItem(ACHK)||'{}')||{}}catch(e){return ACHmem}};
 const ACHset=o=>{ACHmem=o;try{localStorage.setItem(ACHK,JSON.stringify(o))}catch(e){}};
-// rate＝ゲーム1回あたりの達成確率の目安（NPC対戦の実測＋推定）。期待値が高い順に自動で並べる
+// rate＝ゲーム1回あたりの達成確率の目安（NPC対戦の実測＋推定）。確率の高い順に自動で並べる
 const ACHDEF=()=>[
- {id:'goal',ic:'🏁',rate:100,ok:p=>!!p.done,t:_T("Goal!",'ゴール到達'),s:_T("Reach the goal square",'ゴールマスにたどり着く')},
- {id:'fz1',ic:'🏮',rate:95,ok:p=>!!p.fstop,t:_T("First visit",'初めての風俗'),s:_T("Visit nightlife for the first time",'はじめて風俗に行く')},
- {id:'wed',ic:'💍',rate:92,ok:p=>{if(p.wed||Object.keys(p.fm||{}).length)p.aw=1;return !!p.aw},t:_T("Married",'結婚した'),s:_T("Get married (a marriage square or a nightlife partner)",'結婚マス、または風俗嬢と結婚する')},
- {id:'kid1',ic:'👶',rate:90,ok:p=>kidTotal(p)>=1,t:_T("A child is born",'子供が産まれた'),s:_T("Have your first child",'はじめての子供ができる')},
- {id:'sti',ic:'🦠',rate:85,ok:p=>!!(p.hist&&Object.keys(p.hist).length),t:_T("Caught something",'性病にかかった'),s:_T("Catch any STD at least once",'どれかの性病に一度かかる')},
- {id:'plus',ic:'💴',rate:69,ok:p=>!!p.done&&p.m>0,t:_T("In the black",'黒字でゴール'),s:_T("Reach the goal with more than ¥0",'所持金プラスでゴールする')},
- {id:'pk',ic:'🍼',rate:51,ok:p=>haramase(p),t:_T("Baby Maker",'孕ませマン'),s:_T("Have a child who pays child support",'養育費を払っている子供がいる')},
- {id:'bd',ic:'👨‍👧‍👦',rate:52,ok:p=>bigDad(p),t:_T("Big Daddy",'ビッグダディ'),s:_T("Have 5 children in total",'子供が合計5人になる')},
- {id:'master',ic:'👑',rate:50,ok:p=>!!p.master,t:_T("Nightlife Master",'風俗マスター'),s:_T("Visit the pink salon, delivery health, soapland and Menesu",'ピンサロ・デリヘル・ソープ・メンエスの4店に通う')},
- {id:'twin',ic:'👶👶',rate:45,ok:p=>!!p.twin,t:_T("Twins!",'双子誕生'),s:_T("Have twins",'双子が産まれる')},
- {id:'grand',ic:'🌟',rate:43,ok:p=>!!p.grand,t:_T("Grand Nightlife Master",'グランド風俗マスター'),s:_T("Visit all 5 venues, including uri-sen",'売り専を含む5店すべてに通う')},
- {id:'first',ic:'🥇',rate:33,ok:p=>fin.indexOf(p)===0,t:_T("First to the goal",'ゴール一番乗り'),s:_T("Be the first player to reach the goal",'最初にゴールする')},
- {id:'win',ic:'🏆',rate:33,ok:()=>false,t:_T("Champion",'優勝'),s:_T("Finish with the most money",'最終所持金が1位になる')},
- {id:'red',ic:'💸',rate:30,ok:p=>!!p.done&&p.m<0,t:_T("In the red",'借金ゴール'),s:_T("Reach the goal with less than ¥0",'所持金マイナスでゴールする')},
- {id:'div',ic:'💔',rate:25,ok:p=>!!p.hdiv,t:_T("Divorced",'離婚'),s:_T("Get divorced",'離婚する')},
- {id:'big',ic:'💰',rate:15,ok:p=>!!p.done&&p.m>=50000,t:_T("¥50,000 club",'5万円超えでゴール'),s:_T("Reach the goal with ¥50,000 or more",'所持金5万円以上でゴールする')},
- {id:'ichizu',ic:'💞',rate:10,ok:p=>!!p.ichizu||!!p.ihad,t:_T("Devoted",'一途'),s:_T("Visit the same kind of venue 3 times in a row",'同じ種類の風俗に3回連続で通う')},
- {id:'ape',ic:'🐒',rate:10,ok:p=>monkey(p),t:_T("Monkey",'猿'),s:_T("Have a child who doesn't pay child support",'養育費を払わない子供がいる')},
- {id:'baikin',ic:'🦠',rate:8,ok:p=>!!p.baikin,t:_T("Germ Man",'バイキンマン'),s:_T("Catch each of chlamydia, syphilis, HIV and candidiasis at least once",'クラミジア・梅毒・HIV・カンジダにそれぞれ一度は感染する')},
- {id:'boss',ic:'🐵',rate:5,ok:p=>!!p.boss,t:_T("Boss Monkey",'ボス猿'),s:_T("Hold Monkey, Baby Maker and Big Daddy with 7+ children",'猿・孕ませマン・ビッグダディを持ち、子供が累計7人以上')},
- {id:'sage',ic:'🧙',rate:2,ok:p=>!!p.done&&!p.fstop,t:_T("Great Sage",'大賢者'),s:_T("Reach the goal without ever visiting nightlife",'一度も風俗に行かずにゴールする')},
- {id:'king',ic:'🎰',rate:2,ok:p=>!!p.king,t:_T("Casino King",'カジノ王'),s:_T("Win at all 6 kinds of gambling",'6種類のギャンブルすべてで勝つ')},
- {id:'mil',ic:'💎',rate:1,ok:p=>!!p.done&&p.m>=100000,t:_T("¥100,000 club",'10万円超えでゴール'),s:_T("Reach the goal with ¥100,000 or more",'所持金10万円以上でゴールする')}
+ {id:'red',rate:30,ok:p=>!!p.done&&p.m<0,t:_T("In the red",'借金ゴール'),s:_T("Reach the goal with less than ¥0",'所持金マイナスでゴールする')},
+ {id:'pk',rate:51,ok:p=>haramase(p),t:_T("Baby Maker",'孕ませマン'),s:_T("Have a child who pays child support",'養育費を払っている子供がいる')},
+ {id:'bd',rate:52,ok:p=>bigDad(p),t:_T("Big Daddy",'ビッグダディ'),s:_T("Have 5 children in total",'子供が合計5人になる')},
+ {id:'master',rate:50,ok:p=>!!p.master,t:_T("Nightlife Master",'風俗マスター'),s:_T("Visit the pink salon, delivery health, soapland and Menesu",'ピンサロ・デリヘル・ソープ・メンエスの4店に通う')},
+ {id:'twin',rate:45,ok:p=>!!p.twin,t:_T("Twins!",'双子誕生'),s:_T("Have twins",'双子が産まれる')},
+ {id:'grand',rate:43,ok:p=>!!p.grand,t:_T("Grand Nightlife Master",'グランド風俗マスター'),s:_T("Visit all 5 venues, including uri-sen",'売り専を含む5店すべてに通う')},
+ {id:'div',rate:25,ok:p=>!!p.hdiv,t:_T("Divorced",'離婚'),s:_T("Get divorced",'離婚する')},
+ {id:'big',rate:15,ok:p=>!!p.done&&p.m>=50000,t:_T("¥50,000 club",'5万円超えでゴール'),s:_T("Reach the goal with ¥50,000 or more",'所持金5万円以上でゴールする')},
+ {id:'gomu',rate:15,ok:p=>!!p.done&&!(p.hist&&Object.keys(p.hist).length),t:_T("Always Protected",'ゴム派'),s:_T("Reach the goal without ever catching an STD",'一度も病気にならずにゴールする')},
+ {id:'kokoro',rate:15,ok:p=>!!p.fv&&Object.values(p.fv).some(v=>v>=5),t:_T("Home of the Heart",'心の故郷'),s:_T("Visit the same kind of venue 5 times",'同じ風俗に5回通う')},
+ {id:'sanzoku',rate:15,ok:p=>!!p.rcv&&Object.values(p.rcv).some(v=>v>=20000),t:_T("Bandit",'山賊'),s:_T("Take a total of ¥20,000 or more from one player",'あるプレイヤーから累計2万円以上もらう')},
+ {id:'ichizu',rate:10,ok:p=>!!p.ichizu||!!p.ihad,t:_T("Devoted",'一途'),s:_T("Visit the same kind of venue 3 times in a row",'同じ種類の風俗に3回連続で通う')},
+ {id:'ape',rate:10,ok:p=>monkey(p),t:_T("Monkey",'猿'),s:_T("Have a child who doesn't pay child support",'養育費を払わない子供がいる')},
+ {id:'baikin',rate:8,ok:p=>!!p.baikin,t:_T("Germ Man",'バイキンマン'),s:_T("Catch each of chlamydia, syphilis, HIV and candidiasis at least once",'クラミジア・梅毒・HIV・カンジダにそれぞれ一度は感染する')},
+ {id:'gkr',rate:8,ok:p=>(p.gcnt||0)>=15,t:_T("Kakegurui",'賭ケグルイ'),s:_T("Gamble 15 times or more",'ギャンブルに15回以上通う')},
+ {id:'big7',rate:7,ok:p=>kidTotal(p)>=10,t:_T("Huge Family",'大家族'),s:_T("Have 10 or more children",'子供を10人以上作る')},
+ {id:'fzk',rate:5,ok:p=>!!p.fv&&Object.values(p.fv).reduce((a,b)=>a+b,0)>=10,t:_T("Nightlife Addict",'風俗狂い'),s:_T("Visit nightlife 10 times or more",'風俗に10回以上通う')},
+ {id:'boss',rate:5,ok:p=>!!p.boss,t:_T("Boss Monkey",'ボス猿'),s:_T("Hold Monkey, Baby Maker and Big Daddy with 7+ children",'猿・孕ませマン・ビッグダディを持ち、子供が累計7人以上')},
+ {id:'byak',rate:3,ok:p=>!!p.ten1,t:_T("Byakugan",'白眼'),s:_T("Hit a one-number bet in roulette",'一点賭けで的中させる')},
+ {id:'sage',rate:2,ok:p=>!!p.done&&!p.fstop,t:_T("Great Sage",'大賢者'),s:_T("Reach the goal without ever visiting nightlife",'一度も風俗に行かずにゴールする')},
+ {id:'king',rate:2,ok:p=>!!p.king,t:_T("Casino King",'カジノ王'),s:_T("Win at all 6 kinds of gambling",'6種類のギャンブルすべてで勝つ')},
+ {id:'kou',rate:2,ok:p=>!!p.fb4,t:_T("Shameless",'厚顔無恥'),s:_T("Make 4 or more hands in Free Bet blackjack",'FreeBetで4ハンド以上作る')},
+ {id:'sha',rate:2,ok:p=>!!p.pinzo,t:_T("Sharingan",'写輪眼'),s:_T("Roll a Pinzoro (triple ones)",'ピンゾロを出す')},
+ {id:'mil',rate:1,ok:p=>!!p.done&&p.m>=100000,t:_T("¥100,000 club",'10万円超えでゴール'),s:_T("Reach the goal with ¥100,000 or more",'所持金10万円以上でゴールする')},
+ {id:'rin',rate:.5,ok:p=>!!p.pinzo10,t:_T("Rinnegan",'輪廻眼'),s:_T("Roll a Pinzoro and win with a 10× payout",'ピンゾロを出した上で10倍配当で勝つ')},
+ {id:'ooana',rate:.5,ok:p=>!!p.ooana,t:_T("Long-shot Master",'大穴野郎'),s:_T("Hit a Trifecta with payout odds of 300× or more",'配当オッズ300倍以上の三連単を当てる')}
 ];
-const ACHrate=r=>r>=10?Math.round(r)+'%':r>=1?r.toFixed(1).replace('.0','')+'%':'1%未満';
+const ACHrate=r=>r>=10?Math.round(r)+'%':r>=1?r.toFixed(1).replace('.0','')+'%':r+'%';
+const ACHtier=r=>r>=30?'diamond':r>=10?'ruby':r>=5?'sapphire':'emerald';
+// ダイヤモンドカット（ブリリアントカット）の宝石。確率で色が決まる：30%以上＝ダイヤ／10〜29%＝ルビー／5〜9%＝サファイア／5%未満＝エメラルド
+const ACHPAL={diamond:['#f1faff','#d9f0ff','#b6defa','#8cc2ea','#5f9ccd','#3a6fa3'],ruby:['#ffe0e6','#ff93a8','#f2486a','#cc1434','#930b25','#5e0717'],sapphire:['#dbe9ff','#93b9ff','#4d80ff','#2152dc','#16399f','#0b2268'],emerald:['#d9ffe9','#82f2b3','#31d27d','#10a05b','#0a7041','#064729']};
+const ACHBZ={diamond:['#ffffff','#9aa7b5'],ruby:['#ffe9a0','#b8860b'],sapphire:['#ffe9a0','#b8860b'],emerald:['#ffe9a0','#b8860b']};
+function ACHgem(tier){
+  const P=ACHPAL[tier],B=ACHBZ[tier],pt=(r,a)=>[50+r*Math.cos(a*Math.PI/180),50+r*Math.sin(a*Math.PI/180)],R=42,S=28,T=19;
+  const sh=(pts,bias)=>{const cx=pts.reduce((s,q)=>s+q[0],0)/pts.length-50,cy=pts.reduce((s,q)=>s+q[1],0)/pts.length-50;const th=Math.atan2(cy,cx)*180/Math.PI,v=Math.cos((th-225)*Math.PI/180)*.9;return Math.max(0,Math.min(P.length-1,Math.round((1-v)/2*(P.length-1))+(bias||0)))};
+  const poly=(pts,bias,fl)=>`<polygon points='${pts.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ')}' fill='${fl||P[sh(pts,bias)]}' stroke='#ffffffaa' stroke-width='.7' stroke-linejoin='round'/>`;
+  let f='';
+  const Tp=k=>pt(T,22.5+45*k),Sp=k=>pt(S,45*k),Gp=k=>pt(R,22.5+45*k),Hp=k=>pt(R,45*k);
+  for(let k=0;k<8;k++){
+    f+=poly([Sp(k),Gp(k-1),Hp(k)],k%2?0:1)+poly([Sp(k),Hp(k),Gp(k)],k%2?1:0);          // 外周の三角ファセット
+    f+=poly([Tp(k),Sp(k),Gp(k),Sp(k+1)],0);                                              // カイト（菱形）ファセット
+    f+=poly([Tp(k),Sp(k+1),Tp(k+1)],k%2?-1:1);                                           // スター（三角）ファセット
+  }
+  f+=`<polygon points='${[0,1,2,3,4,5,6,7].map(k=>Tp(k).map(v=>v.toFixed(1)).join(',')).join(' ')}' fill='${P[0]}' stroke='#fff' stroke-width='.9'/>`;   // テーブル（中央の大きな平面）
+  const sp=(x,y,s)=>`<path d='M${x} ${y-s}L${x+s*.28} ${y-s*.28}L${x+s} ${y}L${x+s*.28} ${y+s*.28}L${x} ${y+s}L${x-s*.28} ${y+s*.28}L${x-s} ${y}L${x-s*.28} ${y-s*.28}Z' fill='#fff' opacity='.95'/>`;
+  return `<svg viewBox='0 0 100 100'><circle cx='50' cy='50' r='49' fill='${B[1]}'/><circle cx='50' cy='50' r='47' fill='${B[0]}'/><circle cx='50' cy='50' r='44.5' fill='${B[1]}'/>${f}<ellipse cx='38' cy='30' rx='16' ry='8' transform='rotate(-35 38 30)' fill='#fff' opacity='.22'/>${sp(34,32,7)}${sp(64,58,4)}${sp(58,26,3)}</svg>`}
 (()=>{const s=document.createElement('style');s.textContent=`
+#box{position:relative}#box>b:first-child{display:block;padding-right:76px;font-size:15px}#box button[data-lang]{position:absolute;top:12px;right:12px;margin:0!important;width:auto;padding:3px 10px;font-size:11px!important;border-radius:999px;box-shadow:none}
 #achv{position:fixed;inset:0;z-index:100000;background:#0b0f2a;color:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch}
 #achv .ah{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 10px;background:linear-gradient(#151a45,#0b0f2aee);border-bottom:1px solid #ffffff1f}
 #achv .ah b{font-size:18px}#achv .ah small{display:block;font-size:11px;opacity:.65;margin-top:2px}
 #achv .ax{background:#555;color:#fff;border:0;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700}
 #achv .al{padding:10px 12px 40px}
 #achv .ar{display:flex;align-items:center;gap:12px;margin:8px 0;padding:12px 14px;border-radius:16px;background:#ffffff0f;border:1px solid #ffffff12}
-#achv .ar.on{background:linear-gradient(90deg,#ffd23f22,#ffffff12);border-color:#ffd23f66}
+#achv .ar.on{background:linear-gradient(90deg,var(--tc),#ffffff10);border-color:var(--tb)}
 #achv .at{flex:1;min-width:0}
 #achv .at b{font-size:16px}#achv .at i{font-style:normal;font-size:12px;opacity:.7;margin-left:8px}
 #achv .as{font-size:11.5px;opacity:.7;margin-top:3px;line-height:1.35}
-#achv .ab{flex:none;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;background:#080b20;box-shadow:inset 3px 3px 7px #000a,inset -2px -2px 5px #ffffff14}
-#achv .ar.on .ab{background:radial-gradient(circle at 35% 30%,#fff6c8,#ffd23f 45%,#c98a00);box-shadow:0 3px 8px #000a,inset 0 0 0 2px #fff8,inset 0 -4px 8px #8a5200aa;filter:none}
+#achv .ab,#achP .ab{position:relative;flex:none;width:58px;height:58px;border-radius:50%;background:#080b20;box-shadow:inset 3px 3px 7px #000b,inset -2px -2px 5px #ffffff14}
+#achv .ab .gm,#achP .ab .gm{position:absolute;inset:-2px;filter:drop-shadow(0 3px 6px #000a) drop-shadow(0 0 8px var(--tg))}
+#achv .ab .gm svg,#achP .ab .gm svg{width:100%;height:100%;display:block}
 #achv .an{font-size:10.5px;opacity:.5;text-align:center;padding:8px 0 0}
-#achT{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 10px);transform:translate(-50%,-140%);z-index:100001;background:linear-gradient(90deg,#ffd23f,#ffb300);color:#3a2500;font-weight:800;font-size:14px;padding:10px 18px;border-radius:999px;box-shadow:0 6px 18px #000a;transition:transform .45s cubic-bezier(.2,1.4,.4,1);white-space:nowrap;pointer-events:none}
-#achT.show{transform:translate(-50%,0)}`;document.head.appendChild(s)})();
+.tdiamond{--tc:#9ccdf433;--tb:#9ccdf499;--tg:#bfe6ff}.truby{--tc:#f2486a30;--tb:#f2486a99;--tg:#ff5d7d}.tsapphire{--tc:#4d80ff30;--tb:#4d80ff99;--tg:#6a98ff}.temerald{--tc:#31d27d30;--tb:#31d27d99;--tg:#4ff09a}
+#achP{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);width:min(92vw,400px);transform:translate(-50%,-140%);z-index:100001;background:#111634;border:1px solid var(--tb);border-radius:16px;box-shadow:0 10px 30px #000b,0 0 24px var(--tc);overflow:hidden;transition:transform .45s cubic-bezier(.2,1.3,.4,1);pointer-events:none;color:#fff}
+#achP.show{transform:translate(-50%,0)}
+#achP .pb{position:absolute;top:0;right:0;height:5px;width:0;background:#2ecc71;box-shadow:0 0 8px #2ecc71}
+#achP.show .pb{animation:achpb 5s linear forwards}
+@keyframes achpb{to{width:100%}}
+#achP .pr{display:flex;align-items:center;gap:12px;padding:18px 14px 13px}
+#achP .at{flex:1;min-width:0}#achP .at em{display:block;font-style:normal;font-size:10.5px;color:#ffd23f;font-weight:800;letter-spacing:.08em;margin-bottom:2px}
+#achP .at b{font-size:17px}#achP .at i{font-style:normal;font-size:12px;opacity:.75;margin-left:8px}
+#achP .as{font-size:12px;opacity:.8;margin-top:3px;line-height:1.35}
+#achP .gm{clip-path:inset(100% 0 0 0);animation:achfill 2s ease-out 3s forwards}
+@keyframes achfill{0%{clip-path:inset(100% 0 0 0);filter:brightness(2.2) drop-shadow(0 0 10px var(--tg))}100%{clip-path:inset(0 0 0 0);filter:brightness(1) drop-shadow(0 3px 6px #000a) drop-shadow(0 0 8px var(--tg))}}`;document.head.appendChild(s)})();
 function ACHopen(){
   if(document.getElementById('achv'))return;
   const D=ACHDEF().sort((a,b)=>b.rate-a.rate),G=ACHget(),n=D.filter(a=>G[a.id]).length;
   const v=document.createElement('div');v.id='achv';v.setAttribute('data-nosync','1');
-  v.innerHTML=`<div class='ah'><div><b>🏅 ${_T("Achievements",'実績')} ${n} / ${D.length}</b><small>${_T("Sorted by how likely you are to get it in one game",'1ゲームで達成できそうな確率の高い順')}</small></div><button class='ax'>${_T("Close",'閉じる')}</button></div><div class='al'>${D.map(a=>`<div class='ar${G[a.id]?' on':''}'><div class='at'><b>${a.t}</b><i>${ACHrate(a.rate)}</i><div class='as'>${a.s}</div></div><div class='ab'>${G[a.id]?a.ic:''}</div></div>`).join('')}<div class='an'>${_T("Rates are estimates from NPC simulations (chance per game)",'％はNPC対戦のシミュレーションなどからの目安（1ゲームあたりの達成確率）')}</div></div>`;
+  v.innerHTML=`<div class='ah'><div><b>🏅 ${_T("Achievements",'実績')} ${n} / ${D.length}</b><small>${_T("% = chance of getting it in one game",'%は1ゲームで達成できる確率')}</small></div><button class='ax'>${_T("Close",'閉じる')}</button></div><div class='al'>${D.map(a=>{const ti=ACHtier(a.rate);return `<div class='ar t${ti}${G[a.id]?' on':''}'><div class='at'><b>${a.t}</b><i>${ACHrate(a.rate)}</i><div class='as'>${a.s}</div></div><div class='ab'>${G[a.id]?`<div class='gm'>${ACHgem(ti)}</div>`:''}</div></div>`}).join('')}<div class='an'>${_T("Rates are estimates from NPC simulations and guesses",'確率はNPC対戦のシミュレーションなどからの目安')}</div></div>`;
   document.body.appendChild(v);v.querySelector('.ax').onclick=()=>v.remove();v.querySelector('.ax').addEventListener('pointerup',()=>v.remove())}
 let ACHq=[],ACHbusy=false;
+// 解除ポップアップ：3秒表示→2秒かけてバッジが埋まる。上辺の緑のバーは右から左へ5秒で伸びる
 async function ACHtoast(){if(ACHbusy)return;ACHbusy=true;
-  while(ACHq.length){const a=ACHq.shift();let b=document.getElementById('achT');if(!b){b=document.createElement('div');b.id='achT';b.setAttribute('data-nosync','1');document.body.appendChild(b)}
-    b.textContent='🏅 '+_T("Achievement unlocked: ",'実績解除：')+a.t;await new Promise(r=>setTimeout(r,60));b.classList.add('show');try{snd(784,.12,'triangle',.08);snd(1047,.12,'triangle',.08,.1);snd(1319,.3,'triangle',.08,.2)}catch(e){}
-    await new Promise(r=>setTimeout(r,2800));b.classList.remove('show');await new Promise(r=>setTimeout(r,500))}
+  while(ACHq.length){const a=ACHq.shift(),ti=ACHtier(a.rate);const b=document.createElement('div');b.id='achP';b.className='t'+ti;b.setAttribute('data-nosync','1');
+    b.innerHTML=`<div class='pb'></div><div class='pr'><div class='at'><em>🏅 ${_T("ACHIEVEMENT UNLOCKED",'実績解除')}</em><b>${a.t}</b><i>${ACHrate(a.rate)}</i><div class='as'>${a.s}</div></div><div class='ab'><div class='gm'>${ACHgem(ti)}</div></div></div>`;
+    document.body.appendChild(b);await new Promise(r=>setTimeout(r,60));b.classList.add('show');
+    try{snd(784,.12,'triangle',.08);snd(1047,.14,'triangle',.08,.1)}catch(e){}
+    await new Promise(r=>setTimeout(r,3000));
+    try{[1047,1319,1568,2093].forEach((f,k)=>snd(f,.35,'triangle',.07,k*.35))}catch(e){}
+    await new Promise(r=>setTimeout(r,2000));b.classList.remove('show');await new Promise(r=>setTimeout(r,520));b.remove()}
   ACHbusy=false}
 function ACHunlock(id){const G=ACHget();if(G[id])return;const a=ACHDEF().find(x=>x.id===id);if(!a)return;G[id]=Date.now();ACHset(G);ACHq.push(a);ACHtoast();const o=document.getElementById('achv');if(o){const y=o.scrollTop;o.remove();ACHopen();const n=document.getElementById('achv');if(n)n.scrollTop=y}}
 // 達成した本人にだけ届ける（オンライン中のフレンドの実績は、そのフレンドの端末で解除される）
@@ -2647,8 +2687,8 @@ function ACHgive(p,i,id){
   p.ach=p.ach||{};if(p.ach[id])return;p.ach[id]=1;
   if(typeof NET!=='undefined'&&NET.role==='host'&&i!==0){const g=NET.guests.find(x=>x.c&&x.c.peer===p.net);if(g){try{g.c.send({t:'ach',id})}catch(e){}}return}
   ACHunlock(id)}
-function ACHscan(){try{if(!P)return;const D=ACHDEF();P.forEach((p,i)=>{if(p.npc)return;D.forEach(a=>{if(a.id!=='win'&&a.ok(p))ACHgive(p,i,a.id)})})}catch(e){}}
-function ACHfinish(rk){try{const w=rk[0];if(w&&!w.npc){const i=P.indexOf(w);ACHgive(w,i,'win')}}catch(e){}}
+function ACHscan(){try{if(!P)return;const D=ACHDEF();P.forEach((p,i)=>{if(p.npc)return;D.forEach(a=>{if(a.ok(p))ACHgive(p,i,a.id)})})}catch(e){}}
+function ACHrecv(r,g,a){try{if(!r||!g||r===g||!(a>0))return;r.rcv=r.rcv||{};const k=P.indexOf(g);r.rcv[k]=(r.rcv[k]||0)+a}catch(e){}}   // 他のプレイヤーからもらった累計額（山賊用）
 // ===== オンライン対戦：ホストの画面をフレンドに映し（DOM差分＋効果音）、フレンドの操作をホストへ送る方式 =====
 const NET={role:null,peer:null,code:'',guests:[],conn:null,playing:false,redraw:null,lastCtl:null,myId:'',name:'',mo:null,seat:-1};
 const NETQ=new URLSearchParams(location.search);
