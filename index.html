@@ -2445,9 +2445,16 @@ $('roll').onclick=async()=>{
   if(busy||over)return;busy=true;render();const p=P[cur];actor=p;TL=[];const m0=P.map(x=>x.m);
   let d,usedGold=false;
   if(goldNow){goldNow=false;usedGold=true;snd(880,.2,'triangle',.1);
-    const gi=await ask(_T("🌟 Golden Dice!<br><small>Pick any number and move your piece</small>",'🌟 金のサイコロ！<br><small>好きな目を選んでコマを進めよう</small>'),[1,2,3,4,5,6].map(n=>({l:_TT("{0}　Move {1} square(s)",[``,`　`,`マス進む`],[(FACE[n-1]
+    let gi;
+    for(;;){
+      gi=await ask(_T("🌟 Golden Dice!<br><small>Pick any number and move your piece</small>",'🌟 金のサイコロ！<br><small>好きな目を選んでコマを進めよう</small>'),[...[1,2,3,4,5,6].map(n=>({l:_TT("{0}　Move {1} square(s)",[``,`　`,`マス進む`],[(FACE[n-1]
 ),(n
-)]),c:'#c78a00'})));
+)]),c:'#c78a00'})),{l:_T("👀 Look at the squares ahead",'👀 マス目を見る'),s:_T("Check where each number lands, then choose",'各マス先の止まるマスを確認してから選べます'),c:'#4a6fa5'}]);
+      if(gi<6)break;
+      const ln=[];for(let k=1;k<=6;k++){const sq=peekSq(p,k);if(!sq.length)break;const q=sq[sq.length-1],pass=sq.slice(0,-1).some(x=>x.k==='pay'),sub=q.k==='m'?fmt(q.v):q.k==='house'?'¥'+q.pr/1000+_T("k",'千'):q.k==='gam'?'¥'+(q.st>=1000?q.st/1000+_T("k",'千'):q.st):q.k==='fz'?FZ[q.sub].sub:'',ic=q.k==='m'?(q.v>0?'💴':'💸'):q.k==='house'?'🏠':q.k==='gam'?GI[q.g||'slot']:ICON[q.k]||'';
+        ln.push(`<div style='text-align:left;margin:3px 0'>${FACE[k-1]} <b>${k}${_T("",'マス先')}</b>：${ic} ${q.k==='fz'?FZ[q.sub].n:q.t}${sub?' <span style="font-size:12px;opacity:.8">'+sub+'</span>':''}${pass?' <span style="font-size:12px;opacity:.8">'+_T("(passes a payday)",'（途中で給料日を通過）')+'</span>':''}</div>`)}
+      await ask(_T("👀 The squares ahead",'👀 この先のマス目')+`<br><small>${_T("Where you would land with each number",'出た目ごとに止まるマス')}</small><div style='margin-top:8px;font-size:14px'>${ln.join('')}</div>`,[{l:_T("Back to choosing",'選びなおす'),c:'#555'}]);
+    }
     d=gi+1;log(_TT("🌟 {0}: chose <b>{1}</b> with the Golden Dice",[`🌟 `,`：金のサイコロで <b>`,`</b> を選んだ`],[(p.n
 ),(d
 )]));
