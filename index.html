@@ -473,7 +473,7 @@ const ad0=s=>s==='uri';   // 売り専：結婚の有無に関係なく、3回�
 function sq(j){
   // 区間別 [緑,赤,イベント,風俗,ギャンブル]（メイン区間の風俗は全体で平均約28マス／緑とイベントを減らして風俗を増量）（ゴールへのギャンブルは mainSeg で1〜3個を別途配置するため、残りを比率で配分）
   const GW=[2.8,4.7,5.4,5.9,8.3,11.3];   // ギャンブルの重み：序盤0.3→中盤0.4〜0.6→終盤0.8個（メイン合計 平均3個）
-  const T=j===0?[28,14,13,31,GW[0]]:j<6?[25,19,13,40,GW[j]]:[19,19,9,30,0],tot=T.reduce((x,y)=>x+y,0);
+  const T=j===0?[28,14,13,27,GW[0]]:j<6?[25,19,13,36,GW[j]]:[19,19,9,26,0],tot=T.reduce((x,y)=>x+y,0);
   let x=Math.random()*tot,k=0;while(k<4&&x>=T[k]){x-=T[k];k++}
   if(k===0)return grn(false);
   if(k===1)return rSq(false);
@@ -524,7 +524,9 @@ function mainSeg(j,last){
   if(j>0){a[fr[1]]={k:'gov',t:_T("Gov't",'行政')};a[fr[2]]={k:'hosp',t:_T("Hospital",'病院')}}
   if(!last&&Math.random()<.5)a[fr[3]]={k:'shop',t:_T("Shop",'ショップ')};   // ショップ：序盤〜終盤は各区間 平均0.5個（ゴールへは0）
   if(last){const n=rnd(2,4);for(let i=0;i<n;i++){const x=Math.random();a[fr[3+i]]=gmk(x<.5?'hl':x<.75?'horse':'chin',false)}}   // ゴールへ：2〜4マス（平均3）／ハイロー50%・競馬25%・チンチロ25%
-  return limFz(a);
+  let rr=limFz(a);   // メイン区間は風俗マスが最低3つ：足りなければ、固定でない緑・赤・アイテムマスを風俗に置き換える
+  for(let g=0;g<20&&rr.filter(x=>x&&x.k==='fz').length<3;g++){let cand=[...Array(15).keys()].filter(i=>!fx.has(i)&&rr[i]&&(rr[i].k==='m'||rr[i].k==='item'));if(!cand.length)cand=[...Array(15).keys()].filter(i=>!fx.has(i)&&rr[i]&&(rr[i].k==='ev'||rr[i].k==='gam'));if(!cand.length)break;rr[pick(cand)]=mkFz();rr=limFz(rr)}
+  return rr;
 }
 function build(){
   const S=[],names=[_T("Early",'序盤'),_T("Mid 1",'中盤1'),_T("Mid 2",'中盤2'),_T("Mid 3",'中盤3'),_T("Mid 4",'中盤4'),_T("Late",'終盤'),_T("To the Goal",'ゴールへ')];
