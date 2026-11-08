@@ -837,8 +837,8 @@ async function hl(p,st,borrow){
     const b=await gbtn([{l:'⬆ HIGH',c:'#e24b4a'},{l:'⬇ LOW',c:'#378add'}]);
     let nx=draw();while(nx.n===c.n)nx=draw();   // 同じ数字のカードは出ない（引き分けなし）
     $('gs').textContent='……';
-    for(let k=0;k<12;k++){snd(165+k*37,.1,'sawtooth',.08);await sleep((190+k*30)*.525)}   // 選択→めくりまでの時間を25%短縮（音は少し低め）
-    setHand('ph',[c,nx],()=>0);snd(560,.15,'triangle',.12);await sleep(1700);
+    for(let k=0;k<12;k++){snd(165+k*37,.1,'sawtooth',.08);await sleep((190+k*30)*.4725)}   // 選択→めくりまでの時間（さらに10%短縮・音の高さは変えない）
+    setHand('ph',[c,nx],()=>0);snd(560,.15,'triangle',.12);await sleep(850);   // めくれてから「……」の表示時間は半分
     if(nx.n===c.n){$('gs').textContent=_T("🤝 Same number! Once more!",'🤝 同じ数字！もう一回！');snd(392,.2,'triangle',.1);await sleep(1800);continue}
     const ok=b===0?nx.n>c.n:nx.n<c.n;
     if(!ok){const r=await finale(-1,st,nx.n===c.n?_T("💥 Same number loses 💥",'💥 同じ数字は負け 💥'):'💥 MISS 💥');return{net:r,paid:0,stake:st}}
