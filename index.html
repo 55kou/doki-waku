@@ -301,8 +301,8 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 .cd{width:calc(56px*var(--cs,1));height:calc(82px*var(--cs,1));background:#fff;border-radius:8px;color:#222;font-weight:900;font-size:calc(21px*var(--cs,1));display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 8px #0008;animation:dl .35s}
 .cd.r{color:#d22}.cd.b{background:repeating-linear-gradient(45deg,#3a4fd0,#3a4fd0 6px,#2a3aa0 6px,#2a3aa0 12px);color:#fff;border:3px solid #fff}
 /* バスト：トランプをグレーにして、赤い「BUST」を浮かび上がらせる */
-.hand.bust{position:relative}.hand.bust .cd{filter:grayscale(1) brightness(.62);transition:filter .4s .5s}
-.hand.bust::after{content:'BUST';position:absolute;left:0;right:0;top:50%;text-align:center;font-weight:900;letter-spacing:.08em;font-size:clamp(26px,9vw,44px);color:#ff2a2a;text-shadow:0 0 10px #ff2a2a99,0 2px 0 #fff,0 0 3px #000,0 4px 10px #000;transform:translateY(-50%) rotate(-8deg);pointer-events:none;animation:bustup .6s cubic-bezier(.2,1.4,.4,1) .5s both}
+.hand.bust{position:relative}.hand.bust .cd{filter:grayscale(1) brightness(.62);transition:filter .4s 1.4s}
+.hand.bust::after{content:'BUST';position:absolute;left:0;right:0;top:50%;text-align:center;font-weight:900;letter-spacing:.08em;font-size:clamp(26px,9vw,44px);color:#ff2a2a;text-shadow:0 0 10px #ff2a2a99,0 2px 0 #fff,0 0 3px #000,0 4px 10px #000;transform:translateY(-50%) rotate(-8deg);pointer-events:none;animation:bustup .6s cubic-bezier(.2,1.4,.4,1) 1.4s both}
 /* アクションを終えたハンドの合計 */
 .hand[data-tot]{position:relative;margin-top:20px}
 .hand[data-tot]::before{content:attr(data-tot);position:absolute;left:50%;top:-19px;transform:translateX(-50%);z-index:3;min-width:36px;height:34px;padding:0 9px;box-sizing:border-box;border-radius:17px;background:#ffd54f;color:#222;border:2px solid #fff;font-weight:900;font-size:21px;line-height:30px;text-align:center;box-shadow:0 2px 8px #000a;pointer-events:none}
@@ -1154,11 +1154,11 @@ async function bj(p,st){
 ),(kk
 )]));$('l0').textContent=_T("Hand 1",'ハンド1');sh();await sleep(500);await tease(3);h.c.push(draw());H[kk].c.push(draw());sh();snd(520,.12,'triangle',.1);await sleep(500)}
       }
-      h.done=1;sh();
+      h.done=1;sh();if(bv(h.c)>21)await sleep(2300);   // バストは、カードが揃ってから0.5秒後のグレー＋BUSTを見せてから次へ
     }
     hd=false;if(FB&&H.length>=4)p.fb4=1;   // 実績：フリーベットで4ハンド以上
     if(H.some(h=>!h.nat&&bv(h.c)<=21)){txt(_T("Dealer's turn…",'ディーラーのターン…'));await tease(6);sh();snd(700,.2,'triangle',.12);await sleep(800);
-      while(bv(D)<17){txt(_T("Dealer draws a card…",'ディーラーがカードを引く…'));await tease(5);D.push(draw());nd=D.length;sh();snd(450,.12,'triangle',.1);await sleep(700)}dd=true;sh()}
+      while(bv(D)<17){txt(_T("Dealer draws a card…",'ディーラーがカードを引く…'));await tease(5);D.push(draw());nd=D.length;sh();snd(450,.12,'triangle',.1);await sleep(700)}dd=true;sh();if(bv(D)>21)await sleep(2300)}
     else{dd=true;sh();await sleep(300)}
     const d=bv(D);
     if(FB&&d===22){txt(_T("Dealer 22… Push! (hands that haven't busted are a draw)",'ディーラー22…プッシュ！（バストしていない手は引き分け）'));snd(392,.3,'triangle',.1);await sleep(1300)}
