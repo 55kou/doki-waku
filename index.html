@@ -385,7 +385,7 @@ function _staticEn(){if(_LANG!=='en')return;document.documentElement.lang='en';d
 /* ===== /i18n ===== */
 
 const CAP=Infinity,COL=['#e24b4a','#378add','#1d9e75','#f08a24','#a855d6','#e84393'];
-const JOBS=[{n:'会社員',s:1500,d:_T("Payday +1,500 / losses are halved / bonus showdown on gambling wins & losses",'給料日 +1,500／マイナスが半分／ギャンブルの勝ち負けで追加勝負')},{n:'起業家',s:0,d:_T("Payday: dice ×900 / bonus showdown on gambling wins & losses",'給料日 サイコロ×900／ギャンブルの勝ち負けで追加勝負')},{n:'ギャンブラー',s:0,d:_T("Payday: +5,000 only when you land exactly on it (no pay for passing) / gambling wins ×1.2 / win to ride the streak",'給料日 ぴったり止まった時のみ+5,000（通過では貰えない）／ギャンブル勝ち1.2倍／勝つと流れに乗れる')}];
+const JOBS=[{n:'会社員',s:1500,d:_T("Payday +1,500 / losses are halved / bonus showdown on gambling wins & losses",'給料日 +1,500／マイナスが半分／ギャンブルの勝ち負けで追加勝負')},{n:'起業家',s:0,d:_T("Payday: dice ×800 / bonus showdown on gambling wins & losses",'給料日 サイコロ×800／ギャンブルの勝ち負けで追加勝負')},{n:'ギャンブラー',s:0,d:_T("Payday: +3,000 only when you land exactly on it (no pay for passing) / gambling wins ×1.2 / win to ride the streak",'給料日 ぴったり止まった時のみ+3,000（通過では貰えない）／ギャンブル勝ち1.2倍／勝つと流れに乗れる')}];
 let FAST=false;   // NPCがギャンブル中は進行速度1.5倍
 const pick=a=>a[Math.random()*a.length|0],d6=()=>1+(Math.random()*6|0),sleep=ms=>new Promise(r=>setTimeout(r,FAST?ms/1.5:ms)),$=id=>document.getElementById(id);
 const yen=n=>'¥'+n.toLocaleString('ja-JP');
@@ -1900,7 +1900,7 @@ async function step(p,stop){
     else p.r=null;
   }
   const q=cs(p);
-  if(q.k==='pay'){let v;if(p.job==='起業家'){const r=d6();await bigRoll(p,r);v=r*900}else if(p.job==='ギャンブラー')v=stop?5000:0;else v=JOBS.find(j=>j.n===p.job).s;if(p.job==='ギャンブラー'&&!stop){log(_TT("{0}: passed Payday (a Gambler only gets paid by landing exactly on it)",[``,`：給料日を通過（ギャンブラーはぴったり止まらないと貰えない）`],[(p.n
+  if(q.k==='pay'){let v;if(p.job==='起業家'){const r=d6();await bigRoll(p,r);v=r*800}else if(p.job==='ギャンブラー')v=stop?3000:0;else v=JOBS.find(j=>j.n===p.job).s;if(p.job==='ギャンブラー'&&!stop){log(_TT("{0}: passed Payday (a Gambler only gets paid by landing exactly on it)",[``,`：給料日を通過（ギャンブラーはぴったり止まらないと貰えない）`],[(p.n
 )]));v=null}if(v!==null){add(p,v,_T("Payday",'給料日'))}}
   if(q.k==='goal'){p.done=true;fin.push(p)}
 }
