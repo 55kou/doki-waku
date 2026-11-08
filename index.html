@@ -375,7 +375,7 @@ z-index:15;display:none;flex-direction:column;align-items:center;gap:20px;cursor
 <h1>🎲 ドキドキワクワク勝負師すごろく</h1>
 
 <div class="sticky"><div class="players" id="pls"></div>
-<div class="ctl"><div class="dice" id="dice" style="display:none">-</div><button id="roll">サイコロ</button><button id="reset" style="position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;background:#555;padding:4px 8px;font-size:11px;border-radius:8px;box-shadow:none;opacity:.8">最初から</button><button id="snd" style="position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:70px;background:#555;padding:4px 8px;font-size:11px;border-radius:8px;box-shadow:none;opacity:.8">🔊</button><button id="achb" style="position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:108px;background:#555;padding:4px 8px;font-size:11px;border-radius:8px;box-shadow:none;opacity:.8">🏅</button></div>
+<div class="ctl"><div class="dice" id="dice" style="display:none">-</div><button id="roll">サイコロ</button><button id="menub" style="position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;background:#555;padding:2px 11px;font-size:19px;line-height:1.2;border-radius:8px;box-shadow:none;opacity:.85">☰</button></div>
 <div class="log" id="log"></div></div>
 <div id="board"></div>
 <div id="rdie"><div class="scene"><div class="cube" id="cube"></div></div><div class="cap" id="rcap">サイコロをタップ！</div></div>
@@ -612,10 +612,8 @@ function add(p,v,why,raw){
 const ICON={st:'🚩',pay:'💰',wed:'💍',baby:'👶',goal:'🏁',gam:'🎰',ev:'❓',rest:'♨️',duel:'⚔️',gov:'🏛️',fz:'🏮',hosp:'🏥',shop:'🛒',item:'🎁'};
 const JE={'会社員':'💼','公務員':'🏛️','起業家':'🚀','ギャンブラー':'🎩'};
 const FACE='⚀⚁⚂⚃⚄⚅',sd=n=>{$('dice').textContent=FACE[n-1]};
-let SND=true,AC;
-function snd(f,t=.1,ty='square',v=.07,w=0){if(!SND)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume().catch(()=>{});const o=AC.createOscillator(),g=AC.createGain(),s=AC.currentTime+w;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+t);o.connect(g);g.connect(AC.destination);o.start(s);o.stop(s+t)}catch(e){}}
-$('achb').onclick=()=>ACHopen();
-$('snd').onclick=()=>{SND=!SND;$('snd').textContent=SND?'🔊':'🔇';bgmVol()};
+let SND=true,AC,BGMV=1,SFXV=1;try{const s=JSON.parse(localStorage.getItem('dkwk_vol')||'{}');if(typeof s.b==='number')BGMV=s.b;if(typeof s.s==='number')SFXV=s.s}catch(e){}
+function snd(f,t=.1,ty='square',v=.07,w=0){if(!SND||SFXV<=0)return;v*=SFXV;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume().catch(()=>{});const o=AC.createOscillator(),g=AC.createGain(),s=AC.currentTime+w;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+t);o.connect(g);g.connect(AC.destination);o.start(s);o.stop(s+t)}catch(e){}}
 const BPM=77,BEAT=60/BPM,BAR=BEAT*4,NBARS=96,BK=[0,5,10,3,8,3,10,5,0,7,2,7];
 const BP=[[[2,'m'],[7,'d'],[0,'M'],[9,'d']],[[4,'m'],[9,'d'],[2,'m'],[7,'d']],[[0,'M'],[5,'M'],[4,'m'],[9,'d']],[[0,'M'],[9,'m'],[2,'m'],[7,'d']],[[2,'m'],[7,'d'],[0,'M'],[5,'M']],[[5,'m'],[10,'d'],[0,'M'],[0,'M']]];
 const BQ={M:{v:[4,11,14,7],s:[0,2,4,7,9,11],t:4},m:{v:[3,10,14,7],s:[0,2,3,5,7,10],t:3},d:{v:[4,10,14,9],s:[0,2,4,7,9,10],t:4}};
@@ -654,14 +652,14 @@ function bgmTick(){
 }
 let BGMX=0;   // 1の間はBGMを切る（G1の専用BGM・ファンファーレの最中など）
 let bgmMute=on=>{BGMX=on?1:0;bgmVol()};
-function bgmVol(){if(BGM.m&&AC)BGM.m.gain.setTargetAtTime(SND&&!BGMX?1:0,AC.currentTime,.12)}
+function bgmVol(){if(BGM.m&&AC)BGM.m.gain.setTargetAtTime(SND&&!BGMX?BGMV:0,AC.currentTime,.12)}
 function bgmStart(){
   if(BGM.on)return;
   try{AC=AC||new(window.AudioContext||window.webkitAudioContext)()}catch(e){return}
   const m=AC.createGain(),bus=AC.createGain(),cv=AC.createConvolver(),wet=AC.createGain(),len=AC.sampleRate*2.4|0,ib=AC.createBuffer(2,len,AC.sampleRate),nb=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);
   for(let c=0;c<2;c++){const d=ib.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6)}
   const nd=nb.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
-  cv.buffer=ib;wet.gain.value=.4;bus.gain.value=.55;m.gain.value=SND?1:0;
+  cv.buffer=ib;wet.gain.value=.4;bus.gain.value=.55;m.gain.value=SND?BGMV:0;
   bus.connect(m);bus.connect(cv);cv.connect(wet);wet.connect(m);m.connect(AC.destination);
   BGM.m=m;BGM.bus=bus;BGM.nb=nb;BGM.on=true;BGM.next=AC.currentTime+.3;
   if(AC.state==='suspended')AC.resume().catch(()=>{});
@@ -2664,6 +2662,31 @@ function ACHgem(tier){
 #achP .as{font-size:12px;opacity:.8;margin-top:3px;line-height:1.35}
 #achP .gm{clip-path:inset(100% 0 0 0);animation:achfill 2s ease-out 3s forwards}
 @keyframes achfill{0%{clip-path:inset(100% 0 0 0);filter:brightness(2.2) drop-shadow(0 0 10px var(--tg))}100%{clip-path:inset(0 0 0 0);filter:brightness(1) drop-shadow(0 3px 6px #000a) drop-shadow(0 0 8px var(--tg))}}`;document.head.appendChild(s)})();
+
+// ===== ☰ メニュー（実績・説明書・最初から・音量スライダー） =====
+const MANUAL_URL='https://55kou.github.io/doki-waku/manual.html';
+function MENUsave(){try{localStorage.setItem('dkwk_vol',JSON.stringify({b:BGMV,s:SFXV}))}catch(e){}}
+function MENUicon(){const b=document.getElementById('menub');if(b)b.style.opacity=.85}
+function MENUclose(){const p=document.getElementById('menup');if(p)p.remove()}
+function MENUtoggle(){
+  if(document.getElementById('menup')){MENUclose();return}
+  const guest=typeof NET!=='undefined'&&NET.role==='guest';
+  const p=document.createElement('div');p.id='menup';p.setAttribute('data-nosync','1');
+  p.style.cssText='position:fixed;top:calc(env(safe-area-inset-top,0px) + 42px);right:8px;width:236px;max-width:calc(100vw - 16px);z-index:9990;background:#2b2b33;color:#fff;border:1px solid #666;border-radius:12px;padding:10px;box-shadow:0 8px 28px #000a;font-size:14px;font-family:inherit';
+  const bs='display:block;width:100%;text-align:left;background:#444;color:#fff;border:0;border-radius:8px;padding:9px 10px;margin:0 0 6px;font-size:14px;box-shadow:none';
+  const sl=(id,ic,lb,v)=>`<div style="margin:8px 2px 2px"><div style="display:flex;justify-content:space-between;font-size:12px;opacity:.85"><span>${ic} ${lb}</span><span id="${id}v">${Math.round(v*100)}%</span></div><input id="${id}" type="range" min="0" max="100" step="1" value="${Math.round(v*100)}" style="width:100%;margin:4px 0 0;accent-color:#e91e63"></div>`;
+  p.innerHTML=`<button id="mn1" style="${bs}">🏅 ${_T("Achievements",'実績')}</button><button id="mn2" style="${bs}">📖 ${_T("Manual",'説明書')}</button>${guest?'':`<button id="mn3" style="${bs}">🔄 ${_T("Restart",'最初から')}</button>`}<div style="border-top:1px solid #555;margin:4px 0 2px"></div>${sl('mnb','🎵',_T("BGM",'BGM'),BGMV)}${sl('mns','🔔',_T("Sound effects",'効果音'),SFXV)}`;
+  document.body.appendChild(p);
+  const $$=id=>document.getElementById(id);
+  $$('mn1').onclick=()=>{MENUclose();ACHopen()};
+  $$('mn2').onclick=()=>{MENUclose();window.open(MANUAL_URL,'_blank')};
+  if($$('mn3'))$$('mn3').onclick=()=>{MENUclose();if(!confirm(_T("Restart from the beginning?",'最初からやり直しますか？')))return;$('ov').classList.remove('show');init()};
+  $$('mnb').oninput=e=>{BGMV=e.target.value/100;$$('mnbv').textContent=e.target.value+'%';bgmVol();MENUsave()};
+  $$('mns').oninput=e=>{SFXV=e.target.value/100;$$('mnsv').textContent=e.target.value+'%';MENUsave()};
+  $$('mns').onchange=()=>{snd(880,.1,'triangle',.1)};
+}
+$('menub').onclick=e=>{e.stopPropagation();MENUtoggle()};
+document.addEventListener('pointerdown',e=>{const p=document.getElementById('menup');if(p&&!e.target.closest('#menup,#menub'))MENUclose()},true);
 function ACHopen(){
   if(document.getElementById('achv'))return;
   const D=ACHDEF().sort((a,b)=>b.rate-a.rate),G=ACHget(),n=D.filter(a=>G[a.id]).length;
@@ -2839,7 +2862,7 @@ function NETclose(){
   const b=document.getElementById('netroot');if(b)b.remove()}
 // ---- ゲスト ----
 // フレンドも参加した瞬間からBGM・効果音がONで始まるようにする（「参加」タップの操作中に音声を起こす）
-function NETaudioKick(){try{SND=true;const s=document.getElementById('snd');if(s)s.textContent='🔊';BGMX=0;bgmStart();if(AC&&AC.state!=='running'){AC.resume().catch(()=>{});try{const b=AC.createBuffer(1,1,22050),o=AC.createBufferSource();o.buffer=b;o.connect(AC.destination);o.start(0)}catch(e){}}bgmVol()}catch(e){}}
+function NETaudioKick(){try{SND=true;BGMX=0;bgmStart();if(AC&&AC.state!=='running'){AC.resume().catch(()=>{});try{const b=AC.createBuffer(1,1,22050),o=AC.createBufferSource();o.buffer=b;o.connect(AC.destination);o.start(0)}catch(e){}}bgmVol()}catch(e){}}
 function NETjoin(code,name){NETaudioKick();return new Promise(async(ok,ng)=>{
   try{await NETloadLib()}catch(e){return ng(new Error('lib'))}
   code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(code.length!==4)return ng(new Error('code'));
@@ -2870,8 +2893,8 @@ function NETguestInit(c){
     if(t.closest('#netroot'))return;
     if(t.closest('#netlv')){if(t.closest('#netlvx')||t.id==='netlv'){const v=document.getElementById('netlv');if(v)v.classList.remove('show')}return}
     if(t.closest('#achv'))return;
-    if(t.closest('#achb')){ACHopen();return}
-    if(t.closest('#snd')){SND=!SND;const s=document.getElementById('snd');if(s)s.textContent=SND?'🔊':'🔇';bgmVol();return}
+    if(t.closest('#menup'))return;
+    if(t.closest('#menub')){MENUtoggle();return}
     const pl=t.closest('.pl');
     if(pl&&pl.parentNode&&pl.parentNode.id==='pls'){try{NET.conn.send({t:'log',i:[...pl.parentNode.children].indexOf(pl)})}catch(_){}return}
     let x=t;while(x&&x!==document.body&&!x.__gid)x=x.parentNode;if(!x||x===document.body)return;
@@ -2908,7 +2931,7 @@ function NETguestMsg(m){
 // ---- ホストが操作権のない間は、ホスト自身のタップも受け付けない ----
 ['click','pointerup','pointerdown','mouseup','mousedown'].forEach(ty=>addEventListener(ty,e=>{
   if(NET.role!=='host'||!e.isTrusted||NETctrl()==='host')return;
-  const t=e.target;if(t&&t.closest&&t.closest('#netroot,#snd,#achb,#achv,#lv,#lvx'))return;
+  const t=e.target;if(t&&t.closest&&t.closest('#netroot,#menub,#menup,#achv,#lv,#lvx'))return;
   e.stopImmediatePropagation();e.preventDefault()},true));
 // ---- 効果音をフレンドにも流す ----
 {const _f=follow;follow=function(p){if(NET.role==='host'&&NET.guests.length){const c=p.c;setTimeout(()=>NETbc({t:'f',c}),40)}return _f.apply(this,arguments)}}
@@ -3031,7 +3054,6 @@ async function init(){BGMX=0;bgmVol();try{if(NET.role==='host'&&NET.guests.lengt
   actor=null;log(_T("Start! Overcome forks, real estate, gambling and events and aim for the goal.",'スタート！ 分かれ道・不動産・ギャンブル・イベントを乗り越えてゴールを目指そう。'));
   busy=false;render();npcKick();
 }
-$('reset').onclick=()=>{$('ov').classList.remove('show');init()};
 _staticEn();
 init();
 </script></body></html>
