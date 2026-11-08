@@ -50,9 +50,27 @@ button:disabled{opacity:.5}
 @keyframes ltfly7{0%,39%{opacity:0;transform:translate(0,-50%) translateZ(-2600px) scale(.5)}45%{opacity:1}62%{opacity:1;transform:translate(0,-50%) translateZ(0) scale(1)}95%{opacity:1;transform:translate(0,-50%) translateZ(30px) scale(1)}100%{opacity:0;transform:translate(0,-50%) translateZ(160px) scale(1)}}
 @keyframes ltsub7{0%,58%{opacity:0}65%,96%{opacity:1}100%{opacity:0}}
 @keyframes ltshk{0%,100%{margin-left:0}25%{margin-left:-5px}50%{margin-left:4px}75%{margin-left:-3px}}
+#ltn.mp{animation:ltbgp 6.3s linear forwards}
+#ltn.mp .lglow{display:none}
+#ltn.mp .lflash{background:#ffd6ea}
+#ltn.mp .bolt{filter:drop-shadow(0 0 6px #f9c) drop-shadow(0 0 18px #f6a) drop-shadow(0 0 40px #e0245e)}
+#ltn.mp .ltx{color:#fff0f7;text-shadow:0 0 10px #fff,0 0 30px #ff7ab8,0 0 60px #e0245e,0 6px 0 #a3124f,0 12px 0 #5a0a2e;animation:ltflyp 6.3s cubic-bezier(.5,0,.9,.6) forwards}
+#ltn svg.lhr{left:50%;top:50%;width:26vmin;height:26vmin;opacity:0;overflow:visible}
+#ltn svg.lhr.core{transform:translate(-50%,-50%);animation:lhc .9s ease-in-out .45s infinite}
+#ltn svg.lhr.core path{fill:#ff5fa2;filter:drop-shadow(0 0 22px #ff2d82) drop-shadow(0 0 60px #e0245e)}
+#ltn svg.lhr.ring path{fill:none;stroke:#ffb3d6;stroke-width:3px;filter:drop-shadow(0 0 8px #ff5fa2)}
+#ltn svg.lhr.ring{animation:lhx 2.6s ease-out forwards}
+#ltn.mp::after{content:'';position:absolute;inset:0;background:#000;opacity:0;z-index:5;animation:lmbk 6.3s linear forwards}
+@keyframes ltbgp{0%,5.7%{background:#000}7%,100%{background:#1a0410}}
+@keyframes ltflyp{0%,13.7%{opacity:0;transform:translate(0,-50%) translateZ(-2600px) scale(.5)}17.1%{opacity:1}44.4%,100%{opacity:1;transform:translate(0,-50%) translateZ(0) scale(1)}}
+@keyframes lhc{0%{opacity:.85;transform:translate(-50%,-50%) scale(.9)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}100%{opacity:.85;transform:translate(-50%,-50%) scale(.9)}}
+@keyframes lhx{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}8%{opacity:.95}100%{opacity:0;transform:translate(-50%,-50%) scale(11)}}
+@keyframes lmbk{0%,84.1%{opacity:0}100%{opacity:1}}
 #ltn.gr{animation:ltbg7 10.4s linear forwards}
 #ltn .lhell{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 85%,#e0245e 0%,#9b1150 30%,#4a0d6e 62%,#14031f 100%);opacity:0;animation:lthell 10.4s linear forwards}
-#ltn.gr .bolt{opacity:0;animation:ltb4 .95s linear forwards}
+#ltn.gr .bolt{opacity:0;stroke-dasharray:none;stroke-dashoffset:0;animation:ltb4 .95s linear forwards}
+#ltn.gr svg.lb{animation:ltrv .16s linear both}   /* 稲妻は上から一気に走り降りる */
+@keyframes ltrv{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
 #ltn.gr .lflash{animation:ltf4 .95s linear forwards}
 #ltn.gr .ltx{top:46%;font-size:clamp(18px,6.4vw,84px);color:#ffe3f0;text-shadow:0 0 10px #ff5b9a,0 0 32px #e0245e,0 0 70px #8a0f6b,0 6px 0 #7a0c3c,0 12px 0 #3a0620;animation:ltfly7 10.4s cubic-bezier(.5,0,.9,.6) forwards}
 #ltn.gr .ltx i{font-style:normal;display:inline-block;animation:ltshk .12s linear infinite}
@@ -1471,25 +1489,36 @@ async function horse(p,st){
 }
 async function lightningScene(tx,grand){
   if(grand)return grandLightning(tx);
-  const f=document.createElement('div');f.id='ltn';
+  const f=document.createElement('div');f.id='ltn';f.className='mp';   // 風俗マスター：ピンク＋ハートが広がる。称号が手前に来てから2.5秒キープ→1秒で暗転（約6.3秒）
   const pts='50,-2 46,14 54,26 44,42 53,55 45,70 51,84 49,102';
-  f.innerHTML=`<div class='lglow'></div><svg viewBox='0 0 100 100' preserveAspectRatio='none'><polyline class='bolt' pathLength='1' points='${pts}' style='stroke-width:2.2' vector-effect='non-scaling-stroke'/><polyline class='bolt' pathLength='1' points='${pts}' style='stroke-width:.6;stroke:#e8f4ff' vector-effect='non-scaling-stroke'/></svg><div class='lflash'></div><div class='ltx'>${tx}</div>`;
+  const HP='M16 28C16 28 2 18 2 9.5 2 4.5 6 1.5 10 1.5c2.8 0 5 1.6 6 3.8 1-2.2 3.2-3.8 6-3.8 4 0 8 3 8 8C30 18 16 28 16 28z';
+  let hr=`<svg class='lhr core' viewBox='0 0 32 30'><path d='${HP}'/></svg>`;
+  for(let i=0;i<9;i++)hr+=`<svg class='lhr ring' viewBox='0 0 32 30' style='animation-delay:${(.5+i*.5).toFixed(2)}s'><path d='${HP}' vector-effect='non-scaling-stroke'/></svg>`;
+  f.innerHTML=`<div class='lglow'></div>${hr}<svg viewBox='0 0 100 100' preserveAspectRatio='none'><polyline class='bolt' pathLength='1' points='${pts}' style='stroke-width:2.2' vector-effect='non-scaling-stroke'/><polyline class='bolt' pathLength='1' points='${pts}' style='stroke-width:.6;stroke:#e8f4ff' vector-effect='non-scaling-stroke'/></svg><div class='lflash'></div><div class='ltx'>${tx}</div>`;
   f.querySelectorAll('.bolt').forEach((b,i)=>b.style.strokeWidth=i?'3px':'12px');
   document.body.appendChild(f);
   snd(60,.5,'sawtooth',.12,.3);snd(45,.9,'square',.1,.32);snd(1800,.15,'square',.06,.3);
   for(let k=0;k<8;k++)snd(90-k*6,.25,'sawtooth',.05,.45+k*.1);
   [330,440,554,740].forEach((fq,i)=>snd(fq,.7,'triangle',.07,1.0+i*.12));
-  await new Promise(r=>setTimeout(r,3600));f.remove();
+  await new Promise(r=>setTimeout(r,6300));f.remove();
 }
 async function grandLightning(tx){   // グランド風俗マスター：稲妻4本の間に背景が紺→赤紫の地獄へ変わり、称号が降臨する（約10.4秒）
   const f=document.createElement('div');f.id='ltn';f.className='gr';
-  const B=[[22,'50,-2 44,16 53,28 42,45 52,58 44,74 50,88 48,102',.55],[78,'50,-2 56,15 46,30 55,44 47,60 54,76 49,90 51,102',1.65],[36,'50,-2 45,12 54,24 43,40 53,56 44,72 52,86 49,102',2.75],[52,'50,-2 47,10 53,22 44,36 55,50 43,66 54,80 47,92 50,102',3.85]];
-  const bolts=B.map(([x,pts,t],i)=>{const sw=i===3?[16,5]:[11,3.5];return `<svg viewBox='0 0 100 100' preserveAspectRatio='none' style='left:${x-50}%;width:100%;transform:scaleY(${i===3?1:1})'><polyline class='bolt' pathLength='1' points='${pts}' style='stroke-width:${sw[0]}px;animation-delay:${t}s' vector-effect='non-scaling-stroke'/><polyline class='bolt' pathLength='1' points='${pts}' style='stroke-width:${sw[1]}px;stroke:#ffe8f4;animation-delay:${t}s' vector-effect='non-scaling-stroke'/></svg>`}).join('');
-  const fl=B.map(([x,p,t])=>`<div class='lflash' style='animation-delay:${t}s'></div>`).join('');
+  // 稲妻：中点変位法でギザギザの幹を作り、そこから枝・小枝を分岐させる（毎回違う形になる）
+  const rd=(a,b)=>a+Math.random()*(b-a);
+  const jag=(x0,y0,x1,y1,amp,dp)=>{if(!dp)return [[x0,y0],[x1,y1]];const mx=(x0+x1)/2+rd(-amp,amp),my=(y0+y1)/2+rd(-amp*.3,amp*.3),a=jag(x0,y0,mx,my,amp/2,dp-1),b=jag(mx,my,x1,y1,amp/2,dp-1);return a.concat(b.slice(1))};
+  const mk=()=>{const tr=jag(50,-2,50+rd(-7,7),102,17,5),br=[];for(let k=0;k<8;k++){const i=rd(5,tr.length-10)|0,[bx,by]=tr[i],d=Math.random()<.5?-1:1,b=jag(bx,by,bx+d*rd(7,20),by+rd(14,32),6,4);br.push([b,1]);if(Math.random()<.65){const j=rd(2,b.length-3)|0,[sx,sy]=b[j];br.push([jag(sx,sy,sx+d*rd(4,12),sy+rd(6,15),3,3),2])}}return {tr,br}};
+  const P2=a=>'M'+a.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L');
+  const B=[[22,.55],[78,1.65],[36,2.75],[52,3.85]];
+  const bolts=B.map(([x,t],i)=>{const sw=i===3?[16,5]:[11,3.5],g=mk();let s='';
+    const add=(a,k,col)=>{const w=k===0?sw:[sw[0]*(k===1?.45:.25),sw[1]*(k===1?.5:.3)];s+=`<path class='bolt' pathLength='1' d='${P2(a)}' style='stroke-width:${w[0].toFixed(1)}px;animation-delay:${t}s' vector-effect='non-scaling-stroke'/><path class='bolt' pathLength='1' d='${P2(a)}' style='stroke-width:${w[1].toFixed(1)}px;stroke:#ffe8f4;animation-delay:${t}s' vector-effect='non-scaling-stroke'/>`};
+    g.br.forEach(([a,k])=>add(a,k));add(g.tr,0);
+    return `<svg class='lb' viewBox='0 0 100 100' preserveAspectRatio='none' style='left:${x-50}%;width:100%;animation-delay:${t}s'>${s}</svg>`}).join('');
+  const fl=B.map(([x,t])=>`<div class='lflash' style='animation-delay:${t}s'></div>`).join('');
   const emb=Array.from({length:14},(_,i)=>`<span class='lemb' style='left:${3+i*7}%;animation-delay:${(3.6+Math.random()*2.4).toFixed(2)}s'>${i%3?'🔥':'💀'}</span>`).join('');
   f.innerHTML=`<div class='lhell'></div>${bolts}${fl}${emb}<div class='ltx'><i>${tx}</i></div><div class='lsub'>${_T("— The summit descends from the depths of hell —",'― 地獄の底から、風俗の頂点が降臨する ―')}</div>`;
   document.body.appendChild(f);
-  B.forEach(([x,p,t],i)=>{snd(70-i*6,.6,'sawtooth',.12,t+.05);snd(48,1,'square',.1,t+.07);snd(1700-i*150,.14,'square',.06,t+.05);for(let k=0;k<6;k++)snd(100-k*8,.22,'sawtooth',.05,t+.25+k*.1)});
+  B.forEach(([x,t],i)=>{snd(70-i*6,.6,'sawtooth',.12,t+.05);snd(48,1,'square',.1,t+.07);snd(1700-i*150,.14,'square',.06,t+.05);for(let k=0;k<6;k++)snd(100-k*8,.22,'sawtooth',.05,t+.25+k*.1)});
   [110,98,82,65].forEach((fq,i)=>snd(fq,1.6,'sawtooth',.05,4.0+i*.08));
   [294,349,415,554].forEach((fq,i)=>snd(fq,.9,'triangle',.07,4.3+i*.14));
   await new Promise(r=>setTimeout(r,10500));f.remove();
