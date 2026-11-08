@@ -827,9 +827,9 @@ async function hl(p,st,borrow){
 const bcv=h=>h.reduce((a,c)=>a+(c.n>9?0:c.n),0)%10;
 const RW=[0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
 const ROUH=[];   // ゲーム開始からのルーレットの出目（出た順）
-const rhHTML=()=>`<div class='rh' id='rh'><small>${_T("Spins so far (oldest → newest)",'これまでの出目（左が古い→右が最新）')}${ROUH.length?'':_T(": none yet",'：まだなし')}</small>${ROUH.length?`<div class='rhl'>${ROUH.map((n,i)=>`<span class='rn ${n===0?'g':REDS.includes(n)?'r':''} ${i===ROUH.length-1?'last':''}'>${n}</span>`).join('')}</div>`:''}</div>`;
+const rhHTML=()=>!ROUH.length?'':`<div class='rh' id='rh'><small>${_T("Spins so far (oldest → newest)",'これまでの出目（左が古い→右が最新）')}</small>${ROUH.length?`<div class='rhl'>${ROUH.map((n,i)=>`<span class='rn ${n===0?'g':REDS.includes(n)?'r':''} ${i===ROUH.length-1?'last':''}'>${n}</span>`).join('')}</div>`:''}</div>`;
 const rhAdd=()=>{const g=$('gm'),t=g.querySelector('.gt');if(t)t.insertAdjacentHTML('afterend',rhHTML());const l=g.querySelector('.rhl');if(l)l.scrollTop=l.scrollHeight};
-const rhUpd=()=>{const r=$('rh');if(r){r.outerHTML=rhHTML();const l=$('gm').querySelector('.rhl');if(l)l.scrollTop=l.scrollHeight}};
+const rhUpd=()=>{const r=$('rh');if(!r){rhAdd();return}if(r){r.outerHTML=rhHTML();const l=$('gm').querySelector('.rhl');if(l)l.scrollTop=l.scrollHeight}};
 // 一点がけ：チップ5枚を0〜36の数字に置く（同じ数字に何枚でも／数字の上だけ）。当たると1枚あたり36倍
 async function rouPlace(p,put,c1){
   const N=5;let stack=[];
