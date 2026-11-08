@@ -143,6 +143,11 @@ button:disabled{opacity:.5}
 @keyframes bswh{to{clip-path:circle(150% at 50% 50%)}}@keyframes bswf{to{opacity:0}}
 #bossm .bsp{position:absolute;color:#fffbe0;opacity:0;text-shadow:0 0 8px #fff,0 0 14px #ffd23f;animation:bstw 1.4s ease-in-out infinite}
 @keyframes bstw{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:1;transform:scale(1) rotate(90deg)}}
+#bossm .bsk{position:absolute;inset:0;overflow:hidden}
+#bossm .bsm{position:absolute;bottom:-8vh;opacity:0;animation:bsmv 3s ease-in forwards}
+@keyframes bsmv{0%{opacity:0;transform:translateY(0) rotate(0)}15%{opacity:.95}100%{opacity:0;transform:translateY(-110vh) rotate(var(--rt))}}
+#bossm::after{content:'';position:absolute;inset:0;background:#000;opacity:0;z-index:5;animation:bsbk 11.7s linear forwards}   /* 流し始めて2秒キープ→1.5秒で暗転 */
+@keyframes bsbk{0%,87.2%{opacity:0}100%{opacity:1}}
 #bossm .bst{position:absolute;left:0;right:0;top:46%;text-align:center;transform:translateY(-50%) scale(.2);opacity:0;animation:bspop .8s cubic-bezier(.2,1.5,.4,1) 7.4s forwards}
 @keyframes bspop{to{opacity:1;transform:translateY(-50%) scale(1)}}
 #bossm .bst b{display:block;font-size:clamp(60px,24vw,200px);font-weight:900;line-height:1.1;background:linear-gradient(180deg,#fff9d6 0%,#ffd23f 45%,#a86a00 60%,#ffe27a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px #fff6) drop-shadow(0 6px 0 #5a3400);-webkit-text-stroke:2px #7a4b00}
@@ -2202,12 +2207,13 @@ async function bossScene(){
   const f=document.createElement('div');f.id='bossm';
   const em=['🐒','🍼','👨‍👧‍👦'].map((e,i)=>`<div class='bsa' style='transform:rotate(${i*120}deg)'><div class='bse'>${e}</div></div>`).join('');
   const sp=Array.from({length:46},()=>`<span class='bsp' style='left:${(Math.random()*96).toFixed(1)}%;top:${(Math.random()*96).toFixed(1)}%;font-size:${(10+Math.random()*22).toFixed(0)}px;animation-delay:${(7+Math.random()*2.4).toFixed(2)}s;animation-duration:${(.9+Math.random()*1.2).toFixed(2)}s'>${Math.random()<.5?'✦':'•'}</span>`).join('');
-  f.innerHTML=`<div class='bsg'></div><div class='bsr'>${em}</div><div class='bsb'>${sp}</div><div class='bsw'></div><div class='bst'><small class='bsu'>🐒🍼🧑‍🧑‍🧒→🐵</small><b>${_T("Boss Monkey",'ボス猿')}</b><small>${_T("Three titles become one!",'3つの称号が1つに！')}</small></div>`;
+  const kd=Array.from({length:44},(_,i)=>`<span class='bsm' style='left:${(Math.random()*94+1).toFixed(1)}%;font-size:${(3+Math.random()*3.2).toFixed(1)}vh;animation-delay:${(8.2+Math.random()*2.6).toFixed(2)}s;animation-duration:${(2.2+Math.random()*1.4).toFixed(2)}s;--rt:${(Math.random()<.5?-1:1)*(360+Math.random()*540)|0}deg'>${['👶','👦','🐒'][i%3]}</span>`).join('');   // 文字が出終わる8.2秒から、👶👦🐒が回転しながら下から上へ流れる
+  f.innerHTML=`<div class='bsg'></div><div class='bsr'>${em}</div><div class='bsb'>${sp}</div><div class='bsw'></div><div class='bsk'>${kd}</div><div class='bst'><small class='bsu'>🐒🍼🧑‍🧑‍🧒→🐵</small><b>${_T("Boss Monkey",'ボス猿')}</b><small>${_T("Three titles become one!",'3つの称号が1つに！')}</small></div>`;
   document.body.appendChild(f);
   for(let k=0;k<44;k++)snd(90+k*k*1.1,.16,'sine',.04+k*.0012,k*.135);   // だんだん高く速くなる吸い込み音
   snd(60,1.2,'sawtooth',.12,6);[1047,1319,1568,2093].forEach((fq,i)=>snd(fq,.9,'triangle',.07,6.1+i*.06));
   [523,659,784,1047,1319,1568].forEach((fq,i)=>{snd(fq,.5,'square',.05,7.4+i*.1);snd(fq/2,.5,'triangle',.06,7.4+i*.1)});
-  await new Promise(r=>setTimeout(r,11500));f.remove();
+  await new Promise(r=>setTimeout(r,11700));f.remove();
 }
 // ボス猿：猿・孕ませマン・ビッグダディを全て持った上で、子供が累計7人以上になると、その3つが一つにまとまる（ゴールボーナスは一律+20,000円）
 async function bossCheck(p){
