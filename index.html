@@ -175,9 +175,11 @@ button:disabled{opacity:.5}
 @keyframes msbg{to{opacity:1}}
 #msn span{position:absolute;left:8vw;right:8vw;text-align:center;color:#fff;font-size:clamp(16px,4.8vw,26px);font-weight:700;letter-spacing:.06em;opacity:0}
 #msn span i{display:block;font-style:normal;font-size:clamp(44px,14vw,76px);line-height:1.1;margin-bottom:10px}
-#msn .m1{animation:msf1 2.5s linear .3s forwards}
+#msn::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 100% 0,rgba(255,196,160,.55) 0,rgba(255,150,120,.28) 9%,transparent 24%),radial-gradient(ellipse 95% 75% at 100% 0,rgba(255,138,108,.3) 0,rgba(255,120,128,.15) 38%,transparent 72%);opacity:0;animation:mslamp 1.5s ease-in-out .3s forwards}
+@keyframes mslamp{from{opacity:0}to{opacity:1}}
+#msn .m1{animation:msf1 2.5s linear 1.8s forwards}
 @keyframes msf1{0%{opacity:0}80%{opacity:.5}100%{opacity:0}}
-#msn .m2{animation:msf2 2s linear 3.8s forwards}
+#msn .m2{animation:msf2 2s linear 5.3s forwards}
 @keyframes msf2{from{opacity:0}to{opacity:.5}}
 @keyframes ltbg{0%,8%{background:#000}10%,100%{background:#050a1a}}
 @keyframes ltfl{0%,9%{opacity:0}10%{opacity:1}16%{opacity:.15}20%{opacity:.8}30%{opacity:.1}100%{opacity:0}}
@@ -2048,8 +2050,8 @@ async function menesuOption(){
   const f=document.createElement('div');f.id='msn';
   f.innerHTML=`<span class='m1'><i>👴🏻</i>${_T("Do you have any secret options?",'裏オプションってありますか？')}</span><span class='m2'><i>👩🏻</i>${fee?_TT("If you give me {0}…",[``,`円くれるなら…`],[(fee)]):_T("It's free… 💕",'タダでいいですよ…💕')}</span>`;
   document.body.appendChild(f);
-  snd(70,2.4,'sine',.05,.3);snd(494,.5,'sine',.03,3.8);
-  await sleep(7100);f.remove();
+  snd(660,.1,'sine',.03,.3);snd(70,2.4,'sine',.05,1.8);snd(494,.5,'sine',.03,5.3);   // 右上のスタンドライトが1.5秒かけて灯る→その明るさのまま演出が続く
+  await sleep(8600);f.remove();
   return{fee};
 }
 async function fuzoku(p,q){
