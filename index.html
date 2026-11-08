@@ -2856,7 +2856,15 @@ function NEThandle(c,m){
   if(!m||typeof m!=='object')return;
   if(m.t==='hello'){
     if(NET.guests.some(g=>g.c===c)||NET.guests.length>=8)return;
-    let nm=NETclean(m.name)||_T("Friend",'フレンド');const used=NET.guests.map(g=>g.name);let k=2,base=nm;while(used.includes(nm))nm=base+(k++);
+    let nm=NETclean(m.name)||_T("Friend",'フレンド');
+    if(NET.playing&&typeof P!=='undefined'&&P){   // ゲーム中の入り直し（他のアプリに行って切れた等）：同じ名前なら、その人の席に戻す
+      const old=NET.guests.find(g=>g.name===nm),p=P.find(q=>old&&q.net===old.c.peer)||P.find(q=>q.fnm===nm&&!q.net);
+      if(old){try{old.c.close()}catch(e){}NET.guests.splice(NET.guests.indexOf(old),1)}
+      if(p||old){
+        NET.guests.push({c,name:nm});
+        if(p){p.net=c.peer;p.npc=0;log(_TT("🌐 {0}: reconnected!",[`🌐 `,`：再接続しました！`],[(p.n)]));try{render()}catch(e){}}
+        c.send(NETsnap());c.send({t:'you',id:c.peer,name:nm,code:NET.code});c.send({t:'ctl',who:NETctrl()});NETbannerUpd();return}}
+    const used=NET.guests.map(g=>g.name);let k=2,base=nm;while(used.includes(nm))nm=base+(k++);
     NET.guests.push({c,name:nm});c.send(NETsnap());c.send({t:'you',id:c.peer,name:nm,code:NET.code});c.send({t:'ctl',who:NETctrl()});
     NETbannerUpd();if(NET.redraw)NET.redraw()}
   else if(m.t==='ev'){
@@ -2887,7 +2895,7 @@ function NETseat(cfg){   // フレンドの席を、参加順に割り当てる�
   for(let i=0;i<P.length;i++){
     if(!cfg.fr||!cfg.fr[i]||i===0)continue;
     const g=NET.guests[gi++];
-    if(g){P[i].net=g.c.peer;P[i].npc=0;P[i].n=g.name}
+    if(g){P[i].net=g.c.peer;P[i].npc=0;P[i].n=g.name;P[i].fnm=g.name}
     else{P[i].npc=1;P[i].n='NPC'+(i+1)}}
   const nm=P.map(p=>p.n);P.forEach((p,i)=>{if(nm.indexOf(p.n)!==i)p.n+=(i+1)})}
 function NETclose(){
