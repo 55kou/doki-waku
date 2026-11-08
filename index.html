@@ -2966,7 +2966,8 @@ function NMsave(a){try{localStorage.setItem('sugoroku_names',JSON.stringify(a))}
 function NMname(cfg,i){const nm=cfg.names&&cfg.names[i]?NETclean(cfg.names[i]):'';return(cfg.npc[i]||!nm)?(cfg.npc[i]?'NPC':_T("Player",'プレイヤー'))+(i+1):nm}
 function NMdecorate(cfg,draw){
   const box=$('box'),go=box.querySelector('[data-go]');if(!go)return;
-  {const ab=document.createElement('button');ab.setAttribute('data-ach','1');ab.style.cssText='background:#b8860b;text-align:center;margin-top:8px;font-size:14px';ab.textContent=_T("🏅 Achievements",'🏅 実績');ab.onclick=ACHopen;box.insertBefore(ab,go)}
+  {const ab=document.createElement('button');ab.setAttribute('data-ach','1');ab.style.cssText='background:#b8860b;text-align:center;margin-top:8px;font-size:14px';ab.textContent=_T("🏅 Achievements",'🏅 実績');ab.onclick=ACHopen;box.insertBefore(ab,go);
+    const hb=document.createElement('button');hb.setAttribute('data-howto','1');hb.style.cssText='background:#2f6db5;text-align:center;margin-top:8px;font-size:14px';hb.textContent=_T("📖 How to play",'📖 遊び方');hb.onclick=()=>window.open(MANUAL_URL,'_blank');box.insertBefore(hb,go)}
   const seats=[];for(let i=0;i<cfg.n;i++)if(!cfg.npc[i]&&(!cfg.online||i===0))seats.push(i);
   if(!seats.length)return;
   const w=document.createElement('div');
@@ -3008,7 +3009,7 @@ function setup(){
   const cfg=NCFG?{n:NCFG.n,npc:[...NCFG.npc],fr:[...(NCFG.fr||[])],online:!!NCFG.online&&NET.role==='host',names:[...(NCFG.names||[])],nmOpen:false}:{n:3,npc:[0,0,0,0,0,0],fr:[],online:false,names:NMload(),nmOpen:false};
   return new Promise(res=>{
     const draw=()=>{
-      $('box').innerHTML=_TT("<b>🎲 Heart-Pounding High-Roller Sugoroku</b><div class='su'>Number of players (2–6)</div><div class='sn'>{0}</div><div class='su'>Use NPCs (computer players)? Tap to switch Human / NPC</div><div class='sp'>{1}</div><div class='qk'><button data-q='h'>All human</button><button data-q='n'>Only me human (others NPC)</button></div><button data-go style='background:#1d9e75;text-align:center;margin-top:14px'>🎲 Start!</button>",[`<b>🎲 ドキドキワクワク勝負師すごろく</b><div class='su'>プレイヤー人数（2〜6人）</div><div class='sn'>`,`</div><div class='su'>NPC（コンピューター）を使う？　タップで 人間／NPC を切り替え</div><div class='sp'>`,`</div><div class='qk'><button data-q='h'>全員 人間</button><button data-q='n'>自分だけ人間（他はNPC）</button></div><button data-go style='background:#1d9e75;text-align:center;margin-top:14px'>🎲 スタート！</button>`],[([2,3,4,5,6].map(n=>_TT("<button data-n='{0}' class='{1}'>{2}</button>",[`<button data-n='`,`' class='`,`'>`,`人</button>`],[(n
+      $('box').innerHTML=_TT("<b>🎲 Heart-Pounding High-Roller Sugoroku</b><div class='su'>Number of players (2–6)</div><div class='sn'>{0}</div><div class='su'>Use NPCs (computer players)? Tap to switch Human / NPC</div><div class='sp'>{1}</div><button data-go style='background:#1d9e75;text-align:center;margin-top:14px'>🎲 Start!</button>",[`<b>🎲 ドキドキワクワク勝負師すごろく</b><div class='su'>プレイヤー人数（2〜6人）</div><div class='sn'>`,`</div><div class='su'>NPC（コンピューター）を使う？　タップで 人間／NPC を切り替え</div><div class='sp'>`,`</div><button data-go style='background:#1d9e75;text-align:center;margin-top:14px'>🎲 スタート！</button>`],[([2,3,4,5,6].map(n=>_TT("<button data-n='{0}' class='{1}'>{2}</button>",[`<button data-n='`,`' class='`,`'>`,`人</button>`],[(n
 ),(cfg.n===n?'sel':''
 ),(n
 )])).join('')
@@ -3024,7 +3025,6 @@ function setup(){
       NETdecorate(cfg,draw,res);NMdecorate(cfg,draw);
       $('box').querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{cfg.n=+b.dataset.n;draw()});
       $('box').querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{const i=+b.dataset.p;cfg.npc[i]=cfg.npc[i]?0:1;draw()});
-      $('box').querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{for(let i=0;i<6;i++)cfg.npc[i]=b.dataset.q==='h'?0:(i===0?0:1);draw()});
       const lgb=$('box').querySelector('[data-lang]');if(lgb)lgb.onclick=()=>_setLang(_LANG==='en'?'ja':'en');
       $('box').querySelector('[data-go]').onclick=()=>{NET.redraw=null;$('ov').classList.remove('show');res(cfg)};
     };
