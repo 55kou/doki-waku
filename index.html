@@ -326,7 +326,7 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 .hand.bust{position:relative}.hand.bust .cd{filter:grayscale(1) brightness(.62);transition:filter .3s}
 .hand.bt::after{content:'BUST';position:absolute;left:0;right:0;top:50%;text-align:center;font-weight:900;letter-spacing:.08em;font-size:clamp(26px,9vw,44px);color:#ff2a2a;text-shadow:0 0 10px #ff2a2a99,0 2px 0 #fff,0 0 3px #000,0 4px 10px #000;transform:translateY(-50%) rotate(-8deg);pointer-events:none;animation:bustup .6s cubic-bezier(.2,1.4,.4,1) both}
 /* アクションを終えたハンドの合計 */
-.hand[data-tot]{position:relative;margin-top:20px}
+.hand[data-tot],.hand.pt{position:relative;margin-top:20px}
 .hand[data-tot]::before{content:attr(data-tot);position:absolute;left:50%;top:-19px;transform:translateX(-50%);z-index:3;min-width:36px;height:34px;padding:0 9px;box-sizing:border-box;border-radius:17px;background:#ffd54f;color:#222;border:2px solid #fff;font-weight:900;font-size:21px;line-height:30px;text-align:center;box-shadow:0 2px 8px #000a;pointer-events:none}
 .hand.bust[data-tot]::before,.hand.bt[data-tot]::before{background:#e53935;color:#fff}
 @keyframes bustup{from{opacity:0;transform:translateY(10%) rotate(-8deg) scale(.4)}to{opacity:1;transform:translateY(-50%) rotate(-8deg) scale(1)}}
@@ -1097,6 +1097,10 @@ function bjFit(){const g=$('gm'),gs=$('gs'),gt=g.querySelector('.gt'),bh=$('bjh'
     return}
   while(!ok()&&cs>.42){cs=Math.round((cs-.04)*100)/100;g.style.setProperty('--cs',cs)}}
 // バースト演出：カードが所定の位置に着いてから0.5秒後にグレー、さらに0.2秒後に「BUST」（sh()が何度呼ばれても1回だけ進む）
+// プレイヤーのハンド：2枚揃ってから、カードが追加されるたびに合計を表示（カードが降り切って0.5秒後）
+function totMark(e,cs){if(!e)return;e.classList.add('pt');const n=cs.length;
+  if(n<2){e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');return}
+  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),900+500)}
 function bustMark(e,on){if(!e)return;
   if(!on){if(e._bt){e._bt.forEach(clearTimeout);e._bt=null}e.classList.remove('bust','bt');return}
   if(e._bt||e.classList.contains('bust'))return;
@@ -1152,7 +1156,7 @@ async function bj(p,st){
   const txt=s=>{$('gs').textContent=s};
   const lab=i=>H.length>1?_TT("Hand {0}",[`ハンド`,``],[(i+1
 )]):p.n;
-  const sh=()=>{setHand('dh',D.slice(0,nd),i=>hd&&i===1);{const e=$('dh');bustMark(e,!hd&&bv(D.slice(0,nd))>21);if(dd&&!hd)e.setAttribute('data-tot',bv(D));else e.removeAttribute('data-tot')}H.forEach((h,i)=>{setHand('ph'+i,dealing?h.c.slice(0,dn[i]||0):h.c,()=>0);{const e=$('ph'+i);bustMark(e,bv(dealing?h.c.slice(0,dn[i]||0):h.c)>21);if(h.done&&!dealing)e.setAttribute('data-tot',bv(h.c));else e.removeAttribute('data-tot')}const e=$('l'+i),bet=h.r+h.pd,fr=h.fr||0;if(e)e.innerHTML=`${lab(i)}　${chipSvg(bet,p.c)}${fr?chipSvg(fr,'#2f6fe0'):''}<b style='color:#ffd54f'> 💰${yen(bet+fr)}</b>${fr?_TT("<small>(of which Free Bet {0})</small>",[`<small>（うち Free Bet `,`）</small>`],[(yen(fr)
+  const sh=()=>{setHand('dh',D.slice(0,nd),i=>hd&&i===1);{const e=$('dh');bustMark(e,!hd&&bv(D.slice(0,nd))>21);if(dd&&!hd)e.setAttribute('data-tot',bv(D));else e.removeAttribute('data-tot')}H.forEach((h,i)=>{setHand('ph'+i,dealing?h.c.slice(0,dn[i]||0):h.c,()=>0);{const e=$('ph'+i);bustMark(e,bv(dealing?h.c.slice(0,dn[i]||0):h.c)>21);totMark(e,dealing?h.c.slice(0,dn[i]||0):h.c)}const e=$('l'+i),bet=h.r+h.pd,fr=h.fr||0;if(e)e.innerHTML=`${lab(i)}　${chipSvg(bet,p.c)}${fr?chipSvg(fr,'#2f6fe0'):''}<b style='color:#ffd54f'> 💰${yen(bet+fr)}</b>${fr?_TT("<small>(of which Free Bet {0})</small>",[`<small>（うち Free Bet `,`）</small>`],[(yen(fr)
 )]):''}`});bjFit()};   // ハンドごとに今の賭け金を表示
   for(const[a,b,y]of(mh?[[1,0,0],[1,1,0],[1,1,1],[2,1,1],[2,2,1],[2,2,2]]:[[1,0,0],[1,0,1],[2,0,1],[2,0,2]])){dn=[a,b];nd=y;sh();snd(420,.1,'triangle',.1);await sleep(mh?650:900)}
   dealing=false;
