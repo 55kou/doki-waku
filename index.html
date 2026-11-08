@@ -168,6 +168,14 @@ button:disabled{opacity:.5}
 @keyframes bsbk{0%,91.8%{opacity:0}100%{opacity:1}}
 #bossm .bst{position:absolute;left:0;right:0;top:46%;text-align:center;transform:translateY(-50%) scale(.2);opacity:0;animation:bspop .8s cubic-bezier(.2,1.5,.4,1) 7.4s forwards}
 @keyframes bspop{to{opacity:1;transform:translateY(-50%) scale(1)}}
+#bossm.bdm{background:radial-gradient(circle at 50% 50%,#2b4a9e 0,#101f55 72%)}   /* ビッグダディ誕生：青と紺の中間色の背景→ホワイトアウト→淡い空色に称号 */
+#bossm.bdm .bsg{background:radial-gradient(circle,#fff 0,#e3efff 14%,#8fb8ff88 34%,transparent 66%)}
+#bossm.bdm .bse{filter:drop-shadow(0 0 14px #8fb8ff)}
+#bossm.bdm .bsb{background:linear-gradient(160deg,#f6faff 0%,#cfe2ff 55%,#eaf3ff 100%);animation:bsbin .1s 6.3s forwards}
+#bossm.bdm .bsp{color:#fff;text-shadow:0 0 8px #fff,0 0 14px #6f9bff}
+#bossm.bdm .bst b{background:linear-gradient(180deg,#7ea6ff 0%,#2a4cae 50%,#0b1e5c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px #fff) drop-shadow(0 5px 0 #07123a);-webkit-text-stroke:2px #07123a;font-size:clamp(40px,13vw,120px);white-space:nowrap}
+#bossm.bdm .bde{font-size:clamp(60px,22vw,160px);line-height:1.05;filter:drop-shadow(0 4px 10px #1a3a8f88)}
+#bossm.bdm .bdk{display:flex;flex-wrap:wrap;justify-content:center;gap:1.2vmin;margin-top:8px;font-size:clamp(30px,10vw,76px);line-height:1.1;padding:0 4vw}
 #bossm .bst b{display:block;font-size:clamp(60px,24vw,200px);font-weight:900;line-height:1.1;background:linear-gradient(180deg,#fff9d6 0%,#ffd23f 45%,#a86a00 60%,#ffe27a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px #fff6) drop-shadow(0 6px 0 #5a3400);-webkit-text-stroke:2px #7a4b00}
 #bossm .bst small.bsu{margin:0 0 2px;font-size:clamp(15px,5.5vw,45px);line-height:1.15;color:#fff;text-shadow:0 0 14px #ffd23f}
 #bossm .bst small{display:block;margin-top:8px;font-size:clamp(14px,4.4vw,30px);font-weight:900;color:#4a2a00;text-shadow:0 0 10px #fff8}
@@ -2272,6 +2280,19 @@ async function bossScene(){
   [523,659,784,1047,1319,1568].forEach((fq,i)=>{snd(fq,.5,'square',.05,7.4+i*.1);snd(fq/2,.5,'triangle',.06,7.4+i*.1)});
   await new Promise(r=>setTimeout(r,12200));f.remove();
 }
+// ビッグダディ誕生：その人の子供の絵文字（種類と数そのまま）が円状に回りながら中心に吸い込まれ→ホワイトアウト→「ビッグダディ」＋上に👨‍👧‍👦・下に子供の絵文字を横並び（約12秒）
+async function bigDadScene(p){
+  const kids=[...'👶'.repeat(Math.round((p.cc||0)/500)),...'👦'.repeat((p.pk||0)+(p.adk||0)),...'🐒'.repeat(p.ape||0)].slice(0,12),n=kids.length||1;
+  const f=document.createElement('div');f.id='bossm';f.className='bdm';
+  const em=kids.map((e,i)=>`<div class='bsa' style='transform:rotate(${(i*360/n).toFixed(1)}deg)'><div class='bse'>${e}</div></div>`).join('');
+  const sp=Array.from({length:46},()=>`<span class='bsp' style='left:${(Math.random()*96).toFixed(1)}%;top:${(Math.random()*96).toFixed(1)}%;font-size:${(10+Math.random()*22).toFixed(0)}px;animation-delay:${(7+Math.random()*2.4).toFixed(2)}s;animation-duration:${(.9+Math.random()*1.2).toFixed(2)}s'>${Math.random()<.5?'✦':'•'}</span>`).join('');
+  f.innerHTML=`<div class='bsg'></div><div class='bsr'>${em}</div><div class='bsb'>${sp}</div><div class='bsw'></div><div class='bst'><div class='bde'>👨‍👧‍👦</div><b>${_T("Big Daddy",'ビッグダディ')}</b><div class='bdk'>${kids.join('')}</div></div>`;
+  document.body.appendChild(f);
+  for(let k=0;k<44;k++)snd(90+k*k*1.1,.16,'sine',.04+k*.0012,k*.135);
+  snd(60,1.2,'sawtooth',.12,6);[1047,1319,1568,2093].forEach((fq,i)=>snd(fq,.9,'triangle',.07,6.1+i*.06));
+  [523,659,784,1047,1319,1568].forEach((fq,i)=>{snd(fq,.5,'square',.05,7.4+i*.1);snd(fq/2,.5,'triangle',.06,7.4+i*.1)});
+  await new Promise(r=>setTimeout(r,12200));f.remove();
+}
 // ボス猿：猿・孕ませマン・ビッグダディを全て持った上で、子供が累計7人以上になると、その3つが一つにまとまる（ゴールボーナスは一律+20,000円）
 async function bossCheck(p){
   if(p.boss||!(monkey(p)&&haramase(p)&&bigDad(p)&&kidTotal(p)>=7))return;   // 3つの称号をすべて持った上で、子供が累計7人以上
@@ -2281,7 +2302,7 @@ async function bossCheck(p){
   await ask(_T("🐵 \"Boss Monkey\" is born!",'🐵 称号「ボス猿」誕生！'),[{l:_T("Monkey + Baby Maker + Big Daddy → Boss Monkey!",'猿＋孕ませマン＋ビッグダディ → ボス猿！'),s:_T("With all three titles and 7+ children in total, they become one. Goal bonus: a flat +¥20,000 (the three titles' separate bonuses and penalties no longer apply)",'3つの称号をすべて持ち、子供が累計7人以上になったので一つに。ゴールボーナスは一律 +20,000円（3つの称号それぞれのボーナス・マイナスはなくなる）'),c:'#e8a317'}]);
 }
 async function kidTitle(p){
-  if(bigDad(p)&&!p.bdl){p.bdl=1;log(_TT("👨‍👧‍👦 {0}: now has {1} children in total! Earned the \"Big Daddy\" title (goal bonus +¥15,000 · can't be stripped)",[`👨‍👧‍👦 `,`：子供が合計`,`人に！ 称号「ビッグダディ」を獲得（ゴールボーナス +15,000円・剥奪されない）`],[(p.n
+  if(bigDad(p)&&!p.bdl){p.bdl=1;await bigDadScene(p);log(_TT("👨‍👧‍👦 {0}: now has {1} children in total! Earned the \"Big Daddy\" title (goal bonus +¥15,000 · can't be stripped)",[`👨‍👧‍👦 `,`：子供が合計`,`人に！ 称号「ビッグダディ」を獲得（ゴールボーナス +15,000円・剥奪されない）`],[(p.n
 ),(kidTotal(p)
 )]));await ask(_T("👨‍👧‍👦 \"Big Daddy\" title",'👨‍👧‍👦 称号「ビッグダディ」'),[{l:_T("Five children… earned the \"Big Daddy\" title!",'子供が5人に…称号「ビッグダディ」を獲得！'),s:_T("Any kind of child counts, 5 in total / goal bonus +¥15,000 / can't be stripped",'子供の種類は問わず合計5人／ゴールボーナス +15,000円／剥奪されない'),c:'#e8a317'}])}
   const hs=monkey(p),hh=haramase(p);
