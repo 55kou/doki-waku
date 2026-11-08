@@ -27,6 +27,11 @@ button{font:inherit;border:0;border-radius:10px;padding:11px 16px;background:#37
 button:disabled{opacity:.5}
 .log{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:6px 9px;height:96px;overflow:auto;font-size:12px;line-height:1.55;margin-top:4px}
 .pos{color:var(--pos)}.neg{color:var(--neg)}
+#pkb{position:fixed;left:6px;right:6px;bottom:6px;z-index:25;background:rgba(18,18,60,.96);border:2px solid #7a63ff;border-radius:14px;padding:8px 10px 10px;color:#fff;box-shadow:0 6px 24px #000a}
+#pkb .pkh{font-weight:800;font-size:14px}#pkb .pkh small{font-weight:400;opacity:.7;font-size:11px}
+#pkb .pkg{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;font-size:12.5px;margin:2px 0 6px}
+#pkb button{width:100%;padding:9px;border:0;border-radius:10px;background:#555;color:#fff;font-weight:800;font-size:15px}
+body.pkon{padding-bottom:230px}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
 .ov.show{display:flex}
 .pl{cursor:pointer}
@@ -2488,7 +2493,15 @@ async function land(p){
 async function peekShow(p){
   const ln=[];for(let k=1;k<=6;k++){const sq=peekSq(p,k);if(!sq.length)break;const q=sq[sq.length-1],pass=sq.slice(0,-1).some(x=>x.k==='pay'),sub=q.k==='m'?fmt(q.v):q.k==='house'?'¥'+q.pr/1000+_T("k",'千'):q.k==='gam'?'¥'+(q.st>=1000?q.st/1000+_T("k",'千'):q.st):q.k==='fz'?FZ[q.sub].sub:'',ic=q.k==='m'?(q.v>0?'💴':'💸'):q.k==='house'?'🏠':q.k==='gam'?GI[q.g||'slot']:ICON[q.k]||'';
     ln.push(`<div style='text-align:left;margin:3px 0'>${FACE[k-1]} <b>${k}${_T("",'マス先')}</b>：${ic} ${q.k==='fz'?FZ[q.sub].n:q.t}${sub?' <span style="font-size:12px;opacity:.8">'+sub+'</span>':''}${pass?' <span style="font-size:12px;opacity:.8">'+_T("(passes a payday)",'（途中で給料日を通過）')+'</span>':''}</div>`)}
-  await ask(_T("👀 The squares ahead",'👀 この先のマス目')+`<br><small>${_T("Where you would land with each number",'出た目ごとに止まるマス')}</small><div style='margin-top:8px;font-size:14px'>${ln.join('')}</div>`,[{l:_T("Back to choosing",'選びなおす'),c:'#555'}]);
+  if(NET.role){   // オンライン中は従来のモーダル（画面共有の都合）
+    await ask(_T("👀 The squares ahead",'👀 この先のマス目')+`<br><small>${_T("Where you would land with each number",'出た目ごとに止まるマス')}</small><div style='margin-top:8px;font-size:14px'>${ln.join('')}</div>`,[{l:_T("Back to choosing",'選びなおす'),c:'#555'}]);return}
+  // オフライン：盤面・自分のプロフが見えるよう、画面下に小さな一覧バーだけを出す（暗幕なし・スクロールできる）
+  await new Promise(r=>{
+    const b=document.createElement('div');b.id='pkb';b.setAttribute('data-nosync','1');
+    b.innerHTML=`<div class='pkh'>👀 ${_T("The squares ahead",'この先のマス目')}<small> ${_T("(scroll to see the board)",'（盤面・プロフはスクロールで確認できます）')}</small></div><div class='pkg'>${ln.join('')}</div><button>${_T("Back to choosing",'選びなおす')}</button>`;
+    b.querySelector('button').onclick=()=>{b.remove();document.body.classList.remove('pkon');r()};
+    document.body.appendChild(b);document.body.classList.add('pkon');
+  });
 }
 $('roll').onclick=async()=>{
   if(busy||over)return;busy=true;render();const p=P[cur];actor=p;TL=[];const m0=P.map(x=>x.m);
