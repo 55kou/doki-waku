@@ -459,15 +459,15 @@ const gSq=big=>{const g=pick(GL);return{k:'m',t:big?g[2]:g[1],v:g[0]}},rSq=big=>
 
 const gift=()=>gSq(false);
 const grn=big=>Math.random()<.1?{k:'item',t:_T("Item",'アイテム')}:gSq(big);   // 緑マスの10%は「アイテム」マス（お金は増えず、ランダムでショップのアイテムが手に入る）
-const FZW={pin:.2,del:.2,soap:.2,uri:.2,men:.2};   // 各風俗の出現確率は均等に20%
-const limFz=(a,mx=2)=>{   // 同じ種類の風俗は1区画に2つまで（パタヤは3つまで）。超えた分は別の種類に変更。全種類が上限まで埋まっていたら緑マスに
+const FZW={pin:.21,del:.21,soap:.21,uri:.16,men:.21};   // 各風俗の出現確率：売り専16%・他4種類は各21%
+const limFz=(a,mx=2)=>{   // 同じ種類の風俗は1区画に2つまで（パタヤも同じ）。超えた分は別の種類に変更。全種類が上限まで埋まっていたら緑マスに
   const c={},ok=k=>(c[k]||0)<mx;
   a.forEach((x,i)=>{if(!x||x.k!=='fz')return;
     if(!ok(x.sub)){const al=Object.keys(FZW).filter(ok);if(!al.length){a[i]=grn(false);return}
       let r=Math.random()*al.reduce((t,k)=>t+FZW[k],0);x.sub=al.find(k=>(r-=FZW[k])<=0)||al[al.length-1]}
     c[x.sub]=(c[x.sub]||0)+1});
   return a};
-const mkFz=()=>({k:'fz',t:'風俗',sub:pick(['pin','del','soap','uri','men'])});
+const mkFz=()=>{let r=Math.random(),sub='men';for(const k of Object.keys(FZW)){if((r-=FZW[k])<0){sub=k;break}}return{k:'fz',t:'風俗',sub}};
 
 const ad0=s=>s==='uri';   // 売り専：結婚の有無に関係なく、3回通うと「親権なし・養育費がかかる養子」
 function sq(j){
@@ -515,7 +515,7 @@ function mainSeg(j,last){
   const sp=Math.random();
   if(sp<.05){   // 特別区間：2.5%でパタヤ（病院3マス＋残りは風俗）／2.5%でラスベガス（行政2＋風俗1＋残りはギャンブル）。STARTとGOAL以外は、給料日や固定の結婚/出産マスも置き換えて、パタヤ／ラスベガスを優先
     const fr2=shuf([...Array(15).keys()].filter(i=>!(i===0&&j===0)&&!(i===14&&last)));   // STARTとGOAL以外（給料日・固定の結婚/出産マスも）はパタヤ／ラスベガスを優先
-    if(sp<.025){fr2.forEach((i,k)=>{a[i]=k<3?{k:'hosp',t:_T("Hospital",'病院')}:mkFz()});limFz(a,3);a.sp=_T("🌴Pattaya",'🌴パタヤ')}
+    if(sp<.025){fr2.forEach((i,k)=>{a[i]=k<3?{k:'hosp',t:_T("Hospital",'病院')}:mkFz()});limFz(a,2);a.sp=_T("🌴Pattaya",'🌴パタヤ')}
     else{fr2.forEach((i,k)=>{a[i]=k<2?{k:'gov',t:_T("Gov't",'行政')}:k===2?mkFz():gm(false)});a.sp=_T("🎰Las Vegas",'🎰ラスベガス')}
     return a;
   }
@@ -2277,7 +2277,7 @@ async function hospital(p){
 ),(ks.map(x=>x.n).join(_T(", ",'・'))
 )]));
 }
-// 通常の結婚・風俗嬢との結婚のどちらでも、毎ターン終了時に10%で子供が誕生（さらに20%で双子）。出産マスと同じく出産祝い+5,000円と子育て金-500円/ターン（双子は2倍）
+// 通常の結婚・風俗嬢との結婚のどちらでも、毎ターン終了時に15%で子供が誕生（さらに20%で双子）。出産マスと同じく出産祝い+5,000円と子育て金-500円/ターン（双子は2倍）
 // 養育費まわりの称号：猿＝養育費を払わない子供がいる（ゴール −5,000円×人数）／孕ませマン＝養育費を払っている子供がいる（ゴール −2,000円×人数）。両方いる場合は猿（降格）
 const monkey=p=>(p.ape||0)>0,haramase=p=>(p.pk||0)>0;
 // ボス猿誕生：猿・孕ませマン・ビッグダディの絵文字が円状に回りながら中心の光に吸い込まれ、ホワイトアウト→黄金のラメ背景に「ボス猿」（約11.5秒）
@@ -2333,7 +2333,7 @@ async function kidTitle(p){
 const kidTotal=p=>Math.round((p.cc||0)/500)+(p.pk||0)+(p.ape||0)+(p.adk||0);
 const bigDad=p=>{if(!p.bd&&kidTotal(p)>=5)p.bd=1;return !!p.bd};
 async function birthTick(p){
-  if(!(p.wed||Object.keys(p.fm||{}).length)||Math.random()>=.10)return;   // 通常結婚でも風俗嬢との結婚でも、毎ターン10%の抽選
+  if(!(p.wed||Object.keys(p.fm||{}).length)||Math.random()>=.15)return;   // 通常結婚でも風俗嬢との結婚（売り専の養子も含む）でも、毎ターン15%の抽選
   {
    if(p.fm&&p.fm.uri){   // 売り専ボーイとの結婚：子供は必ず養子（双子なし・子育て金なし）
     p.adk=(p.adk||0)+1;p.kids=(p.kids||0)+1;p.sup=(p.sup||0)+800;
