@@ -316,7 +316,9 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 @keyframes fbm{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 .hand{position:relative;z-index:1;display:flex;gap:calc(6px*var(--cs,1));min-height:calc(90px*var(--cs,1));align-items:center;justify-content:center;flex-wrap:wrap}
 .bjh{position:relative;z-index:1;display:grid;grid-template-columns:1fr;width:100%;max-width:560px;gap:0 6px;padding:0 6px}.bjh.c2{grid-template-columns:1fr 1fr}
-.bjh .hb{display:flex;flex-direction:column;align-items:center;min-width:0}
+.bjh .hb{display:flex;flex-direction:column;align-items:center;min-width:0;border-radius:16px;padding:0 0 4px;transition:opacity .3s,box-shadow .3s,background .3s}
+.bjh .hb.act{box-shadow:0 0 0 2px rgba(255,213,79,.6),0 0 16px rgba(255,213,79,.35);background:rgba(255,255,255,.07)}
+.bjh .hb.idle{opacity:.55}
 .bjh .lab{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px 5px;text-align:center;line-height:1.3}
 .bjh.c2 .lab{font-size:11px;margin:calc(6px*var(--cs,1)) 0 1px}.bjh.c2 .lab small{font-size:10px;flex-basis:100%}.bjh.c2 .lab svg{height:34px;width:auto}
 #gm .gb{max-width:100%}
@@ -1066,15 +1068,16 @@ function bjFit(){const g=$('gm'),gs=$('gs'),gt=g.querySelector('.gt'),bh=$('bjh'
     if(over>0){bh.style.maxHeight=Math.max(150,bh.offsetHeight-over-8)+'px';bh.style.overflowY='auto';bh.style.webkitOverflowScrolling='touch';bh.scrollTop=bh.scrollHeight}
     return}
   while(!ok()&&cs>.42){cs=Math.round((cs-.04)*100)/100;g.style.setProperty('--cs',cs)}}
-// バースト演出：カードが所定の位置に着いてから0.5秒後にグレー、さらに0.2秒後に「BUST」（sh()が何度呼ばれても1回だけ進む）
+// バースト演出：カードが完全に着いた瞬間（合計の表示と同時）にグレー、さらに0.1秒後に「BUST」（sh()が何度呼ばれても1回だけ進む）
 // プレイヤーのハンド：2枚揃ってから、カードが追加されるたびに合計を表示（カードが降り切って0.5秒後）
+const actHB=hi=>document.querySelectorAll('#bjh .hb').forEach((el,i)=>{el.classList.toggle('act',hi>=0&&i===hi);el.classList.toggle('idle',hi>=0&&i!==hi)});
 function totMark(e,cs){if(!e)return;e.classList.add('pt');const n=cs.length;
   if(n<2){e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');return}
-  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),(900+500)/2)}   // 合計の表示タイミングは半分（0.7秒後）
+  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),900)}   // 合計は、カードが完全に着いた瞬間（配るアニメ0.9秒）に表示
 function bustMark(e,on){if(!e)return;
   if(!on){if(e._bt){e._bt.forEach(clearTimeout);e._bt=null}e.classList.remove('bust','bt');return}
   if(e._bt||e.classList.contains('bust'))return;
-  e._bt=[setTimeout(()=>e.classList.add('bust'),900+500),setTimeout(()=>e.classList.add('bt'),900+500+200)]}
+  e._bt=[setTimeout(()=>e.classList.add('bust'),900),setTimeout(()=>e.classList.add('bt'),900+100)]}   // バースト：合計と同時（着いた瞬間）にグレー、その0.1秒後にBUST
 function setHand(id,cs,hid){const el=$(id);cs.forEach((c,i)=>{const h=hid(i),key=h?'b':c.n+'-'+c.s,ch=el.children[i];if(!ch||ch.dataset.k!==key){const t=document.createElement('div');t.innerHTML=card(c,h);const n=t.firstChild;n.dataset.k=key;if(ch)el.replaceChild(n,ch);else el.appendChild(n)}});while(el.children.length>cs.length)el.removeChild(el.lastChild)}
 const tease=async n=>{for(let k=0;k<n;k++){snd(150+k*35,.1,'sawtooth',.08);await sleep(240)}};
 async function gov(p){
@@ -1153,6 +1156,7 @@ async function bj(p,st){
 )]),c:'#1d9e75',dis:!ok});act.push('spl')}
           }
         }
+        actHB(H.length>1?hi:-1);   // 複数ハンド：いま操作中のハンドを光らせ、もう一方は少し暗くする
         txt((H.length>1?_TT("Hand {0}: ",[`ハンド`,`：`],[(hi+1
 )]):_T("You: ",'あなた：'))+bv(h.c));
         gctx={cards:h.c.map(c=>c.n),up:D[0].n,fb:FB};
@@ -1168,6 +1172,7 @@ async function bj(p,st){
       h.done=1;sh();if(bv(h.c)>21)await sleep(2900);   // バストは、カードが揃ってから0.5秒後のグレー＋BUSTを見せてから次へ
     }
     hd=false;if(FB&&H.length>=4)p.fb4=1;   // 実績：フリーベットで4ハンド以上
+    actHB(-1);
     if(H.some(h=>!h.nat&&bv(h.c)<=21)){txt(_T("Dealer's turn…",'ディーラーのターン…'));await tease(6);sh();snd(700,.2,'triangle',.12);await sleep(800);
       while(bv(D)<17){txt(_T("Dealer draws a card…",'ディーラーがカードを引く…'));await tease(5);D.push(draw());nd=D.length;sh();snd(450,.12,'triangle',.1);await sleep(700)}dd=true;sh();if(bv(D)>21)await sleep(2900)}
     else{dd=true;sh();await sleep(300)}
