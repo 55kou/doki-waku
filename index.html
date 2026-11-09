@@ -227,6 +227,10 @@ body.pkon{padding-bottom:90px}
 </style><style>
 :root,:root[data-theme]{--bg:#0e1230;--card:#1a1f4a;--tx:#f4f1ff;--mut:#9aa0d6;--bd:#363c7a;--pos:#5ff0a8;--neg:#ff8590;color-scheme:dark}
 body{background:radial-gradient(circle at 15% 0,#2f3490 0,transparent 45%),radial-gradient(circle at 100% 35%,#6a2282 0,transparent 40%),#0e1230;background-attachment:fixed;color:var(--tx)}
+html.sea{background:linear-gradient(180deg,#c0568f 0%,#e49ab6 13%,#4aa8d8 28%,#27b3a0 42%,#d4742a 56%,#8e3a24 70%,#6a86b4 82%,#2a3a66 100%);background-size:100% 100%;background-attachment:scroll}
+html.sea body{background:none}
+#sea{position:absolute;left:0;top:0;width:100%;z-index:-1;pointer-events:none;overflow:hidden}
+#sea span{position:absolute;line-height:1}
 h1{font-size:25px;font-weight:900;letter-spacing:.05em;margin:0;background:linear-gradient(90deg,#ffd86b,#ff7ab6,#7ad7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
 .sticky{background:linear-gradient(#0e1230 88%,transparent)}
 .pl{background:linear-gradient(160deg,#262c70,#151944);border-color:#363c7a;border-radius:14px;box-shadow:0 4px 0 #080a22;transition:transform .3s,box-shadow .3s}
@@ -2011,7 +2015,26 @@ const plHTML=(p,k)=>{
   const tt=[p.grand?_T("🌟Grand Nightlife Master",'🌟グランド風俗マスター'):p.master?_T("👑Nightlife Master",'👑風俗マスター'):'',p.king?_T("🎰Casino King",'🎰カジノ王'):'',p.baikin?_T("🦠Germ Man",'🦠バイキンマン'):'',p.ichizu?_T("💞Devoted",'💞一途'):'',p.boss?_T("🐵Boss Monkey",'🐵ボス猿'):'',(!p.boss&&bigDad(p))?_T("🧔‍♂️Big Daddy",'🧔‍♂️ビッグダディ'):'',(!p.boss&&monkey(p))?_T("🐒Monkey",'🐒猿'):'',(!p.boss&&haramase(p))?_T("🍼Baby Maker",'🍼孕ませマン'):'',gkrT(p)?_T("🎲Kakegurui",'🎲賭ケグルイ'):'',fzkT(p)?_T("💋Nightlife Addict",'💋風俗狂い'):''].filter(Boolean);
   if(tt.length)L.push(tt.join(' '));
   return `<div class="pl ${k===cur&&!over?'on':''}" style="--pc:${p.c};${k===cur&&!over?'border-color:'+p.c:''}"><b><span class="dot" style="background:${p.c}"></span>${p.npc?'🤖 ':''}${p.n}</b><div class="m ${p.m<0?'neg':''}">${yen(p.m)}</div>${L.join('<br>')}</div>`};
-function render(){
+/* 盤面の背景：序盤(春)→中盤(夏・秋)→終盤(冬)へ色が移り、四季の絵文字を毎ゲーム新しくランダム配置（最背面） */
+const SEAS=[
+ {a:0,b:.23,em:['🌸','🌸','🌸','🌷','🦋','🐝','🌱'],big:'🌸'},
+ {a:.23,b:.49,em:['🌻','☀️','🍉','🏖️','🌴','🍦','🌊','🐚'],big:'🌻'},
+ {a:.49,b:.75,em:['🍁','🍂','🍂','🎃','🌰','🍄','🍇'],big:'🍁'},
+ {a:.75,b:1,em:['❄️','❄️','⛄','🎄','☃️','🧣','⭐','🧤'],big:'❄️'}];
+function seaInit(){
+  document.documentElement.classList.add('sea');
+  let d=$('sea');if(d)d.remove();
+  d=document.createElement('div');d.id='sea';
+  const rnd=Math.random;
+  SEAS.forEach(z=>{const n=Math.round((z.b-z.a)*4200/29.5);
+    for(let i=0;i<n;i++){const big=rnd()<.336,sz=big?60+rnd()*60:20+rnd()*24,
+      left=big?(rnd()<.5?-18+rnd()*10:88+rnd()*10):rnd()*94,e=big?z.big:z.em[rnd()*z.em.length|0],
+      sp=document.createElement('span');sp.textContent=e;
+      sp.style.cssText=`left:${left}%;top:${(z.a+rnd()*(z.b-z.a))*100}%;font-size:${sz}px;opacity:${e==='🌊'?.5:.7};transform:rotate(${(rnd()*60-30)|0}deg);${big?'filter:blur(1.5px)':''}`;
+      d.appendChild(sp)}});
+  document.body.insertBefore(d,document.body.firstChild);seaSync()}
+function seaSync(){const d=$('sea');if(d)d.style.height=document.documentElement.scrollHeight+'px'}
+function render(){seaSync();
   if(P){const n=P.length;$('pls').style.gridAutoColumns=n<3?`calc((100% - ${6*(n-1)}px)/${n})`:'calc((100% - 12px)/3)'}
   $('pls').innerHTML=P.map((p,k)=>plHTML(p,k)).join('');
   let h='';
@@ -3212,7 +3235,7 @@ function setup(){
   });
 }
 async function init(){BGMX=0;bgmVol();try{if(NET.role==='host'&&NET.guests.length)NETbc({t:'bgm',on:0})}catch(e){}NET.playing=false;
-  const cfg=await setup();NCFG=cfg;actor=null;
+  const cfg=await setup();NCFG=cfg;actor=null;seaInit();
   B=build();fin=[];cur=0;goldNow=false;over=false;busy=true;$('log').innerHTML='';$('dice').textContent='-';
   HRD=false;ROUH.length=0;MH.length=0;P=Array.from({length:cfg.n},(_,i)=>({n:NMname(cfg,i),npc:cfg.npc[i]?1:0,c:COL[i],m:10000,s:0,r:null,i:0,done:false,kids:0,wed:0,job:null,conf:0,baikin:0,cc:0,sup:0,pk:0,ape:0,kt:'',ichizu:0,last:null,streak:0,lg:[],gw:{},king:0,std:{},fv:{},fm:{},cand:0,pend:[],tk:0,prep:0,gold:0,sage:0,fstop:0,master:0,mfirst:0,grand:0,ost:0,loan:0,fwed:0,div:0,hist:{},it:{sigoro:0,news:0,sagami:0,dbl:0},single:0}));
   if(NET.role==='host')NETseat(cfg);
