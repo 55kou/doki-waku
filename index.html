@@ -340,7 +340,8 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 .bjh .hb{display:flex;flex-direction:column;align-items:center;min-width:0;transition:opacity .3s}
 .bjh .hb.idle{opacity:.7}   /* 操作中でないプレイヤーのハンドだけ、30%薄くする（枠は付けない） */
 .bjh .lab{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px 5px;text-align:center;line-height:1.3}
-.bjh.c2 .lab{font-size:11px;margin:calc(6px*var(--cs,1)) 0 1px}.bjh.c2 .lab small{font-size:10px;flex-basis:100%}.bjh.c2 .lab svg{height:34px;width:auto}
+.bjh.c2 .lab{font-size:11px;margin:calc(6px*var(--cs,1)) 0 1px}
+.bjh.c2.fbx .lab{min-height:52px}   /* Free Bet表示で2行になるハンドがあっても、全ハンドのカードの縦位置を揃える */.bjh.c2 .lab small{font-size:10px;flex-basis:100%}.bjh.c2 .lab svg{height:34px;width:auto}
 #gm .gb{max-width:100%}
 .cd{width:calc(56px*var(--cs,1));height:calc(82px*var(--cs,1));background:#fff;border-radius:8px;color:#222;font-weight:900;font-size:calc(21px*var(--cs,1));display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 8px #0008;animation:dl .35s}
 .cd.r{color:#d22}.cd.b{background:repeating-linear-gradient(45deg,#3a4fd0,#3a4fd0 6px,#2a3aa0 6px,#2a3aa0 12px);color:#fff;border:3px solid #fff}
@@ -368,6 +369,7 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 #gm.bjm .hand{gap:calc(4px*var(--cs,1));min-height:calc(82px*var(--cs,1))}
 #gm.bjm .hand[data-tot],#gm.bjm .hand.pt{margin-top:2px}
 #gm.bjm .hand[data-tot]::before{position:static;transform:none;order:-1;flex:none;margin-right:4px;min-width:26px;height:24px;padding:0 6px;font-size:15px;line-height:20px;border-width:2px;border-radius:12px}
+#gm.bjm .bjh.c2.fbx .lab{min-height:36px}
 #gm.bjm .bjh.c2 .lab{font-size:10px;margin:2px 0 0}#gm.bjm .bjh.c2 .lab svg{height:20px}
 #gm.bjm .bjh{gap:0 2px;padding:0 2px}
 .bjh .cd{animation-duration:.72s}   /* ブラックジャックのカードが着くまでを20%短縮（0.9秒→0.72秒） */
@@ -1165,7 +1167,7 @@ async function bj(p,st){
   const lab=i=>H.length>1?_TT("Hand {0}",[`ハンド`,``],[(i+1
 )]):p.n;
   // ディーラーもプレイヤーと同条件：表に見えるカードが2枚以上で合計を表示
-  const sh=()=>{setHand('dh',D.slice(0,nd),i=>hd&&i===1);{const e=$('dh');bustMark(e,!hd&&bv(D.slice(0,nd))>21);totMark(e,hd?D.slice(0,nd).filter((_,i)=>i!==1):D.slice(0,nd))}H.forEach((h,i)=>{setHand('ph'+i,dealing?h.c.slice(0,dn[i]||0):h.c,()=>0);{const e=$('ph'+i);bustMark(e,bv(dealing?h.c.slice(0,dn[i]||0):h.c)>21);totMark(e,dealing?h.c.slice(0,dn[i]||0):h.c)}const e=$('l'+i),bet=h.r+h.pd,fr=h.fr||0;if(e)e.innerHTML=`${lab(i)}　${chipSvg(bet,p.c)}${fr?chipSvg(fr,'#2f6fe0'):''}<b style='color:#ffd54f'> 💰${yen(bet+fr)}</b>${fr?_TT("<small>(of which Free Bet {0})</small>",[`<small>（うち Free Bet `,`）</small>`],[(yen(fr)
+  const sh=()=>{{const bq=$('bjh');if(bq)bq.classList.toggle('fbx',H.some(h=>h.fr))}setHand('dh',D.slice(0,nd),i=>hd&&i===1);{const e=$('dh');bustMark(e,!hd&&bv(D.slice(0,nd))>21);totMark(e,hd?D.slice(0,nd).filter((_,i)=>i!==1):D.slice(0,nd))}H.forEach((h,i)=>{setHand('ph'+i,dealing?h.c.slice(0,dn[i]||0):h.c,()=>0);{const e=$('ph'+i);bustMark(e,bv(dealing?h.c.slice(0,dn[i]||0):h.c)>21);totMark(e,dealing?h.c.slice(0,dn[i]||0):h.c)}const e=$('l'+i),bet=h.r+h.pd,fr=h.fr||0;if(e)e.innerHTML=`${lab(i)}　${chipSvg(bet,p.c)}${fr?chipSvg(fr,'#2f6fe0'):''}<b style='color:#ffd54f'> 💰${yen(bet+fr)}</b>${fr?_TT("<small>(of which Free Bet {0})</small>",[`<small>（うち Free Bet `,`）</small>`],[(yen(fr)
 )]):''}`});bjFit()};   // ハンドごとに今の賭け金を表示
   for(const[a,b,y]of(mh?[[1,0,0],[1,1,0],[1,1,1],[2,1,1],[2,2,1],[2,2,2]]:[[1,0,0],[1,0,1],[2,0,1],[2,0,2]])){dn=[a,b];nd=y;sh();snd(420,.1,'triangle',.1);await sleep(900)}   // カードを配る間隔：通常のブラックジャックと同じ（2ハンドでも900ms）
   dealing=false;
@@ -1210,7 +1212,7 @@ async function bj(p,st){
     hd=false;if(FB&&H.length>=4)p.fb4=1;   // 実績：フリーベットで4ハンド以上
     actHB(-1);
     if(H.some(h=>!h.nat&&bv(h.c)<=21)){txt(_T("Dealer's turn…",'ディーラーのターン…'));await tease(6);sh();snd(700,.2,'triangle',.12);await sleep(800);
-      while(bv(D)<17){txt(_T("Dealer draws a card…",'ディーラーがカードを引く…'));await tease(5);D.push(draw());nd=D.length;sh();snd(450,.12,'triangle',.1);await sleep(700)}dd=true;sh();if(bv(D)>21)await sleep(2900)}
+      while(bv(D)<17){txt(_T("Dealer draws a card…",'ディーラーがカードを引く…'));await tease(5);D.push(draw());nd=D.length;sh();snd(450,.12,'triangle',.1);await sleep(700)}dd=true;sh();if(bv(D)>21)await sleep(1900)}
     else{dd=true;sh();await sleep(300)}
     const d=bv(D);
     if(FB&&d===22){txt(_T("Dealer 22… Push! (hands that haven't busted are a draw)",'ディーラー22…プッシュ！（バストしていない手は引き分け）'));snd(392,.3,'triangle',.1);await sleep(1300)}
