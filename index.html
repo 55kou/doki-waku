@@ -1735,8 +1735,8 @@ async function game(p,q){
     CURST=st;let v=await fn(p,st,bw,cons),paid=0;bw=null;CURST=0;
     if(v&&typeof v==='object'){paid=v.paid;if(v.stake)st=v.stake;v=v.net}
     p.m+=paid;
+    if(v>=30000)p.big30=1;   // 実績「ヤメドキ」：1回のギャンブルで3万円以上勝つ（ギャンブラーの1.3倍は含めない）
     if(v>0&&p.job==='ギャンブラー')v=Math.round(v*1.3/10)*10;
-    if(v>=30000)p.big30=1;   // 実績「ヤメドキ」：1回のギャンブルで3万円以上勝つ
     add(p,v,`${q.t}${xr?_T(" (bonus round)",'（追加勝負）'):''}${v>0?_T(" — won",'に勝利'):v<0?_T(" — lost",'に敗北'):_T(" — draw",'は引き分け')}`,true);
     if(v>0)await crownCheck(p,q.g);
     if(v<0){
@@ -2538,7 +2538,7 @@ async function land(p){
 ),(w
 )]));return;
   }
-  if(q.k==='m'&&q.v<0&&p.m<-25000&&Math.random()<.3){   // 自己破産：資金（前借りは別）が−25,000円を超えて赤マスに止まると30%で、資金と前借りを両方0にする
+  if(q.k==='m'&&q.v<0&&p.m<=-20000&&Math.random()<.35){   // 自己破産：資金（前借りは別）が−20,000円以下で赤マスに止まると35%で、資金と前借りを両方0にする
     const b=p.m,l=p.loan||0;
     await ask(_T("We can't pile on any more debt!",'これ以上借金を重ねるわけにはいかない！'),[{l:_T("……",'……'),c:'#888'}]);
     await ask(_T("Unable to stand by, the government accepted your personal bankruptcy!",'見かねた行政が自己破産を受け入れてくれた！'),[{l:_T("Funds and advance both reset to ¥0",'資金と前借りがどちらも0円に！'),s:_TT("Funds {0} / advance {1} → ¥0",[`資金 `,` ／前借り `,` → 0円`],[(yen(b)),(yen(l))]),c:'#1d9e75'}]);
