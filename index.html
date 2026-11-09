@@ -1026,7 +1026,7 @@ async function chin(p,st){
       if(cho)await chonboScene($('cb'+id));
       $('cr'+id).textContent=cho?_T("💥 The dice flew out of the bowl… → Chonbo!",'💥 サイコロが丼の外へ… → チョンボ！'):v.map(x=>FACE[x-1]).join('')+' → '+(role?role.n:_T("No point",'目なし')+(n<3?_T("…roll again",'…もう一回'):''));
       if(role)snd(role.rk>=100?1047:role.bad?196:660,.3,role.bad?'sawtooth':'triangle',.1);
-      await sleep(role||n===3?1800:1400);   // 出目が見える時間は2倍
+      await sleep(role||n===3?1440:1120);   // 出目が見える時間（以前の2倍から20%短縮）
     }
     return role||{n:_T("No point",'目なし'),rk:0,m:1};
   };
