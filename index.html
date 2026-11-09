@@ -1020,6 +1020,7 @@ async function chin(p,st){
 ),(p.n
 )]));
   $('gm').insertAdjacentHTML('beforeend',"<div id='cslot' style='height:72px;width:100%;display:flex;justify-content:center;align-items:flex-start'></div>");
+  $('gs').style.minHeight='26px';   // 結果発表でも画面全体の位置がずれないよう、下の文字の高さを固定
   const turn=async(id,who,manual)=>{
     let role=null;const ch=!(manual&&sgr)&&Math.random()<.03;   // チョンボは1回の勝負（手番）につき3%
     for(let n=1;n<=3&&!role;n++){
@@ -1071,7 +1072,6 @@ async function chin(p,st){
 )]):''
 )])
 )]);
-  if($('cslot'))$('cslot').remove();   // 結果発表ではボタン用の空きを詰める
   return finale(res,st,res>0?_TT("🎉 Won with {0}!{1}",[`🎉 `,` で勝ち！`,``],[(pr.n
 ),(pr.m>1&&dr.m>1?_TT(" ({0} {1}× × {2} {3}× = {4}×)",[`（`,``,`倍×`,``,`倍＝`,`倍）`],[(pr.n
 ),(pr.m
@@ -2745,7 +2745,7 @@ async function turnSum(p,m0){
 ),(d>=0?'+':'-'
 ),(yen(Math.abs(d))
 )])}).join('');
-  await ask(_TT("📋 {0}'s turn results<div style=\"font-weight:400;font-size:12.5px;text-align:left;max-height:46vh;overflow:auto;margin-top:8px\"><div style=\"opacity:.75\">■ What happened</div>{1}<div style=\"opacity:.75;margin-top:8px\">■ Funds changes</div>{2}</div>",[`📋 `,` のターン結果<div style="font-weight:400;font-size:12.5px;text-align:left;max-height:46vh;overflow:auto;margin-top:8px"><div style="opacity:.75">■ 起きたこと</div>`,`<div style="opacity:.75;margin-top:8px">■ 資金の変化</div>`,`</div>`],[(p.n
+  await ask(_TT("📋 {0}'s turn results<div style=\"font-weight:400;font-size:12.5px;text-align:left;max-height:46vh;overflow:auto;margin-top:8px;margin-right:-76px\"><div style=\"opacity:.75\">■ What happened</div>{1}<div style=\"opacity:.75;margin-top:8px\">■ Funds changes</div>{2}</div>",[`📋 `,` のターン結果<div style="font-weight:400;font-size:12.5px;text-align:left;max-height:46vh;overflow:auto;margin-top:8px;margin-right:-76px"><div style="opacity:.75">■ 起きたこと</div>`,`<div style="opacity:.75;margin-top:8px">■ 資金の変化</div>`,`</div>`],[(p.n
 ),(ev
 ),(mo
 )]),[{l:P.every(x=>x.done)?_T("To the results",'結果発表へ'):_T("Next player",'次のプレイヤーへ'),c:p.c}]);
