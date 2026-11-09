@@ -2039,7 +2039,7 @@ async function baikinCheck(p){
   log(_TT("🦠 {0}: has now caught all of Chlamydia, Syphilis, HIV and Candida! Earned the <b class='pos'>Germ Man</b> title! Every STD currently held is cured (the title stays until the goal)",[`🦠 `,`：クラミジア・梅毒・HIV・カンジダの全てに感染した履歴がそろった！ <b class='pos'>バイキンマン</b>の称号を獲得！今かかっている性病は全て治った（称号はゴールまで消えない）`],[(p.n
 )]));
   await germScene();
-  await ask(_T("🦠 Germ Man is born!",'🦠 バイキンマン誕生！'),[{l:_T("Earned the Germ Man title!",'バイキンマンの称号を獲得！'),s:_T("All STDs cured. Future infections cure instantly. At the end of your own turn you also attack everyone else with an infection (Chlamydia 60% / Syphilis 30% / HIV 10%). Goal bonus +10,000 (the title stays until the goal)",'全ての性病が完治。今後の感染は即治癒。さらに自分のターン終わりに他の全員へ感染攻撃（クラミジア60%／梅毒30%／HIV10%）。ゴール時ボーナス+10,000（称号はゴールまで消えない）'),c:'#1d9e75'}]);
+  await ask(_T("🦠 Germ Man is born!",'🦠 バイキンマン誕生！'),[{l:_T("Earned the Germ Man title!",'バイキンマンの称号を獲得！'),s:_T("All STDs cured. Future infections cure instantly. At the end of your own turn you also attack everyone else with an infection (Chlamydia 60% / Syphilis 30% / HIV 10%). Goal bonus +7,000 (the title stays until the goal)",'全ての性病が完治。今後の感染は即治癒。さらに自分のターン終わりに他の全員へ感染攻撃（クラミジア60%／梅毒30%／HIV10%）。ゴール時ボーナス+7,000（称号はゴールまで消えない）'),c:'#1d9e75'}]);
   return true;
 }
 // バイキンマンの特典：自分のターン終わりに、他の全員（ゴール済みを除く）へ クラミジア60%／梅毒30%／HIV10% のどれかを感染させる
@@ -2290,7 +2290,7 @@ async function hospital(p){
 )]));
 }
 // 通常の結婚・風俗嬢との結婚のどちらでも、毎ターン終了時に15%で子供が誕生（さらに20%で双子）。出産マスと同じく出産祝い+5,000円と子育て金-500円/ターン（双子は2倍）
-// 養育費まわりの称号：猿＝養育費を払わない子供がいる（ゴール −5,000円×人数）／孕ませマン＝養育費を払っている子供がいる（ゴール −2,000円×人数）。両方いる場合は猿（降格）
+// 養育費まわりの称号：猿＝養育費を払わない子供がいる（ゴール −2,500円×人数）／孕ませマン＝養育費を払っている子供がいる（ゴール −1,000円×人数）。両方いる場合は猿（降格）
 const monkey=p=>(p.ape||0)>0,haramase=p=>(p.pk||0)>0;
 // ボス猿誕生：猿・孕ませマン・ビッグダディの絵文字が円状に回りながら中心の光に吸い込まれ、ホワイトアウト→黄金のラメ背景に「ボス猿」（約11.5秒）
 async function bossScene(){
@@ -2318,27 +2318,27 @@ async function bigDadScene(p){
   [523,659,784,1047,1319,1568].forEach((fq,i)=>{snd(fq,.5,'square',.05,7.4+i*.1);snd(fq/2,.5,'triangle',.06,7.4+i*.1)});
   await new Promise(r=>setTimeout(r,12200));f.remove();
 }
-// ボス猿：猿・孕ませマン・ビッグダディを全て持った上で、子供が累計7人以上になると、その3つが一つにまとまる（ゴールボーナスは一律+20,000円）
+// ボス猿：猿・孕ませマン・ビッグダディを全て持った上で、子供が累計7人以上になると、その3つが一つにまとまる（ゴールボーナスは一律+8,000円）
 async function bossCheck(p){
   if(p.boss||!(monkey(p)&&haramase(p)&&bigDad(p)&&kidTotal(p)>=7))return;   // 3つの称号をすべて持った上で、子供が累計7人以上
   p.boss=1;
-  log(_TT("🐵 {0}: Monkey, Baby Maker and Big Daddy merged into <b class='pos'>Boss Monkey</b>! (goal bonus +¥20,000)",[`🐵 `,`：猿・孕ませマン・ビッグダディの3つの称号が <b class='pos'>ボス猿</b> に統合！（ゴールボーナス +20,000円）`],[(p.n)]));
+  log(_TT("🐵 {0}: Monkey, Baby Maker and Big Daddy merged into <b class='pos'>Boss Monkey</b>! (goal bonus +¥8,000)",[`🐵 `,`：猿・孕ませマン・ビッグダディの3つの称号が <b class='pos'>ボス猿</b> に統合！（ゴールボーナス +8,000円）`],[(p.n)]));
   await bossScene();
-  await ask(_T("🐵 \"Boss Monkey\" is born!",'🐵 称号「ボス猿」誕生！'),[{l:_T("Monkey + Baby Maker + Big Daddy → Boss Monkey!",'猿＋孕ませマン＋ビッグダディ → ボス猿！'),s:_T("With all three titles and 7+ children in total, they become one. Goal bonus: a flat +¥20,000 (the three titles' separate bonuses and penalties no longer apply)",'3つの称号をすべて持ち、子供が累計7人以上になったので一つに。ゴールボーナスは一律 +20,000円（3つの称号それぞれのボーナス・マイナスはなくなる）'),c:'#e8a317'}]);
+  await ask(_T("🐵 \"Boss Monkey\" is born!",'🐵 称号「ボス猿」誕生！'),[{l:_T("Monkey + Baby Maker + Big Daddy → Boss Monkey!",'猿＋孕ませマン＋ビッグダディ → ボス猿！'),s:_T("With all three titles and 7+ children in total, they become one. Goal bonus: a flat +¥8,000 (the three titles' separate bonuses and penalties no longer apply)",'3つの称号をすべて持ち、子供が累計7人以上になったので一つに。ゴールボーナスは一律 +8,000円（3つの称号それぞれのボーナス・マイナスはなくなる）'),c:'#e8a317'}]);
 }
 async function kidTitle(p){
-  if(bigDad(p)&&!p.bdl){p.bdl=1;await bigDadScene(p);log(_TT("🧔‍♂️ {0}: now has {1} children in total! Earned the \"Big Daddy\" title (goal bonus +¥15,000 · can't be stripped)",[`🧔‍♂️ `,`：子供が合計`,`人に！ 称号「ビッグダディ」を獲得（ゴールボーナス +15,000円・剥奪されない）`],[(p.n
+  if(bigDad(p)&&!p.bdl){p.bdl=1;await bigDadScene(p);log(_TT("🧔‍♂️ {0}: now has {1} children in total! Earned the \"Big Daddy\" title (goal bonus +¥5,000 · can't be stripped)",[`🧔‍♂️ `,`：子供が合計`,`人に！ 称号「ビッグダディ」を獲得（ゴールボーナス +5,000円・剥奪されない）`],[(p.n
 ),(kidTotal(p)
-)]));await ask(_T("🧔‍♂️ \"Big Daddy\" title",'🧔‍♂️ 称号「ビッグダディ」'),[{l:_T("Five children… earned the \"Big Daddy\" title!",'子供が5人に…称号「ビッグダディ」を獲得！'),s:_T("Any kind of child counts, 5 in total / goal bonus +¥15,000 / can't be stripped",'子供の種類は問わず合計5人／ゴールボーナス +15,000円／剥奪されない'),c:'#e8a317'}])}
+)]));await ask(_T("🧔‍♂️ \"Big Daddy\" title",'🧔‍♂️ 称号「ビッグダディ」'),[{l:_T("Five children… earned the \"Big Daddy\" title!",'子供が5人に…称号「ビッグダディ」を獲得！'),s:_T("Any kind of child counts, 5 in total / goal bonus +¥5,000 / can't be stripped",'子供の種類は問わず合計5人／ゴールボーナス +5,000円／剥奪されない'),c:'#e8a317'}])}
   const hs=monkey(p),hh=haramase(p);
-  if(hs&&!p.ks){p.ks=1;const t=_TT("A child with unpaid support! Earned the \"Monkey\" title",[`養育費を払わない子供ができた！ 称号「猿」を獲得`],[]);log(_TT("🐒 {0}: {1} (goal bonus −¥5,000 × {2})",[`🐒 `,`：`,`（ゴールボーナス −5,000円×`,`人）`],[(p.n
+  if(hs&&!p.ks){p.ks=1;const t=_TT("A child with unpaid support! Earned the \"Monkey\" title",[`養育費を払わない子供ができた！ 称号「猿」を獲得`],[]);log(_TT("🐒 {0}: {1} (goal bonus −¥2,500 × {2})",[`🐒 `,`：`,`（ゴールボーナス −2,500円×`,`人）`],[(p.n
 ),(t
 ),(p.ape
-)]));await ask(_T("🐒 \"Monkey\" title",'🐒 称号「猿」'),[{l:t,s:_TT("Goal bonus: children with unpaid support {0} × −¥5,000",[`ゴールボーナス：養育費を払わない子供 `,`人 × −5,000円`],[(p.ape
+)]));await ask(_T("🐒 \"Monkey\" title",'🐒 称号「猿」'),[{l:t,s:_TT("Goal bonus: children with unpaid support {0} × −¥2,500",[`ゴールボーナス：養育費を払わない子供 `,`人 × −2,500円`],[(p.ape
 )]),c:'#7b4a1e'}])}
-  if(hh&&!p.kh){p.kh=1;log(_TT("🍼 {0}: a child with paid support! Earned the \"Baby Maker\" title (goal bonus −¥2,000 × {1})",[`🍼 `,`：養育費を払う子供ができた！ 称号「孕ませマン」を獲得（ゴールボーナス −2,000円×`,`人）`],[(p.n
+  if(hh&&!p.kh){p.kh=1;log(_TT("🍼 {0}: a child with paid support! Earned the \"Baby Maker\" title (goal bonus −¥1,000 × {1})",[`🍼 `,`：養育費を払う子供ができた！ 称号「孕ませマン」を獲得（ゴールボーナス −1,000円×`,`人）`],[(p.n
 ),(p.pk
-)]));await ask(_T("🍼 \"Baby Maker\" title",'🍼 称号「孕ませマン」'),[{l:_T("A child with paid support… \"Baby Maker\" title",'養育費を払う子供ができた…称号「孕ませマン」'),s:_TT("Goal bonus: children with paid support {0} × −¥2,000",[`ゴールボーナス：養育費を払っている子供 `,`人 × −2,000円`],[(p.pk
+)]));await ask(_T("🍼 \"Baby Maker\" title",'🍼 称号「孕ませマン」'),[{l:_T("A child with paid support… \"Baby Maker\" title",'養育費を払う子供ができた…称号「孕ませマン」'),s:_TT("Goal bonus: children with paid support {0} × −¥1,000",[`ゴールボーナス：養育費を払っている子供 `,`人 × −1,000円`],[(p.pk
 )]),c:'#c2185b'}])}
   await bossCheck(p)}
 // ビッグダディ：子供の種類を問わず合計5人（子育て金の子＋養育費の子＋養育費を払わない子）になった瞬間に獲得。子供は減らないので、剥奪されない
@@ -2561,9 +2561,9 @@ $('roll').onclick=async()=>{
     if(sell){add(p,sell,_TT("Sold {0} propert(ies)",[`物件`,`件を売却`],[(ps.length)]));gsT.push({e:'🏠',t:_TT("Sold {0} propert(ies)",[`物件`,`件を売却`],[(ps.length)]),v:sell})}
     if(bonus){add(p,bonus,_T("Goal order bonus",'ゴール順ボーナス'));gsT.push({e:['🥇','🥈','🥉'][fin.length-1],t:_T("Goal order bonus",'ゴール順ボーナス'),v:bonus})}
     // 称号ボーナス（グランドは風俗マスターを兼ねるが、風俗系はグランド5,000円のみ＝高い方）
-    [[p.grand?10000:p.master?5000:0,p.grand?_T("Grand Nightlife Master",'グランド風俗マスター'):_T("Nightlife Master",'風俗マスター'),p.grand?'🌟':'👑'],[p.king?10000:0,_T("Casino King",'カジノ王'),'🎰'],[p.baikin?10000:0,_T("Germ Man",'バイキンマン'),'🦠'],[p.ichizu?5000:0,_T("Devoted",'一途'),'💞'],[p.boss?20000:0,_T("Boss Monkey",'ボス猿'),'🐵'],[(!p.boss&&bigDad(p))?15000:0,_T("Big Daddy",'ビッグダディ'),'🧔‍♂️'],[p.fstop?0:25000,_T("Great Sage",'大賢者'),'🧙']].forEach(([v,t,e])=>{if(v){add(p,v,_TT("🏅 Title bonus ({0})",[`🏅 称号ボーナス（`,`）`],[(t)]));gsT.push({e,t,v})}});
-    if(!p.boss&&monkey(p)){const v=-5000*p.ape;add(p,v,_TT("🐒 \"Monkey\" title goal bonus (children with unpaid support {0} × −¥5,000)",[`🐒 称号「猿」ゴールボーナス（養育費を払わない子供 `,`人×−5,000円）`],[(p.ape)]),true);gsT.push({e:'🐒',t:_T("Monkey",'猿'),v})}
-    if(!p.boss&&(p.pk||0)>0){const v=-2000*p.pk;add(p,v,_TT("🍼 \"Baby Maker\" title goal bonus ({0} × −¥2,000)",[`🍼 称号「孕ませマン」ゴールボーナス（`,`人×−2,000円）`],[(p.pk)]),true);gsT.push({e:'🍼',t:_T("Baby Maker",'孕ませマン'),v})}
+    [[p.grand?7000:p.master?3000:0,p.grand?_T("Grand Nightlife Master",'グランド風俗マスター'):_T("Nightlife Master",'風俗マスター'),p.grand?'🌟':'👑'],[p.king?8000:0,_T("Casino King",'カジノ王'),'🎰'],[p.baikin?7000:0,_T("Germ Man",'バイキンマン'),'🦠'],[p.ichizu?3000:0,_T("Devoted",'一途'),'💞'],[p.boss?8000:0,_T("Boss Monkey",'ボス猿'),'🐵'],[(!p.boss&&bigDad(p))?5000:0,_T("Big Daddy",'ビッグダディ'),'🧔‍♂️'],[p.fstop?0:10000,_T("Great Sage",'大賢者'),'🧙']].forEach(([v,t,e])=>{if(v){add(p,v,_TT("🏅 Title bonus ({0})",[`🏅 称号ボーナス（`,`）`],[(t)]));gsT.push({e,t,v})}});
+    if(!p.boss&&monkey(p)){const v=-2500*p.ape;add(p,v,_TT("🐒 \"Monkey\" title goal bonus (children with unpaid support {0} × −¥2,500)",[`🐒 称号「猿」ゴールボーナス（養育費を払わない子供 `,`人×−2,500円）`],[(p.ape)]),true);gsT.push({e:'🐒',t:_T("Monkey",'猿'),v})}
+    if(!p.boss&&(p.pk||0)>0){const v=-1000*p.pk;add(p,v,_TT("🍼 \"Baby Maker\" title goal bonus ({0} × −¥1,000)",[`🍼 称号「孕ませマン」ゴールボーナス（`,`人×−1,000円）`],[(p.pk)]),true);gsT.push({e:'🍼',t:_T("Baby Maker",'孕ませマン'),v})}
     gs={start:gsS,steps:gsT};
     ps.forEach(q=>q.owner=null);
   }else{await land(p);stdTick(p);if(!p.done)await birthTick(p);if(p.baikin&&p.bkNew){p.bkNew=0;await baikinSpread(p)}}
