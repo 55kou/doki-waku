@@ -1050,9 +1050,11 @@ async function bowlRoll(host,vals){
   snd(520,.1,'triangle',.1);await sleep(405);
 }
 async function chin(p,st){
-  const sgr=p.it&&p.it.sigoro>0;if(sgr){p.it.sigoro=0;log(_TT("🎲 {0}: used the Shigoro Dice! This round is a guaranteed Shigoro (the dice vanish)",[`🎲 `,`：シゴロ賽を使用！この勝負は必ずシゴロ（賽は消失）`],[(p.n
+  const sgr=p.it&&p.it.sigoro>0;
+  if(sgr)await ask(_T("🎲 You have a Shigoro Dice!",'🎲 シゴロ賽を持っています！'),[{l:_T("Go to Chinchiro",'チンチロへ進む'),s:_T("This round is a guaranteed Shigoro (the dice vanish once used)",'この勝負は必ずシゴロになります（使うと賽は消失）'),c:'#ffb300'}]);   // 競馬新聞と同じ：事前に持っていることをお知らせ
+  if(sgr){p.it.sigoro=0;log(_TT("🎲 {0}: used the Shigoro Dice! This round is a guaranteed Shigoro (the dice vanish)",[`🎲 `,`：シゴロ賽を使用！この勝負は必ずシゴロ（賽は消失）`],[(p.n
 )]))}
-  gopen('felt',_TT("<div class='gt' style='font-size:24px;margin-bottom:6px'>🎲 Chinchiro 🎲</div>{0}<div class='cwr'><div class='lab cin'>Dealer　<span id='cr1'>-</span></div><div class='cbowl' id='cb1'><div class='bowl'></div></div></div><div class='cwr'><div class='lab cin'>{1}　<span id='cr2'>-</span></div><div class='cbowl' id='cb2'><div class='bowl'></div></div></div><div class='gs' id='gs' style='margin-top:8px;font-size:17px'></div>",[`<div class='gt' style='font-size:24px;margin-bottom:6px'>🎲 チンチロ 🎲</div>`,`<div class='cwr'><div class='lab cin'>ディーラー　<span id='cr1'>-</span></div><div class='cbowl' id='cb1'><div class='bowl'></div></div></div><div class='cwr'><div class='lab cin'>`,`　<span id='cr2'>-</span></div><div class='cbowl' id='cb2'><div class='bowl'></div></div></div><div class='gs' id='gs' style='margin-top:8px;font-size:17px'></div>`],[(betHTML(st,p.c,'')
+  gopen('felt',_TT("<div class='gt' style='font-size:24px;margin-bottom:6px'>🎲 Chinchiro 🎲</div>{0}<div class='cwr'><div class='lab cin'>Dealer　<span id='cr1'>-</span></div><div class='cbowl' id='cb1'><div class='bowl'></div></div></div><div class='cwr'><div class='lab cin'>{1}　<span id='cr2'>-</span></div><div class='cbowl' id='cb2'><div class='bowl'></div></div></div><div class='gs' id='gs' style='margin-top:8px;font-size:17px'></div>",[`<div class='gt' style='font-size:24px;margin-bottom:6px'>🎲 チンチロ 🎲</div>`,`<div class='cwr'><div class='lab cin'>ディーラー　<span id='cr1'>-</span></div><div class='cbowl' id='cb1'><div class='bowl'></div></div></div><div class='cwr'><div class='lab cin'>`,`　<span id='cr2'>-</span></div><div class='cbowl' id='cb2'><div class='bowl'></div></div></div><div class='gs' id='gs' style='margin-top:8px;font-size:17px'></div>`],[(betHTML(st,p.c,sgr?'🎲':'')
 ),(p.n
 )]));
   $('gm').insertAdjacentHTML('beforeend',"<div id='cslot' style='height:72px;width:100%;display:flex;justify-content:center;align-items:flex-start'></div>");
