@@ -2598,7 +2598,7 @@ async function land(p){
 )]))}
   }
 }
-async function peekShow(p){
+async function peekShow(p,cd){   // cd：セカンドダイスで出ている今の目（金のサイコロでは無し）
   const ln=[];for(let k=1;k<=6;k++){const sq=peekSq(p,k);if(!sq.length)break;const q=sq[sq.length-1],pass=sq.slice(0,-1).some(x=>x.k==='pay'),sub=q.k==='m'?fmt(q.v):q.k==='house'?'¥'+q.pr/1000+_T("k",'千'):q.k==='gam'?'¥'+(q.st>=1000?q.st/1000+_T("k",'千'):q.st):q.k==='fz'?FZ[q.sub].sub:'',ic=q.k==='m'?(q.v>0?'💴':'💸'):q.k==='house'?'🏠':q.k==='gam'?GI[q.g||'slot']:ICON[q.k]||'';
     ln.push(`<div style='text-align:left;margin:3px 0'>${FACE[k-1]} <b>${k}${_T("",'マス先')}</b>：${ic} ${q.k==='fz'?FZ[q.sub].n:q.t}${sub?' <span style="font-size:12px;opacity:.8">'+sub+'</span>':''}${pass?' <span style="font-size:12px;opacity:.8">'+_T("(passes a payday)",'（途中で給料日を通過）')+'</span>':''}</div>`)}
   // 盤面・自分のプロフが見えるよう暗幕なし。盤面の「止まるマス」に1〜6の番号バッジを付け、画面下には「選びなおす」ボタンだけを出す（オンラインも同じ：#ovを下寄せ・暗幕なしにするだけなので全員の画面に同期される）
@@ -2606,7 +2606,7 @@ async function peekShow(p){
   render();
   try{const fe=document.querySelector('.pkn');if(fe)fe.closest('.cell').scrollIntoView({block:'center',behavior:'smooth'})}catch(e){}
   $('ov').classList.add('pk');document.body.classList.add('pkon');
-  await ask('👀',[{l:'👀 '+_T("Back to choosing",'選びなおす'),c:'#555'}]);
+  await ask('👀',[{l:'👀 '+(cd?_T("Current roll: ",'今の目は')+cd+_T(" | ",'｜'):'')+_T("Back to choosing",'選びなおす'),c:'#555'}]);
   $('ov').classList.remove('pk');document.body.classList.remove('pkon');
   PK={};render();
 }
@@ -2631,7 +2631,7 @@ $('roll').onclick=async()=>{
     let si;for(;;){si=await ask(_TT("🎲 Second Dice!<br><small>You rolled <b>{0}</b> / roll again?</small>",[`🎲 セカンドダイス！<br><small>出た目は <b>`,`</b> ／振り直す？</small>`],[(d
 )]),[{l:_T("🎲 Roll again",'🎲 振り直す'),s:_T("Use up the Second Dice and roll once more (the second roll is final)",'セカンドダイスを消費してもう一度振る（2回目の目で確定）'),c:'#e8a317'},{l:_TT("Move {0} as is",[`このまま `,` で進む`],[(d
 )]),s:_T("The Second Dice isn't used up and can be used again later",'セカンドダイスは消費されず、次回以降も使える'),c:'#555'},{l:_T("👀 Look at the squares ahead",'👀 マス目を見る'),s:_T("Check where each number lands, then decide",'各マス先の止まるマスを確認してから決められます'),c:'#4a6fa5'}]);
-    if(si===2){await peekShow(p);continue}break}
+    if(si===2){await peekShow(p,d);continue}break}
     if(si===0){p.it.second=0;const od=d;d=d6();log(_TT("🎲 {0}: used the Second Dice! {1} → rerolled to {2} (the dice are used up)",[`🎲 `,`：セカンドダイスを使用！`,` → 振り直して `,`（ダイスは消失）`],[(p.n
 ),(od
 ),(d
