@@ -2560,7 +2560,7 @@ async function land(p){
 ),(w
 )]));return;
   }
-  if(q.k==='m'&&q.v<0&&p.m<=-20000&&Math.random()<.35){   // 自己破産：資金（前借りは別）が−20,000円以下で赤マスに止まると35%で、資金と前借りを両方0にする
+  if(q.k==='m'&&q.v<0&&p.m<=-20000&&Math.random()<.5){   // 自己破産：資金（前借りは別）が−20,000円以下で赤マスに止まると50%で、資金と前借りを両方0にする
     const b=p.m,l=p.loan||0;
     await ask(_T("We can't pile on any more debt!",'これ以上借金を重ねるわけにはいかない！'),[{l:_T("……",'……'),c:'#888'}]);
     await ask(_T("Unable to stand by, the government accepted your personal bankruptcy!",'見かねた行政が自己破産を受け入れてくれた！'),[{l:_T("Funds and advance both reset to ¥0",'資金と前借りがどちらも0円に！'),s:_TT("Funds {0} / advance {1} → ¥0",[`資金 `,` ／前借り `,` → 0円`],[(yen(b)),(yen(l))]),c:'#1d9e75'}]);
@@ -3271,6 +3271,16 @@ async function init(){BGMX=0;bgmVol();try{if(NET.role==='host'&&NET.guests.lengt
   HRD=false;ROUH.length=0;MH.length=0;P=mkP(cfg);
   if(NET.role==='host')NETseat(cfg);
   {const nm=P.map(p=>p.n);P.forEach((p,i)=>{if(nm.indexOf(p.n)!==i)p.n+=(i+1)})}
+  {const sh=await askUI(_T("Shuffle the turn order?",'順番をシャッフルする？'),[{l:_T("🔀 Shuffle",'🔀 シャッフルする'),s:_T("Randomize who goes first",'順番をランダムに決める'),c:'#e8a317'},{l:_T("Keep as is",'このままでいい'),s:_T("Player 1 goes first",'上から順に'),c:'#378add'}]);
+    if(sh===0){
+      const o=P.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]]}
+      $('box').innerHTML=`<b>${_T("Shuffling the order…",'順番を決めています…')}</b><div id='shf' style='font-size:22px;font-weight:900;line-height:1.7;margin-top:8px'></div>`;$('ov').classList.add('show');
+      const shf=$('shf');for(let k=0;k<10;k++){const t=P.slice().sort(()=>Math.random()-.5);shf.innerHTML=t.map(p=>`<div style='color:${p.c}'>${p.n}</div>`).join('');snd(500+k*40,.06,'triangle',.08);await sleep(150)}
+      o.forEach((p,i)=>P[i]=p);P.forEach((p,i)=>p.c=COL[i]);
+      shf.innerHTML=P.map((p,i)=>`<div style='color:${p.c}'>${i+1}. ${p.n}</div>`).join('');snd(784,.2,'triangle',.12);await sleep(500);
+      $('ov').classList.remove('show');
+      log(_T("Turn order: ",'順番：')+P.map(p=>p.n).join(' → '))}
+    else $('ov').classList.remove('show')}
   MH.push(P.map(x=>x.m));
   NET.playing=true;
   render();
