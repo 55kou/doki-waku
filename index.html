@@ -364,14 +364,15 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 .whl{position:relative;width:265px;height:265px;border-radius:50%;border:4.5px solid #ffd23f;box-shadow:0 0 30px #ffd23f}
 .whl::after{content:'';position:absolute;inset:32%;border-radius:50%;background:radial-gradient(#444,#111);border:4px solid #ffd23f}
 /* 中心の持ち手（本物のルーレットのターレット）：十字のハンドル＋先端の玉＋中央のつまみ */
-.whl::before{content:'';position:absolute;inset:32%;z-index:2;border-radius:50%;filter:drop-shadow(0 2px 2px #000a);background:
- radial-gradient(circle at 38% 34%,#fffbd0 0,#ffd23f 30%,#9a6000 70%,transparent 72%) 50% 50%/34% 34% no-repeat,
- radial-gradient(circle at 38% 34%,#fff6bf 0,#ffd23f 35%,#9a6000 75%,transparent 77%) 50% 2%/17% 17% no-repeat,
- radial-gradient(circle at 38% 34%,#fff6bf 0,#ffd23f 35%,#9a6000 75%,transparent 77%) 50% 98%/17% 17% no-repeat,
- radial-gradient(circle at 38% 34%,#fff6bf 0,#ffd23f 35%,#9a6000 75%,transparent 77%) 2% 50%/17% 17% no-repeat,
- radial-gradient(circle at 38% 34%,#fff6bf 0,#ffd23f 35%,#9a6000 75%,transparent 77%) 98% 50%/17% 17% no-repeat,
- linear-gradient(90deg,#8a5600,#ffe58a 50%,#8a5600) 50% 50%/8% 84% no-repeat,
- linear-gradient(180deg,#8a5600,#ffe58a 50%,#8a5600) 50% 50%/84% 8% no-repeat}
+.whl::before{content:'';position:absolute;inset:36%;z-index:2;border-radius:50%;filter:drop-shadow(0 1.5px 1.5px #000a);background:
+ radial-gradient(circle closest-side,#fffbe0 0,#fff2b0 60%,transparent 100%) 42% 38%/9% 9% no-repeat,
+ radial-gradient(circle closest-side,#ffe9a0 0,#e0a21a 55%,#8a5600 94%,transparent 100%) 50% 50%/30% 30% no-repeat,
+ radial-gradient(circle closest-side,#ffe9a0 0,#e0a21a 55%,#8a5600 94%,transparent 100%) 50% 0/15% 15% no-repeat,
+ radial-gradient(circle closest-side,#ffe9a0 0,#e0a21a 55%,#8a5600 94%,transparent 100%) 50% 100%/15% 15% no-repeat,
+ radial-gradient(circle closest-side,#ffe9a0 0,#e0a21a 55%,#8a5600 94%,transparent 100%) 0 50%/15% 15% no-repeat,
+ radial-gradient(circle closest-side,#ffe9a0 0,#e0a21a 55%,#8a5600 94%,transparent 100%) 100% 50%/15% 15% no-repeat,
+ linear-gradient(90deg,#8a5600,#ffe58a 50%,#8a5600) 50% 50%/5% 86% no-repeat,
+ linear-gradient(180deg,#8a5600,#ffe58a 50%,#8a5600) 50% 50%/86% 5% no-repeat}
 .dn{background:#fff!important;color:#222;font-size:34px;line-height:1;padding:8px 10px!important;transition:transform .15s}
 .dn.on{background:#ffd23f!important;box-shadow:0 0 18px #ffd23f;transform:translateY(-6px) scale(1.1)}
 .c-gov{--x:#6b7a8f}.c-fz{--x:#c2185b}.c-hosp{--x:#17a2b8}.c-shop{--x:#ff7043}.c-item{--x:#26a69a}.c-fz .v{font-size:9px}
