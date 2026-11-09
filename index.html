@@ -285,6 +285,8 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 .reel.spin{filter:blur(1.5px);animation:jit .08s infinite}@keyframes jit{50%{transform:translateY(5px)}}
 #gm.shake .reels,#gm.shake .gt{animation:shk .08s infinite}@keyframes shk{0%{transform:translate(3px,2px)}50%{transform:translate(-3px,-2px)}100%{transform:translate(2px,-3px)}}
 #gm.win{animation:bgf .25s infinite alternate}@keyframes bgf{from{background:radial-gradient(circle,#ff9a1f,#7b1fa2)}to{background:radial-gradient(circle,#ffe27a,#e91e63)}}
+#gt2~#gs{min-height:29px;box-sizing:border-box}
+#gt2{min-height:88px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
 #gm.win .gt{font-size:36px;animation:pulse .3s infinite alternate}@keyframes pulse{to{transform:scale(1.12)}}
 #gm.lose{filter:grayscale(1) brightness(.7)}
 #gm.flash::after{content:'';position:absolute;inset:0;background:#fff;z-index:3;animation:wf .5s forwards}@keyframes wf{from{opacity:.95}to{opacity:0}}
@@ -315,7 +317,7 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 #mt{position:relative;z-index:1;width:min(92vw,340px);margin-top:4px}#mt .mtl{display:block;color:#fff;font-weight:800;font-size:12px;margin-bottom:2px}#mt .olist{max-height:19vh;overflow-y:auto;-webkit-overflow-scrolling:touch;pointer-events:auto}#mt .orow{font-size:12px;padding:3px 2px}#mt.rs .olist{max-height:13.3vh}#trw{position:relative;z-index:1;width:min(92vw,340px);justify-content:center;margin-bottom:3px}
 #cdt{position:relative;z-index:6;background:#000c;border:2px solid #ffd23f;border-radius:14px;padding:10px 16px;color:#fff;width:min(88vw,320px);text-align:center;font-size:14px;line-height:1.7;margin-top:8px}#cdt .cd2{font-size:22px;font-weight:900;margin:4px 0}#cdt .cd2.w{color:#5ff0a8}#cdt .cd2.l{color:#ff8590}#cdt .cd3{background:#fff1;border-radius:8px;padding:6px}#cdt .cd3 b{font-size:18px}#cdt .cd4{margin-top:6px;color:#ffd23f;font-weight:800;animation:cpulse 1.1s ease-in-out infinite alternate}
 .tapn{position:absolute;left:0;right:0;bottom:14px;text-align:center;z-index:5;color:#fff;font-weight:900;font-size:17px;text-shadow:0 2px 6px #000;animation:cpulse 1.1s ease-in-out infinite alternate;pointer-events:none}
-#rk{position:relative;z-index:2;background:#000a;border:2px solid #ffd23f;border-radius:12px;padding:8px 14px;color:#fff;font-weight:800;width:min(86vw,300px);margin-top:6px}#rk div{padding:2px 0}#rk .rm{color:#ffd23f}
+#rk{position:absolute;left:50%;transform:translateX(-50%);z-index:2;background:#000a;border:2px solid #ffd23f;border-radius:12px;padding:8px 14px;color:#fff;font-weight:800;width:min(86vw,300px);margin-top:6px}#rk div{padding:2px 0}#rk .rm{color:#ffd23f}
 #fscr{position:fixed;inset:0;z-index:100000;background:radial-gradient(ellipse at 50% 18%,#2d1d66,#07031a 72%);display:flex;align-items:center;justify-content:center;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation;animation:ffade .4s ease-out}
 #fscr .fsp{position:absolute;top:-2%;width:60%;height:74%;mix-blend-mode:screen;animation:fsw 4.6s ease-in-out infinite alternate;pointer-events:none}
 #fscr .fsp.l{left:-4%;transform-origin:7% 0;background:linear-gradient(172deg,#fff6c4d9 0%,#ffe27a70 38%,#fff0 92%);clip-path:polygon(0 0,13% 0,100% 100%,36% 100%)}
@@ -1646,6 +1648,7 @@ async function horse(p,st){
 )]));
     if(md===2){const tp=ord.slice(0,3);$('rk').insertAdjacentHTML('beforeend',_TT("<div style='margin-top:6px;border-top:1px solid #fff5;padding-top:4px'>🎫 Trifecta {0}　Payout odds <b style='color:#ffd23f'>{1}×</b></div>",[`<div style='margin-top:6px;border-top:1px solid #fff5;padding-top:4px'>🎫 三連単 `,`　配当オッズ <b style='color:#ffd23f'>`,`倍</b></div>`],[(tp.map(x=>x+1).join('→')),(odT(tp).toFixed(1))]))}
     {const m=$('mt');if(m)m.classList.add('rs')}   // 結果発表中は三連単の一覧を30%短くして、着順が見切れないように
+    {const rk=$('rk'),gs=$('gs');if(rk&&gs){const gr=$('gm').getBoundingClientRect();rk.style.top=(gs.getBoundingClientRect().top-gr.top)+'px'}}   // トラック位置を動かさないよう、順位表は絶対配置
     snd(784,.2,'triangle',.08);snd(988,.3,'triangle',.08,.15);
     if(p.npc)await sleep(1800);
     else{await sleep(500);await new Promise(r=>$('gm').addEventListener('pointerup',r,{once:true}))}
