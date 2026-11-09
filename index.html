@@ -212,11 +212,11 @@ body.pkon{padding-bottom:90px}
 #msn{position:fixed;inset:0;z-index:99999;background:#000;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;animation:msbg .3s ease-out forwards}
 @keyframes msbg{to{opacity:1}}
 #msn span{position:absolute;left:8vw;right:8vw;text-align:center;color:#fff;font-size:clamp(16px,4.8vw,26px);font-weight:700;letter-spacing:.06em;opacity:0}
-#msn span i{display:block;font-style:normal;font-size:clamp(44px,14vw,76px);line-height:1.1;margin-bottom:10px}
+#msn span i{display:block;font-style:normal;font-size:clamp(22px,7vw,38px);line-height:1.1;margin-bottom:10px}
 #msn::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 100% 0,rgba(255,196,160,.55) 0,rgba(255,150,120,.28) 9%,transparent 24%),radial-gradient(ellipse 95% 75% at 100% 0,rgba(255,138,108,.3) 0,rgba(255,120,128,.15) 38%,transparent 72%);opacity:0;animation:mslamp 1.5s ease-in-out .3s forwards}
 @keyframes mslamp{from{opacity:0}to{opacity:1}}
-#msn .m1{animation:msf1 2.5s linear 1.8s forwards}
-@keyframes msf1{0%{opacity:0}80%{opacity:.5}100%{opacity:0}}
+#msn .m1{animation:msf1 3.5s linear 1.8s forwards}   /* 暗転しきる（消える）のが次のセリフの開始（5.3秒）と同時 */
+@keyframes msf1{0%{opacity:0}57.14%{opacity:.5}100%{opacity:0}}
 #msn .m2{animation:msf2 2s linear 5.3s forwards}
 @keyframes msf2{from{opacity:0}to{opacity:.5}}
 @keyframes ltbg{0%,8%{background:#000}10%,100%{background:#050a1a}}
