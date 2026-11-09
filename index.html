@@ -2661,7 +2661,10 @@ async function peekShow(p,cd){   // cd：セカンドダイスで出ている今
   const ln=[];for(let k=1;k<=6;k++){const sq=peekSq(p,k);if(!sq.length)break;const q=sq[sq.length-1],pass=sq.slice(0,-1).some(x=>x.k==='pay'),sub=q.k==='m'?fmt(q.v):q.k==='house'?'¥'+q.pr/1000+_T("k",'千'):q.k==='gam'?'¥'+(q.st>=1000?q.st/1000+_T("k",'千'):q.st):q.k==='fz'?FZ[q.sub].sub:'',ic=q.k==='m'?(q.v>0?'💴':'💸'):q.k==='house'?'🏠':q.k==='gam'?GI[q.g||'slot']:ICON[q.k]||'';
     ln.push(`<div style='text-align:left;margin:3px 0'>${FACE[k-1]} <b>${k}${_T("",'マス先')}</b>：${ic} ${q.k==='fz'?FZ[q.sub].n:q.t}${sub?' <span style="font-size:12px;opacity:.8">'+sub+'</span>':''}${pass?' <span style="font-size:12px;opacity:.8">'+_T("(passes a payday)",'（途中で給料日を通過）')+'</span>':''}</div>`)}
   // 盤面・自分のプロフが見えるよう暗幕なし。盤面の「止まるマス」に1〜6の番号バッジを付け、画面下には「選びなおす」ボタンだけを出す（オンラインも同じ：#ovを下寄せ・暗幕なしにするだけなので全員の画面に同期される）
-  PK={};{let s=p.s,i=p.i,r=p.r;for(let k=1;k<=6;k++){const sg=B[s],len=sg.c?sg.c.length:sg[r].length;if(i+1<len)i++;else{s++;if(s>=B.length)break;i=0;const n=B[s];r=n.A?(p.job==='会社員'?'A':'B'):null}PK[s+'|'+r+'|'+i]=k;if((B[s].c?B[s].c[i]:B[s][r][i]).k==='goal')break}}
+  // 盤面の番号：分岐（A/Bルート）にかかる場合は、両方のルートのマスに番号を振る
+  PK={};{const put=(s,r,i,k)=>{PK[s+'|'+r+'|'+i]=k;if((B[s].c?B[s].c[i]:B[s][r][i]).k==='goal'||k>=6)return;step(s,r,i,k+1)},
+    step=(s,r,i,k)=>{const sg=B[s],len=sg.c?sg.c.length:sg[r].length;if(i+1<len)return put(s,r,i+1,k);const ns=s+1;if(ns>=B.length)return;const n=B[ns];if(n.A){put(ns,'A',0,k);put(ns,'B',0,k)}else put(ns,null,0,k)};
+    step(p.s,p.r,p.i,1)}
   render();
   try{const fe=document.querySelector('.pkn');if(fe)fe.closest('.cell').scrollIntoView({block:'center',behavior:'smooth'})}catch(e){}
   $('ov').classList.add('pk');document.body.classList.add('pkon');
