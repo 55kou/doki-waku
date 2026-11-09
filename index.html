@@ -765,7 +765,7 @@ const GMW={M:{bj:17,hl:15,rou:17,chin:17,horse:17,bac:17},A:{bj:20,hl:10,rou:20,
 const gmr=(r='M')=>wpick(Object.entries(GMW[r]));
 const gm=(big,r='M')=>gmk(gmr(r),big);
 let CURST=0;   // いまプレイ中のギャンブルの掛け金（0＝非表示）
-const setStk=n=>{CURST=n;const e=$('stk');if(e)e.textContent=_T("💰 Stake ",'💰 掛け金 ')+yen(n)};
+const setStk=n=>{CURST=n;const e=$('stk');if(e)e.textContent='💰 '+yen(n)};
 // チップの山：掛け金に応じて枚数が増減（1枚=500円。30枚を超える大きな賭け金は1枚の額を引き上げて表示）。色はプレイヤーのコマの色
 const shade=(hex,k)=>{const n=parseInt(hex.slice(1),16);return '#'+[16,8,0].map(sh=>Math.round(((n>>sh)&255)*k).toString(16).padStart(2,'0')).join('')};
 const chipSvg=(amt,col)=>{
@@ -788,7 +788,7 @@ const betHTML=(amt,pc,tag,col='#ffd23f')=>_TT("<div class='bbet' id='bpn' style=
 ),(tag?`<b style='color:${col}'>${tag}</b>`:''
 ),(yen(amt)
 )]);
-const gopen=(c,h)=>{const g=$('gm');g.className='show '+c;g.innerHTML=(CURST>0&&!/賭け /.test(h)?_TT("<div class='stk' id='stk'>💰 Stake {0}</div>",[`<div class='stk' id='stk'>💰 掛け金 `,`</div>`],[(yen(CURST)
+const gopen=(c,h)=>{const g=$('gm');g.className='show '+c;g.innerHTML=(CURST>0&&!/賭け /.test(h)?_TT("<div class='stk' id='stk'>💰 {0}</div>",[`<div class='stk' id='stk'>💰 `,`</div>`],[(yen(CURST)
 )]):'')+h;return g};
 const gbtnUI=o=>new Promise(r=>{const d=document.createElement('div');d.className='gb';d.innerHTML=o.map((x,i)=>`<button data-i='${i}' ${x.dis?'disabled':''} style='background:${x.c||'#7b61ff'}'>${x.l}</button>`).join('');($('cslot')||$('gm')).appendChild(d);d.querySelectorAll('button').forEach(b=>b.onclick=()=>{d.remove();r(+b.dataset.i)})});
 function coins(n){const g=$('gm');for(let k=0;k<n;k++){const c=document.createElement('span');c.className='coin';c.textContent='🪙';c.style.left=Math.random()*95+'%';c.style.animationDuration=(1+Math.random()*1.3)+'s';c.style.animationDelay=Math.random()*.7+'s';g.appendChild(c)}}
