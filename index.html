@@ -1070,7 +1070,7 @@ function bjFit(){const g=$('gm'),gs=$('gs'),gt=g.querySelector('.gt'),bh=$('bjh'
 // プレイヤーのハンド：2枚揃ってから、カードが追加されるたびに合計を表示（カードが降り切って0.5秒後）
 function totMark(e,cs){if(!e)return;e.classList.add('pt');const n=cs.length;
   if(n<2){e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');return}
-  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),900+500)}
+  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),(900+500)/2)}   // 合計の表示タイミングは半分（0.7秒後）
 function bustMark(e,on){if(!e)return;
   if(!on){if(e._bt){e._bt.forEach(clearTimeout);e._bt=null}e.classList.remove('bust','bt');return}
   if(e._bt||e.classList.contains('bust'))return;
