@@ -1429,8 +1429,8 @@ async function g1Intro(){
   d.innerHTML=_TT("<div class='g1r'></div><div class='g1t'>G1 Race</div><div class='g1s'>🏆 Special race ─ 10 horses · Trifecta available ─ 🏆</div>{0}",[`<div class='g1r'></div><div class='g1t'>G1レース</div><div class='g1s'>🏆 特別な一戦 ─ 10頭立て・三連単あり ─ 🏆</div>`,``],[(Array.from({length:14},(_,i)=>`<span class='g1k' style='left:${6+i*6.5}%;top:${22+(i*37%50)}%;animation-delay:${(i*.17).toFixed(2)}s'>✦</span>`).join('')
 )]);
   document.body.appendChild(d);
-  [523,659,784,1047].forEach((f,i)=>{snd(f,.22,'square',.06,i*.12);snd(f/2,.22,'triangle',.05,i*.12)});
-  snd(1319,.7,'triangle',.07,.55);snd(1568,.7,'square',.04,.55);snd(2093,.3,'triangle',.05,.9);
+  [523,659,784,1047].forEach((f,i)=>{snd(f,.22,'square',.03,i*.12);snd(f/2,.22,'triangle',.025,i*.12)});   // ファンファーレの音量は半分
+  snd(1319,.7,'triangle',.035,.55);snd(1568,.7,'square',.02,.55);snd(2093,.3,'triangle',.025,.9);
   await sleep(2700);d.remove();bgmMute(0);
 }
 // 三連単の買い目づくり（通常／ボックス／流し／フォーメーション）。組み合わせを「セット」して、賭け金の範囲内で複数の買い方を合わせて購入できる。
