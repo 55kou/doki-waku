@@ -361,7 +361,7 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 .dn{background:#fff!important;color:#222;font-size:34px;line-height:1;padding:8px 10px!important;transition:transform .15s}
 .dn.on{background:#ffd23f!important;box-shadow:0 0 18px #ffd23f;transform:translateY(-6px) scale(1.1)}
 .c-gov{--x:#6b7a8f}.c-fz{--x:#c2185b}.c-hosp{--x:#17a2b8}.c-shop{--x:#ff7043}.c-item{--x:#26a69a}.c-fz .v{font-size:9px}
-.bjh .cd{animation-duration:.45s}   /* ブラックジャックのカードが着くまで・合計が出るまでを半分に */
+.bjh .cd{animation-duration:.72s}   /* ブラックジャックのカードが着くまでを20%短縮（0.9秒→0.72秒） */
 .cd{animation:flp .9s ease-out}@keyframes flp{from{transform:perspective(400px) rotateY(95deg) translateY(-80px);opacity:.1}60%{transform:perspective(400px) rotateY(-14deg)}}
 .sticky{padding-top:2px}
 h1{padding-right:125px;font-size:clamp(14px,4.8vw,24px);line-height:1.3}
@@ -1095,7 +1095,7 @@ function bjFit(){const g=$('gm'),gs=$('gs'),gt=g.querySelector('.gt'),bh=$('bjh'
 const actHB=hi=>document.querySelectorAll('#bjh .hb').forEach((el,i)=>{el.classList.toggle('act',hi>=0&&i===hi);el.classList.toggle('idle',hi>=0&&i!==hi)});
 function totMark(e,cs){if(!e)return;e.classList.add('pt');const n=cs.length;
   if(n<2){e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');return}
-  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),450)}   // 合計は、カードが完全に着いた瞬間（配るアニメ0.45秒）に表示
+  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),450)}   // 合計は、カードが完全に着いた瞬間（合計は配るアニメ0.45秒後に表示）
 function bustMark(e,on){if(!e)return;
   if(!on){if(e._bt){e._bt.forEach(clearTimeout);e._bt=null}e.classList.remove('bust','bt');return}
   if(e._bt||e.classList.contains('bust'))return;
