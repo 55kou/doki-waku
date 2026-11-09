@@ -154,12 +154,12 @@ body.pkon{padding-bottom:90px}
 .rtray{position:relative;z-index:1;display:flex;gap:6px;justify-content:center;align-items:center;min-height:34px;margin:2px 0}.rtray .chp{min-width:32px;height:32px;font-size:11px}
 #bossm{position:fixed;inset:0;z-index:99999;overflow:hidden;pointer-events:none;background:radial-gradient(circle at 50% 50%,#1a0f35 0,#07030f 70%);animation:bsin .6s ease-out}
 @keyframes bsin{from{opacity:0}to{opacity:1}}
-#bossm .bsg{position:absolute;left:50%;top:50%;width:46vmin;height:46vmin;margin:-23vmin 0 0 -23vmin;border-radius:50%;background:radial-gradient(circle,#fff 0,#fff6c8 14%,#ffd23f88 34%,transparent 66%);opacity:0;transform:scale(.05);animation:bsgl 4.2s cubic-bezier(.5,0,.9,.6) forwards}
+#bossm .bsg{position:absolute;left:50%;top:50%;width:46vmin;height:46vmin;margin:-23vmin 0 0 -23vmin;border-radius:50%;background:radial-gradient(circle,#fff 0,#fff6c8 14%,#ffd23f88 34%,transparent 66%);opacity:0;transform:scale(.05);animation:bsgl 6s cubic-bezier(.5,0,.9,.6) -1.8s forwards}
 @keyframes bsgl{0%{opacity:0;transform:scale(.05)}12%{opacity:.5}100%{opacity:1;transform:scale(1.5)}}
-#bossm .bsr{position:absolute;left:50%;top:50%;width:0;height:0;animation:bsrot 4.2s cubic-bezier(.55,0,1,.7) forwards}
+#bossm .bsr{position:absolute;left:50%;top:50%;width:0;height:0;animation:bsrot 6s cubic-bezier(.55,0,1,.7) -1.8s forwards}
 @keyframes bsrot{from{transform:rotate(0)}to{transform:rotate(2520deg)}}
 #bossm .bsa{position:absolute;left:0;top:0;width:0;height:0}
-#bossm .bse{position:absolute;left:0;top:0;font-size:16vmin;line-height:1;margin:-8vmin 0 0 -8vmin;filter:drop-shadow(0 0 14px #ffd23f);animation:bsfall 4.2s linear forwards}
+#bossm .bse{position:absolute;left:0;top:0;font-size:16vmin;line-height:1;margin:-8vmin 0 0 -8vmin;filter:drop-shadow(0 0 14px #ffd23f);animation:bsfall 6s linear -1.8s forwards}
 @keyframes bsfall{0%{transform:translateX(36vmin) scale(1);opacity:1}92%{transform:translateX(3vmin) scale(.5);opacity:1}100%{transform:translateX(0) scale(.1);opacity:0}}
 #bossm .bsb{position:absolute;inset:0;opacity:0;background:linear-gradient(115deg,#6b3f00 0%,#e0a100 18%,#fff3a8 32%,#f2b632 46%,#8a5200 62%,#ffe27a 78%,#b87400 100%);background-size:260% 260%;animation:bsbin .1s 4.5s forwards,bsgold 3s linear 4.5s infinite}
 @keyframes bsbin{to{opacity:1}}@keyframes bsgold{from{background-position:0 0}to{background-position:260% 260%}}
@@ -2427,7 +2427,7 @@ async function bossScene(){
   const kd=Array.from({length:52},(_,i)=>`<span class='bsm' style='left:${(Math.random()*94+1).toFixed(1)}%;font-size:${(3+Math.random()*3.2).toFixed(1)}vh;animation-delay:${(6.4+Math.random()*3.4).toFixed(2)}s;animation-duration:${(2.2+Math.random()*1.4).toFixed(2)}s;--rt:${(Math.random()<.5?-1:1)*(360+Math.random()*540)|0}deg'>${['👶','👦','🐒'][i%3]}</span>`).join('');   // 文字が出終わる8.2秒から、👶👦🐒が回転しながら下から上へ流れる
   f.innerHTML=`<div class='bsg'></div><div class='bsr'>${em}</div><div class='bsb'>${sp}</div><div class='bsw'></div><div class='bsk'>${kd}</div><div class='bst'><small class='bsu'>🐒🍼🧔‍♂️→🐵</small><b>${_T("Boss Monkey",'ボス猿')}</b><small>${_T("Three titles become one!",'3つの称号が1つに！')}</small></div>`;
   document.body.appendChild(f);
-  for(let k=0;k<44;k++)snd(90+k*k*1.1,.16,'sine',.04+k*.0012,k*.135*.7);   // だんだん高く速くなる吸い込み音
+  for(let k=13;k<44;k++)snd(90+k*k*1.1,.16,'sine',.04+k*.0012,(k-13)*.135);   // だんだん高く速くなる吸い込み音
   snd(60,1.2,'sawtooth',.12,4.2);[1047,1319,1568,2093].forEach((fq,i)=>snd(fq,.9,'triangle',.07,4.3+i*.06));
   [523,659,784,1047,1319,1568].forEach((fq,i)=>{snd(fq,.5,'square',.05,5.6+i*.1);snd(fq/2,.5,'triangle',.06,5.6+i*.1)});
   await new Promise(r=>setTimeout(r,10400));f.remove();
@@ -2440,7 +2440,7 @@ async function bigDadScene(p){
   const sp=Array.from({length:46},()=>`<span class='bsp' style='left:${(Math.random()*96).toFixed(1)}%;top:${(Math.random()*96).toFixed(1)}%;font-size:${(10+Math.random()*22).toFixed(0)}px;animation-delay:${(5.2+Math.random()*2.4).toFixed(2)}s;animation-duration:${(.9+Math.random()*1.2).toFixed(2)}s'>${Math.random()<.5?'✦':'•'}</span>`).join('');
   f.innerHTML=`<div class='bsg'></div><div class='bsr'>${em}</div><div class='bsb'>${sp}</div><div class='bsw'></div><div class='bst'><div class='bde'>🧔‍♂️</div><b data-t='${_T("Big Daddy",'ビッグダディ')}'>${_T("Big Daddy",'ビッグダディ')}<i class='bdsp' style='left:-2%;top:-30%'>✦</i><i class='bdsp' style='right:4%;top:-22%;animation-delay:7.3s'>✦</i><i class='bdsp' style='left:46%;bottom:-26%;animation-delay:8s;font-size:.3em'>✦</i></b><div class='bdk'>${kids.join('')}</div></div>`;
   document.body.appendChild(f);
-  for(let k=0;k<44;k++)snd(90+k*k*1.1,.16,'sine',.04+k*.0012,k*.135*.7);
+  for(let k=13;k<44;k++)snd(90+k*k*1.1,.16,'sine',.04+k*.0012,(k-13)*.135);
   snd(60,1.2,'sawtooth',.12,4.2);[1047,1319,1568,2093].forEach((fq,i)=>snd(fq,.9,'triangle',.07,4.3+i*.06));
   [523,659,784,1047,1319,1568].forEach((fq,i)=>{snd(fq,.5,'square',.05,5.6+i*.1);snd(fq/2,.5,'triangle',.06,5.6+i*.1)});
   await new Promise(r=>setTimeout(r,10400));f.remove();
