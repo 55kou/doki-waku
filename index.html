@@ -599,7 +599,7 @@ let B,P,cur,busy,over,fin,goldNow=false;
 const wealth=p=>p.m-(p.loan||0);
 // 全員競馬のあと：最下位への金のサイコロ特典のお知らせ（2.5秒で自動で消える・緑のバーが減っていく）
 async function goldNotice(){
-  $('box').innerHTML=`<b>${_T("🌟 Last-place bonus",'🌟 最下位ボーナス')}</b><div style='font-size:18px;font-weight:900;line-height:1.6;margin:6px 0 4px'>${_T("The player in last place has a 50% chance each turn to roll the Golden Dice!",'最下位の人には毎ターン50%の確率で金のサイコロが振れます')}</div><div class='gnb'><i></i></div>`;
+  $('box').innerHTML=`<b>${_T("🌟 Last-place bonus",'🌟 最下位ボーナス')}</b><div style='font-size:18px;font-weight:900;line-height:1.6;margin:6px 0 4px'>${_T("From now on, the player in last place has a 50% chance to roll the Golden Dice!",'以後、最下位の人には50%の確率で金のサイコロが振れます')}</div><div class='gnb'><i></i></div>`;
   $('ov').classList.add('show');snd(660,.15,'triangle',.1);snd(880,.25,'triangle',.1,.12);
   await sleep(3000);$('ov').classList.remove('show')}
 async function setGold(){goldNow=false;const p=P[cur];if(!p||p.done)return;
