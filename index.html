@@ -442,7 +442,7 @@ function _staticEn(){if(_LANG!=='en')return;document.documentElement.lang='en';d
 /* ===== /i18n ===== */
 
 const CAP=Infinity,COL=['#e24b4a','#378add','#1d9e75','#f08a24','#a855d6','#e84393'];
-const JOBS=[{n:'会社員',s:2000,d:_T("Payday +2,000 / losses reduced by 30% / bonus showdown on gambling wins & losses",'給料日 +2,000／マイナスが30%減／ギャンブルの勝ち負けで追加勝負')},{n:'起業家',s:0,d:_T("Payday: dice ×1,000 / bonus showdown on gambling wins & losses",'給料日 サイコロ×1000／ギャンブルの勝ち負けで追加勝負')},{n:'ギャンブラー',s:0,d:_T("Payday: +5,000 only when you land exactly on it (no pay for passing) / gambling wins ×1.2 / win to ride the streak",'給料日 ぴったり止まった時のみ+5,000（通過では貰えない）／ギャンブル勝ち1.2倍／勝つと流れに乗れる')}];
+const JOBS=[{n:'会社員',s:2000,d:_T("Payday +2,000 / losses are halved / bonus showdown on gambling wins & losses",'給料日 +2,000／マイナスが半分／ギャンブルの勝ち負けで追加勝負')},{n:'起業家',s:0,d:_T("Payday: dice ×1,000 / bonus showdown on gambling wins & losses",'給料日 サイコロ×1000／ギャンブルの勝ち負けで追加勝負')},{n:'ギャンブラー',s:0,d:_T("Payday: +5,000 only when you land exactly on it (no pay for passing) / gambling wins ×1.3 / win to ride the streak",'給料日 ぴったり止まった時のみ+5,000（通過では貰えない）／ギャンブル勝ち1.3倍／勝つと流れに乗れる')}];
 let FAST=false;   // NPCがギャンブル中は進行速度1.5倍
 const pick=a=>a[Math.random()*a.length|0],d6=()=>1+(Math.random()*6|0),sleep=ms=>new Promise(r=>setTimeout(r,FAST?ms/1.5:ms)),$=id=>document.getElementById(id);
 const yen=n=>'¥'+n.toLocaleString('ja-JP');
@@ -554,7 +554,7 @@ function sqVal(p,q,last){   // マスの期待値（円）
   const g=p.job==='ギャンブラー',sal=p.job==='会社員'?2000:p.job==='起業家'?3500:0;
   if(q.k==='pay')return g?(last?5000:0):sal;
   if(!last)return 0;
-  if(q.k==='m')return q.v<0&&p.job==='会社員'?q.v*.7:q.v;
+  if(q.k==='m')return q.v<0&&p.job==='会社員'?q.v/2:q.v;
   if(q.k==='gam')return q.st*(g?.03:-.02);
   if(q.k==='fz')return q.sub==='uri'?3000:-3500;
   if(q.k==='hosp')return Object.keys(p.std||{}).length?2000:0;
@@ -634,7 +634,7 @@ function log(s){TL.push(s);if(typeof P!=='undefined'&&P)P.forEach(p=>{if(s.inclu
 let actor=null,NCFG=null,gctx={};
 function askUI(title,opts){return new Promise(r=>{$('box').innerHTML=`<b>${title}</b>`+opts.map((o,i)=>`<button data-i="${i}" style="background:${o.c||'#378add'}">${o.l}<small>${o.s||''}</small></button>`).join('');$('ov').classList.add('show');$('box').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('ov').classList.remove('show');r(+b.dataset.i)})})}
 function add(p,v,why,raw){
-  if(!raw&&v<0&&p.job==='会社員')v=Math.round(v*.7/10)*10;
+  if(!raw&&v<0&&p.job==='会社員')v=Math.round(v/20)*10;
   const o=p.m;p.m=Math.min(CAP,p.m+v);pop(p,p.m-o);
   log(_TT("{0}: {1} <b class=\"{2}\">{3}{4}</b>{5}",[``,`：`,` <b class="`,`">`,``,`</b>`,``],[(p.n
 ),(why
@@ -1046,7 +1046,7 @@ async function chin(p,st){
   if(pr.rk>dr.rk)res=x;
   else if(pr.rk<dr.rk)res=-x;
   if(pr.rk===200){p.pinzo=1;if(res>0&&x>=10)p.pinzo10=1}   // 実績：ピンゾロ／ピンゾロで10倍以上の配当で勝つ
-  const u=st%100?10:100,vv=Math.round(res*st/u)*u,gbv=res>0&&p.job==='ギャンブラー'?Math.round(vv*1.2/10)*10:0;
+  const u=st%100?10:100,vv=Math.round(res*st/u)*u,gbv=res>0&&p.job==='ギャンブラー'?Math.round(vv*1.3/10)*10:0;
   const detail=_TT("<div class='cd1'>Dealer: <b>{0}</b>　Hand multiplier ×{1}</div><div class='cd1'>{2}: <b>{3}</b>　Hand multiplier ×{4}</div><div class='cd2 {5}'>{6}</div><div class='cd3'>{7}</div><div class='cd4'>👆 Tap to close</div>",[`<div class='cd1'>ディーラー：<b>`,`</b>　役の倍率 ×`,`</div><div class='cd1'>`,`：<b>`,`</b>　役の倍率 ×`,`</div><div class='cd2 `,`'>`,`</div><div class='cd3'>`,`</div><div class='cd4'>👆 タップで閉じる</div>`],[(dr.n
 ),(dr.m
 ),(p.n
@@ -1669,7 +1669,7 @@ async function game(p,q){
     CURST=st;let v=await fn(p,st,bw,cons),paid=0;bw=null;CURST=0;
     if(v&&typeof v==='object'){paid=v.paid;if(v.stake)st=v.stake;v=v.net}
     p.m+=paid;
-    if(v>0&&p.job==='ギャンブラー')v=Math.round(v*1.2/10)*10;
+    if(v>0&&p.job==='ギャンブラー')v=Math.round(v*1.3/10)*10;
     add(p,v,`${q.t}${xr?_T(" (bonus round)",'（追加勝負）'):''}${v>0?_T(" — won",'に勝利'):v<0?_T(" — lost",'に敗北'):_T(" — draw",'は引き分け')}`,true);
     if(v>0)await crownCheck(p,q.g);
     if(v<0){
@@ -2483,7 +2483,7 @@ async function land(p){
     const i=await ask(_TT("{0}: bet {1}?",[``,`：`,`を賭ける？`],[(q.t
 ),(yen(q.st)
 )]),[{l:_T("Bet",'賭ける'),s:_T("Dice 6: +4× / 5: +1× / 4: ±0 / 1–3: forfeited",'サイコロ 6:+4倍 5:+1倍 4:±0 1〜3:没収'),c:'#e8a317'},{l:_T("Pass",'やめておく'),c:'#888'}]);
-    if(i===0){const d=d6();await jackpot(p,d,q.st>=3000);let v=d===6?q.st*4:d===5?q.st:d===4?0:-q.st;if(v>0&&p.job==='ギャンブラー')v=Math.round(v*1.2/10)*10;sd(d);add(p,v,_TT("{0} (roll {1})",[``,`（出目`,`）`],[(q.t
+    if(i===0){const d=d6();await jackpot(p,d,q.st>=3000);let v=d===6?q.st*4:d===5?q.st:d===4?0:-q.st;if(v>0&&p.job==='ギャンブラー')v=Math.round(v*1.3/10)*10;sd(d);add(p,v,_TT("{0} (roll {1})",[``,`（出目`,`）`],[(q.t
 ),(d
 )]),true)}
   }else if(q.k==='house'){
