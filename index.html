@@ -2244,7 +2244,7 @@ async function fuzoku(p,q){
     await ask(_T("🌟 Grand Nightlife Master is born!",'🌟 グランド風俗マスター誕生！'),[{l:_T("Earned the Grand Nightlife Master title!",'グランド風俗マスターの称号を獲得！'),s:_T("Conquered all 5 kinds. Your own nightlife (except Uri-sen) is completely free. When another player lands on a nightlife square they pay 50% more, and you receive 50% of the regular price",'5種類すべて制覇。自分の風俗（売り専を除く）は全額タダ。他のプレイヤーが風俗マスに止まると、その人の支払いが50%増しになり、さらに正規料金の50%を受け取れます'),c:'#c2185b'}]);
   }else if(m3&&!p.master){
     await lightningScene(_T("Nightlife Master",'風俗マスター'));
-    p.master=1;log(_TT("👑 {0}: conquered Pink salon, Delivery health, Soapland and Men's esthetic! Earned the <b class='pos'>Nightlife Master</b> title",[`👑 `,`：ピンサロ・デリヘル・ソープ・メンエスを制覇！ <b class='pos'>風俗マスター</b>の称号を獲得`],[(p.n
+    p.master=1;p.mfirst=1;log(_TT("👑 {0}: conquered Pink salon, Delivery health, Soapland and Men's esthetic! Earned the <b class='pos'>Nightlife Master</b> title",[`👑 `,`：ピンサロ・デリヘル・ソープ・メンエスを制覇！ <b class='pos'>風俗マスター</b>の称号を獲得`],[(p.n
 )]));
     await ask(_T("👑 Nightlife Master is born!",'👑 風俗マスター誕生！'),[{l:_T("Earned the Nightlife Master title!",'風俗マスターの称号を獲得！'),s:_T("Your own nightlife (except Uri-sen) is half price. When another player lands on a nightlife square they pay 25% more, and you receive 25% of the regular price",'自分の風俗（売り専を除く）は半額。他のプレイヤーが風俗マスに止まると、その人の支払いが25%増しになり、さらに正規料金の25%を受け取れます'),c:'#c2185b'}]);
   }
@@ -2690,7 +2690,7 @@ const ACHDEF=()=>[
  {id:'red',rate:30,ok:p=>!!p.done&&p.m<0,t:_T("In the red",'借金ゴール'),s:_T("Reach the goal with less than ¥0",'所持金マイナスでゴールする')},
  {id:'pk',rate:51,ok:p=>haramase(p),t:_T("Baby Maker",'孕ませマン'),s:_T("Have a child who pays child support",'養育費を払っている子供がいる')},
  {id:'bd',rate:52,ok:p=>bigDad(p),t:_T("Big Daddy",'ビッグダディ'),s:_T("Have 5 children in total",'子供が合計5人になる')},
- {id:'master',rate:50,ok:p=>!!p.master,t:_T("Nightlife Master",'風俗マスター'),s:_T("Visit the pink salon, delivery health, soapland and Menesu",'ピンサロ・デリヘル・ソープ・メンエスの4店に通う')},
+ {id:'master',rate:50,ok:p=>!!p.mfirst,t:_T("Nightlife Master",'風俗マスター'),s:_T("Visit the pink salon, delivery health, soapland and Menesu",'ピンサロ・デリヘル・ソープ・メンエスの4店に通う')},
  {id:'twin',rate:45,ok:p=>!!p.twin,t:_T("Twins!",'双子誕生'),s:_T("Have twins",'双子が産まれる')},
  {id:'grand',rate:43,ok:p=>!!p.grand,t:_T("Grand Nightlife Master",'グランド風俗マスター'),s:_T("Visit all 5 venues, including uri-sen",'売り専を含む5店すべてに通う')},
  {id:'div',rate:25,ok:p=>!!p.hdiv,t:_T("Divorced",'離婚'),s:_T("Get divorced",'離婚する')},
@@ -3148,7 +3148,7 @@ function setup(){
 async function init(){BGMX=0;bgmVol();try{if(NET.role==='host'&&NET.guests.length)NETbc({t:'bgm',on:0})}catch(e){}NET.playing=false;
   const cfg=await setup();NCFG=cfg;actor=null;
   B=build();fin=[];cur=0;goldNow=false;over=false;busy=true;$('log').innerHTML='';$('dice').textContent='-';
-  ROUH.length=0;MH.length=0;P=Array.from({length:cfg.n},(_,i)=>({n:NMname(cfg,i),npc:cfg.npc[i]?1:0,c:COL[i],m:10000,s:0,r:null,i:0,done:false,kids:0,wed:0,job:null,conf:0,baikin:0,cc:0,sup:0,pk:0,ape:0,kt:'',ichizu:0,last:null,streak:0,lg:[],gw:{},king:0,std:{},fv:{},fm:{},cand:0,pend:[],tk:0,prep:0,gold:0,sage:0,fstop:0,master:0,grand:0,ost:0,loan:0,fwed:0,div:0,hist:{},it:{sigoro:0,news:0,sagami:0,dbl:0},single:0}));
+  ROUH.length=0;MH.length=0;P=Array.from({length:cfg.n},(_,i)=>({n:NMname(cfg,i),npc:cfg.npc[i]?1:0,c:COL[i],m:10000,s:0,r:null,i:0,done:false,kids:0,wed:0,job:null,conf:0,baikin:0,cc:0,sup:0,pk:0,ape:0,kt:'',ichizu:0,last:null,streak:0,lg:[],gw:{},king:0,std:{},fv:{},fm:{},cand:0,pend:[],tk:0,prep:0,gold:0,sage:0,fstop:0,master:0,mfirst:0,grand:0,ost:0,loan:0,fwed:0,div:0,hist:{},it:{sigoro:0,news:0,sagami:0,dbl:0},single:0}));
   if(NET.role==='host')NETseat(cfg);
   {const nm=P.map(p=>p.n);P.forEach((p,i)=>{if(nm.indexOf(p.n)!==i)p.n+=(i+1)})}
   MH.push(P.map(x=>x.m));
