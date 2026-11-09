@@ -361,6 +361,9 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 .hand.bust[data-tot]::before,.hand.bt[data-tot]::before{background:#e53935;color:#fff}
 @keyframes bustup{from{opacity:0;transform:translateY(10%) rotate(-8deg) scale(.4)}to{opacity:1;transform:translateY(-50%) rotate(-8deg) scale(1)}}
 @keyframes dl{from{transform:translateY(-120px) rotate(-30deg);opacity:0}}
+.gb button.rec{position:relative;overflow:hidden;box-shadow:0 0 0 2px #fff9,0 0 16px 3px #ffe58a99}
+.gb button.rec::after{content:'';position:absolute;top:-30%;left:-70%;width:38%;height:160%;background:linear-gradient(100deg,transparent,#fffe,transparent);transform:skewX(-20deg);animation:recsh 1.7s ease-in-out infinite;pointer-events:none}
+@keyframes recsh{0%{left:-70%}55%,100%{left:140%}}
 .gb{position:relative;z-index:1;display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center}.gb button{padding:12px 16px}
 .lab{position:relative;z-index:1;color:#fff;font-weight:800;margin:8px 0 2px;text-shadow:0 2px 0 #000;font-size:13px}
 .wh{position:relative;z-index:1;margin-top:18px}.ptr{position:absolute;top:-24px;left:50%;transform:translateX(-50%);z-index:3;font-size:28px}
@@ -665,6 +668,42 @@ async function npcAsk(title,opts){const title0=title,opts0=opts;title=_pk(title,
   return 0;
 }
 const bjV=n=>n>10?10:n;
+// ===== ブラックジャックの「おすすめアクション」：このゲームのルールで期待値を計算して、いちばん得なボタンを返す（山札は無限・ディーラーはS17・スプリット後のダブル可） =====
+// フリーベット：ディーラー22はプッシュ／9・10・11の無料ダブル／10以外のペアの無料スプリット（2つ目の手は負けても失わない）／ＢＪ（スプリット後の21含む）は1.2倍（通常1.5倍）
+const BJPR=[0,1,1,1,1,1,1,1,1,1,4].map(x=>x/13);   // 引く札の点数（1=A）の確率（10は10・J・Q・Kで4/13）
+const BJDC={};
+function bjDealerDist(up,fb){   // ディーラーの最終結果の確率：17〜21／ちょうど22／23以上
+  const key=up+'|'+fb;if(BJDC[key])return BJDC[key];
+  const memo={};
+  const f=(h,a)=>{const k=h+','+a;if(memo[k])return memo[k];
+    const t=(a&&h+10<=21)?h+10:h;let o;
+    if(t>=17){o={17:0,18:0,19:0,20:0,21:0,22:0,23:0};o[Math.min(t,23)]=1}
+    else{o={17:0,18:0,19:0,20:0,21:0,22:0,23:0};for(let v=1;v<=10;v++){const r=f(h+v,a||v===1);for(const x in o)o[x]+=BJPR[v]*r[x]}}
+    return memo[k]=o};
+  const u=up>10?10:up,r=f(u,up===1);r.nat=up===1?BJPR[10]:u===10?BJPR[1]:0;
+  return BJDC[key]=r;
+}
+function bjBest(cards,up,fb,canD,canS,L0=1){
+  const D=bjDealerDist(up,fb),v1=n=>n>10?10:n,WB=fb?1.2:1.5;
+  const stand=(h,a,W,L)=>{const t=(a&&h+10<=21)?h+10:h;if(t>21)return -L;let pw=D[23]+(fb?0:D[22]),pl=0;for(let d=17;d<=21;d++){if(d<t)pw+=D[d];else if(d>t)pl+=D[d]}return W*pw-L*pl};
+  const hm={};
+  const hit=(h,a,W,L)=>{const k=h+','+a+','+W+','+L;if(k in hm)return hm[k];let e=0;
+    for(let v=1;v<=10;v++){const nh=h+v,na=a||v===1;e+=BJPR[v]*(nh>21?-L:Math.max(stand(nh,na,W,L),hit(nh,na,W,L)))}
+    return hm[k]=e};
+  const dbl=(h,a,W,L,free)=>{let e=0;const W2=W*2,L2=free?L:L+1;for(let v=1;v<=10;v++){const nh=h+v,na=a||v===1;e+=BJPR[v]*(nh>21?-L2:stand(nh,na,W2,L2))}return e};
+  const hardFree=(h,a)=>fb&&!a&&h>=9&&h<=11;   // 無料ダブルの条件（ソフトハンドは不可）
+  const two=(h,a,W,L,split)=>{   // ペアを分けた後の1つの手（2枚）の最善の期待値
+    const t=(a&&h+10<=21)?h+10:h;if(split&&t===21)return W*WB*(1-D.nat);
+    return Math.max(stand(h,a,W,L),hit(h,a,W,L),dbl(h,a,W,L,hardFree(h,a)))};
+  const hs=cards.map(v1),h=hs.reduce((x,y)=>x+y,0),a=cards.includes(1),two2=cards.length===2;
+  const ev={stand:stand(h,a,1,L0),hit:hit(h,a,1,L0)};   // L0：負けた時に失う額（2つ目の無料スプリットの手は0）
+  if(two2&&canD)ev.dbl=dbl(h,a,1,L0,hardFree(h,a));
+  if(two2&&canS&&L0===1&&cards[0]===cards[1]){const r=cards[0],freeS=fb&&r<10;let e=0;
+    for(let c=1;c<=10;c++){e+=BJPR[c]*(two(v1(r)+c,r===1||c===1,1,1,true)+two(v1(r)+c,r===1||c===1,1,freeS?0:1,true))}
+    ev.spl=e}
+  let best='stand',bv=-9;for(const k of ['stand','hit','dbl','spl']){if(k in ev&&ev[k]>bv+1e-9){bv=ev[k];best=k}}
+  return best;
+}
 function bjBasic(cs,up,fb,canD,canS){   // ベーシックストラテジー（ディーラーS17・ダブルアフタースプリットあり）。フリーベットは無料ダブル/スプリットを最大限使う
   const u=up===1?11:bjV(up),two=cs.length===2,hardT=cs.reduce((a,n)=>a+bjV(n),0),hasA=cs.includes(1),soft=hasA&&hardT+10<=21,tot=hardT+(soft?10:0),R=(x,a,b)=>x>=a&&x<=b;
   if(two&&cs[0]===cs[1]&&canS){const r=cs[0];let sp=false;
@@ -834,7 +873,7 @@ const betHTML=(amt,pc,tag,col='#ffd23f')=>_TT("<div class='bbet' id='bpn' style=
 const gopen=(c,h)=>{const g=$('gm');g.className='show '+c;g.style.removeProperty('--cs');   // ブラックジャックで縮めたカードの大きさ(--cs)が次のゲームに残らないようにリセット
   g.innerHTML=(CURST>0&&!/賭け /.test(h)?_TT("<div class='stk' id='stk'>💰 {0}</div>",[`<div class='stk' id='stk'>💰 `,`</div>`],[(yen(CURST)
 )]):'')+h;return g};
-const gbtnUI=o=>new Promise(r=>{const d=document.createElement('div');d.className='gb';d.innerHTML=o.map((x,i)=>`<button data-i='${i}' ${x.dis?'disabled':''} style='background:${x.c||'#7b61ff'}'>${x.l}</button>`).join('');($('cslot')||$('gm')).appendChild(d);d.querySelectorAll('button').forEach(b=>b.onclick=()=>{d.remove();r(+b.dataset.i)})});
+const gbtnUI=o=>new Promise(r=>{const d=document.createElement('div');d.className='gb';d.innerHTML=o.map((x,i)=>`<button data-i='${i}' ${x.dis?'disabled':''} ${x.rec?"class='rec'":''} style='background:${x.c||'#7b61ff'}'>${x.l}</button>`).join('');($('cslot')||$('gm')).appendChild(d);d.querySelectorAll('button').forEach(b=>b.onclick=()=>{d.remove();r(+b.dataset.i)})});
 function coins(n){const g=$('gm');for(let k=0;k<n;k++){const c=document.createElement('span');c.className='coin';c.textContent='🪙';c.style.left=Math.random()*95+'%';c.style.animationDuration=(1+Math.random()*1.3)+'s';c.style.animationDelay=Math.random()*.7+'s';g.appendChild(c)}}
 async function finale(res,st,label,fast,detail,clear){const F=fast?.6:1;
   const g=$('gm'),u=st%100?10:100,v=Math.round(res*st/u)*u;
@@ -1231,6 +1270,9 @@ async function bj(p,st){
 )]),c:'#1d9e75',dis:!ok});act.push('spl')}
           }
         }
+        {const fi=k=>{const i=act.indexOf(k);return i>=0&&!opts[i].dis?i:-1},cD=fi('dbl')>=0||fi('fdbl')>=0,cS=fi('spl')>=0||fi('fspl')>=0;
+          const rec=bjBest(h.c.map(c=>c.n),D[0].n,FB,cD,cS,(h.sp&&!h.r&&!h.pd&&h.fr)?0:1);   // おすすめ（期待値が最も高い）のボタンをキラッと光らせる
+          const ri={hit:0,stand:1,dbl:fi('dbl')>=0?fi('dbl'):fi('fdbl'),spl:fi('spl')>=0?fi('spl'):fi('fspl')}[rec];if(ri>=0)opts[ri].rec=1}
         actHB(H.length>1?hi:-1);   // 複数ハンド：いま操作中のハンドを光らせ、もう一方は少し暗くする
         txt((H.length>1?_TT("Hand {0}: ",[`ハンド`,`：`],[(hi+1
 )]):_T("You: ",'あなた：'))+bv(h.c));
