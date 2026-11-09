@@ -177,6 +177,7 @@ body.pkon{padding-bottom:90px}
 /* 全員競馬：緑の背景に、紙吹雪とたくさんの小さな馬が横切る。「全員競馬」が奥から迫ってバウンスし、キラッと光る（全体で3秒） */
 :root{--grass:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='1000'%20viewBox='0%200%20600%201000'%20preserveAspectRatio='none'%3E%0A%3Cdefs%3E%0A%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='0'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%232f7d2a'/%3E%3Cstop%20offset='.45'%20stop-color='%233f9a34'/%3E%3Cstop%20offset='1'%20stop-color='%231d5e1c'/%3E%3C/linearGradient%3E%0A%3ClinearGradient%20id='st'%20x1='0'%20y1='0'%20x2='1'%20y2='0'%3E%3Cstop%20offset='0'%20stop-color='%23fff'%20stop-opacity='.0'/%3E%3Cstop%20offset='.5'%20stop-color='%23fff'%20stop-opacity='.0'/%3E%3C/linearGradient%3E%0A%3Cpattern%20id='mow'%20width='600'%20height='140'%20patternUnits='userSpaceOnUse'%3E%3Crect%20width='600'%20height='70'%20fill='%23cfffa0'%20opacity='.13'/%3E%3Crect%20y='70'%20width='600'%20height='70'%20fill='%2305260a'%20opacity='.12'/%3E%3C/pattern%3E%0A%3Cfilter%20id='b1'%20x='0'%20y='0'%20width='100%25'%20height='100%25'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='.55%20.035'%20numOctaves='3'%20seed='4'%20result='n'/%3E%3CfeColorMatrix%20in='n'%20type='matrix'%20values='0%200%200%200%20.12%20%200%200%200%20.9%20.28%20%200%200%200%200%20.08%20%200%200%200%20.0%20.75'/%3E%3C/filter%3E%0A%3Cfilter%20id='b2'%20x='0'%20y='0'%20width='100%25'%20height='100%25'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='1.3%20.09'%20numOctaves='2'%20seed='9'%20result='n'/%3E%3CfeColorMatrix%20in='n'%20type='matrix'%20values='0%200%200%20.6%20.55%20%200%200%200%201.3%20.35%20%200%200%200%200%20.08%20%200%200%200%20-1.6%201.0'/%3E%3C/filter%3E%0A%3Cfilter%20id='b3'%20x='0'%20y='0'%20width='100%25'%20height='100%25'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='.012%20.02'%20numOctaves='3'%20seed='2'/%3E%3CfeColorMatrix%20type='matrix'%20values='0%200%200%200%20.1%20%200%200%200%200%20.35%20%200%200%200%200%20.05%20%200%200%200%201.4%20-.45'/%3E%3C/filter%3E%0A%3CradialGradient%20id='v'%20cx='.5'%20cy='.45'%20r='.75'%3E%3Cstop%20offset='.45'%20stop-color='%23000'%20stop-opacity='0'/%3E%3Cstop%20offset='1'%20stop-color='%2302170a'%20stop-opacity='.72'/%3E%3C/radialGradient%3E%0A%3CradialGradient%20id='sun'%20cx='.5'%20cy='.05'%20r='.7'%3E%3Cstop%20offset='0'%20stop-color='%23ffffcc'%20stop-opacity='.55'/%3E%3Cstop%20offset='.6'%20stop-color='%23fff'%20stop-opacity='0'/%3E%3C/radialGradient%3E%0A%3C/defs%3E%0A%3Crect%20width='100%25'%20height='100%25'%20fill='url(%23g)'/%3E%0A%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23b3)'%20opacity='.5'/%3E%0A%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23b1)'%20opacity='.9'/%3E%0A%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23b2)'%20opacity='.55'/%3E%0A%3Crect%20width='100%25'%20height='100%25'%20fill='url(%23mow)'/%3E%0A%3Crect%20width='100%25'%20height='100%25'%20fill='url(%23sun)'/%3E%0A%3Crect%20width='100%25'%20height='100%25'%20fill='url(%23v)'/%3E%0A%3C/svg%3E")}   /* 芝生のイラスト（SVGフィルターで描画）：全員競馬の演出と、競馬（G1以外）のレース画面の背景 */
 #gm.felt.grass{background:#2f7d2a var(--grass) center/cover no-repeat}
+#gm.felt.grass.dk{background:linear-gradient(#0000002e,#0000002e),#2f7d2a var(--grass) center/cover no-repeat}   /* レース中だけ、走路と数字が読みやすいように背景をほんの少し暗くする */
 #ahm{position:fixed;inset:0;z-index:99999;overflow:hidden;pointer-events:none;background:#2f7d2a var(--grass) center/cover no-repeat;animation:ahin .2s ease-out,ahout .25s 2.75s forwards}
 @keyframes ahin{from{opacity:0}to{opacity:1}}@keyframes ahout{to{opacity:0}}
 #ahm .aht{position:absolute;left:0;right:0;top:46%;text-align:center;transform:translateY(-50%);z-index:3}
@@ -1281,7 +1282,7 @@ async function allHorse(){
   actor=keep;
   gopen('felt grass',`<div class='gt' id='gt2'>${_T("🐎 Just before the start… 🐎",'🐎 スタート直前… 🐎')}</div><div id='ln'></div><div class='gs' id='gs'></div>`);
   $('ln').innerHTML=names.map((m,i)=>{const o=taken.get(i);return `<div class='ln ${o?'':''}'><b>${i+1}</b><div class='lt'><span class='hs' id='h${i}'>🐎</span></div><span class='od'>${od[i].toFixed(1)}×</span>${o?`<span style='font-size:10px;font-weight:800;width:58px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:${o.c}'>${o.n}</span>`:'<span style="width:58px"></span>'}</div>`}).join('');
-  await tease(6);$('gt2').textContent=_T("🏇 And they're off! 🏇",'🏇 レース開始！ 🏇');snd(880,.25,'square',.1);
+  $('gm').classList.add('dk');await tease(6);$('gt2').textContent=_T("🏇 And they're off! 🏇",'🏇 レース開始！ 🏇');snd(880,.25,'square',.1);
   const Tw=7+Math.random()*1.5,T=(()=>{const t=[];let c=Tw;ord.forEach((h,r)=>{if(r>0)c+=.25+Math.random()*(r<3?.5:.9);t[h]=c});return t})(),ph=names.map(()=>Math.random()*6);
   const comeback=Math.random()<.65,G=names.map((_,i)=>i===win?(comeback?1.35+Math.random()*.4:.72+Math.random()*.2):(Math.random()<.4?.55+Math.random()*.2:Math.random()<.4?1.15+Math.random()*.3:.85+Math.random()*.3));
   let k=0,fin=false,pl2=-1,msg='',until=0;
@@ -1296,7 +1297,7 @@ async function allHorse(){
     else if(!fin){fin=true;$('gt2').textContent=_T("🏁 FINISH!! 🏁",'🏁 ゴール！！ 🏁');$('gs').textContent='';snd(1047,.3,'square',.1)}
     await sleep(60);
   }
-  await sleep(900);
+  await sleep(900);$('gm').classList.remove('dk');
   // 結果：1着の馬を選んだ人が、給付金×オッズを受け取る（給付金そのものは元手なので、外れても資金は減らない）
   const winner=taken.get(win),pay=Math.round(GR*od[win]/10)*10,medal=['🥇','🥈','🥉'];
   const rows=ord.slice(0,3).map((h,r)=>`${medal[r]} ${h+1}${_T(" ",'番 ')}${names[h]}${taken.get(h)?`（${taken.get(h).n}）`:`（${_T("no bettor",'購入者なし')}）`}`).join('<br>');
@@ -1533,7 +1534,7 @@ async function horse(p,st){
 ),(OD[i].toFixed(1)
 )])).join('');
   if(g1)bgmMute(1);   // G1のレース中は専用のビートが流れるので通常のBGMは切る
-  await tease(6);$('gt2').textContent=_T("🏇 And they're off! 🏇",'🏇 レース開始！ 🏇');snd(880,.25,'square',.1);
+  $('gm').classList.add('dk');await tease(6);$('gt2').textContent=_T("🏇 And they're off! 🏇",'🏇 レース開始！ 🏇');snd(880,.25,'square',.1);
   const Tw=(g1?12:8)+Math.random()*2,T=(()=>{const t=[];let c=Tw;ord.forEach((h,r)=>{if(r>0)c+=.25+Math.random()*(r<3?.5:.9);t[h]=c});return t})(),ph=names.map(()=>Math.random()*6);
   // 脚質：指数<1=逃げ（序盤に飛び出し失速）／指数>1=追込（終盤に伸びる）。1着の馬は65%で追込にして逆転を演出（着順は元の抽選のまま）
   const comeback=Math.random()<.65,G=names.map((_,i)=>i===win?(comeback?1.35+Math.random()*.4:.72+Math.random()*.2):(Math.random()<.4?.55+Math.random()*.2:Math.random()<.4?1.15+Math.random()*.3:.85+Math.random()*.3));
@@ -1568,7 +1569,7 @@ async function horse(p,st){
     else if(!fin){fin=true;if(g1)names.forEach((_,i)=>{$('x'+i).textContent=''});$('gt2').textContent=_T("🏁 FINISH!! 🏁",'🏁 ゴール！！ 🏁');$('gs').textContent='';snd(1047,.3,'square',.1)}
     await sleep(60);
   }
-  await sleep(900);
+  await sleep(900);$('gm').classList.remove('dk');
   if(g1)bgmMute(0);
   {   // ゴール後は着順を表示したまま、タップするまで次へ進まない（NPCは少し見せて自動で進む）
     const medal=['🥇','🥈','🥉'],mark=i=>mine.has(i)?_T(" <span class=\"rm\">◀ Bet</span>",'　<span class="rm">◀ 購入馬</span>'):'';
