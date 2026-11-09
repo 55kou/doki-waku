@@ -720,41 +720,11 @@ ev.forEach(e=>addEventListener(e,unlock,{passive:true,capture:true}));
 addEventListener('visibilitychange',()=>{if(!document.hidden)unlock()});addEventListener('focus',unlock);addEventListener('pageshow',unlock);
 try{bgmStart();if(AC)AC.onstatechange=ACstate}catch(e){}
 document.readyState==='loading'?addEventListener('DOMContentLoaded',unlock):unlock()}
-const SY=['🍒','🔔','💎','7️⃣','⭐'];
-async function jackpot(p,d,big){
-  const g=$('gm');
-  g.className='show';
-  g.innerHTML=_TT("<div class=\"gt\" id=\"gt\">{0}</div><div class=\"reels\"><div class=\"reel\" id=\"r0\"></div><div class=\"reel\" id=\"r1\"></div><div class=\"reel\" id=\"r2\"></div></div><div class=\"gs\" id=\"gs\">{1}'s turn!</div>",[`<div class="gt" id="gt">`,`</div><div class="reels"><div class="reel" id="r0"></div><div class="reel" id="r1"></div><div class="reel" id="r2"></div></div><div class="gs" id="gs">`,` の勝負！</div>`],[(big?'🎰 CASINO 🎰':'🎰 CHANCE 🎰'
-),(p.n
-)]);
-  const R=[0,1,2].map(i=>$('r'+i)),spin=[1,1,1];
-  const iv=setInterval(()=>{R.forEach((r,i)=>{if(spin[i]){r.textContent=pick(SY);r.classList.add('spin')}});snd(220+Math.random()*260,.04,'square',.03)},80);
-  const tri=d===6?'7️⃣':d===5?'💎':null;let L=tri,M=tri,Z=tri;
-  if(d===4){L='🔔';M='🔔';Z='🍒'}
-  else if(d<4){const rc=Math.random()<.5;L=pick(SY);M=rc?L:pick(SY.filter(s=>s!==L));Z=pick(SY.filter(s=>s!==L))}
-  const stop=(i,s)=>{spin[i]=0;R[i].classList.remove('spin');R[i].textContent=s;snd(520+i*150,.18,'triangle',.14)};
-  await sleep(big?2000:1500);stop(0,L);
-  await sleep(big?1700:1300);stop(1,M);
-  if(L===M){
-    $('gt').textContent=_T("🔥 REACH!! 🔥",'🔥 リーチ！！ 🔥');$('gs').textContent=_T("…come on…!",'…来い…！');g.classList.add('shake');
-    for(let k=0;k<(big?16:11);k++){snd(100+(k%2)*45,.13,'sawtooth',.1);if(k>3)snd(500+k*40,.05,'square',.03);await sleep(230)}
-    await sleep(big?1500:1000);g.classList.remove('shake');
-  }else await sleep(1200);
-  clearInterval(iv);if(L===M){$('gs').textContent=_T("Last reel…!",'最後のリール…！');for(let k=0;k<6;k++){R[2].textContent=k===5?L:pick(SY);snd(300+k*60,.12,'triangle',.1);await sleep(280+k*190)}}stop(2,Z);g.classList.add('flash');
-  await sleep(300);
-  const t=$('gt'),s=$('gs'),coins=n=>{for(let k=0;k<n;k++){const c=document.createElement('span');c.className='coin';c.textContent='🪙';c.style.left=Math.random()*95+'%';c.style.animationDuration=(1+Math.random()*1.3)+'s';c.style.animationDelay=Math.random()*.7+'s';g.appendChild(c)}};
-  if(d===6){g.classList.add('win');t.textContent=_T("💎 JACKPOT!! 💎",'💎 大 当 た り ！！ 💎');s.textContent=_T("Roll 6: prize ×4!!",'出目6：賞金 4倍！！');[523,659,784,1047,784,1047,1319,1568].forEach((f,i)=>{snd(f,.28,'square',.063,i*.13);snd(f/2,.28,'triangle',.056,i*.13)});coins(36);await sleep(3200)}
-  else if(d===5){g.classList.add('win');t.textContent=_T("✨ WIN! ✨",'✨ 当 た り ！ ✨');s.textContent=_T("Roll 5: prize ×1!",'出目5：賞金 1倍！');[523,659,784,1047].forEach((f,i)=>snd(f,.25,'square',.063,i*.12));coins(14);await sleep(2400)}
-  else if(d===4){t.textContent=_T("😮 SAFE 😮",'😮 セーフ 😮');s.textContent=_T("Roll 4: ±0",'出目4：±0');snd(392,.3,'triangle',.1);await sleep(1100)}
-  else{g.classList.add('lose');t.textContent=_T("💧 MISS… 💧",'💧 ハズレ… 💧');s.textContent=_TT("Roll {0}: stake forfeited",[`出目`,`：賃け金没収`],[(d
-)]);[392,330,262,196].forEach((f,i)=>snd(f,.3,'sawtooth',.09,i*.18));await sleep(1500)}
-  g.className='';g.innerHTML='';
-}
-const SU=['♠','♥','♦','♣'],GI={slot:'🎰',bj:'🃏',hl:'📈',bac:'🎴',rou:'🎡',chin:'🎲',horse:'🐎'},REDS=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+const SU=['♠','♥','♦','♣'],GI={bj:'🃏',hl:'📈',bac:'🎴',rou:'🎡',chin:'🎲',horse:'🐎'},REDS=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
 const DESC={horse:_T("First pick Win (guess 1st) or Place (top 3 counts, low payout). 5–8 horses. 35% of the time it's a 10-horse \"G1 race\" where you can also bet Trifecta (Normal, Box, Nagashi, Formation; ¥100 per ticket). Hit chance follows the odds and a win pays odds × stake (late-race upsets possible?)",'まず単勝（1着を当てる）か複勝（2〜3着までに入ればOK・低配当）を選ぶ。5〜8頭立て。35%の確率で10頭立ての「G1レース」になり、三連単（買い方は通常・ボックス・流し・フォーメーション、一口100円）も選べる。オッズ通りの確率で的中時の配当はオッズ倍（終盤の大逆転あり？）'),chin:_T("Dealer first, then you: roll 3 dice into the bowl up to 3 times and fight with the hand! Pinzoro +5× / Triple +3× / Shigoro +2× / Point +1× (win or lose by the hand's multiplier) / Hifumi pays double / 3% Chonbo (dice fly out of the bowl: lowest hand below Hifumi, pays double) / when hands stack, multipliers multiply (e.g. Hifumi × Shigoro = 4×)",'ディーラー→あなたの順に、サイコロ3つを丼へ最大3回まで振って役で勝負！ ピンゾロ+5倍／ゾロ目+3倍／シゴロ+2倍／目+1倍（勝ちも負けも役の倍率）／ヒフミは倍払い／3%でチョンボ（丼の外に飛び出し・ヒフミより下の最低役・倍払い）／役が重なったときは倍率を掛け合わせる（例：ヒフミ×シゴロ＝4倍）'),bj:_T("Closest to 21 wins. Win +1× / BJ +1.5× (BJ after a split also 1.5× / Free Bet BJ is 1.2×) / Double & Split are allowed repeatedly when conditions are met (extra stake comes from your cash) / 35% Free Bet BJ (blue screen: 9, 10, 11 free double, any pair except 10s free split, dealer 22 is a push, BJ pays 1.2×. If you can afford it you play 2 hands every time)",'21に近い方が勝ち。勝ち+1倍／BJ+1.5倍（スプリット後のBJも1.5倍／フリーベットは1.2倍）／ダブル・スプリットは条件が合えば何度でも可（追加分は持ち金から支払い）／35%でフリーベットBJ（青い画面：9・10・11は無料ダブル、10以外のペアは無料スプリット、ディーラー22は引き分け、BJは1.2倍。資金に余裕があれば毎回2ハンドで勝負）'),hl:_T("Guess whether the next card is higher or lower and double up as many as 5 times! (the same number never appears) / the stake is ¥500 every time",'次のカードが高いか低いかを当てて最大で5回ダブルアップ！（同じ数字のカードは出ません）／掛け金は毎回500円'),bac:_T("Bet on Player / Banker / Tie. Betting on a non-Tie and getting a Tie is a loss. Betting on Tie fixes the stake at ¥500",'プレイヤー／バンカー／タイに賭ける。タイ以外に賭けてタイなら負け。タイに賭けると掛け金は500円になる'),rou:_T("A 37-pocket roulette. Choose Red/Black (+1×) or Dozens (split the stake across 1–2 spots, +2× per chip). 0 means the house takes all. 30% of the time \"I want to win big right now…‼︎\" forces One-number bets (place 5 chips on numbers 0–36, each winning chip pays 36×). Every number spun since the game started is shown on screen",'37分割のルーレット。赤黒（+1倍）かダース3択（半額ずつ1〜2か所に賭け、1口あたり+2倍）を選べる。0は親の総取り。30%の確率で「今はデカく勝ちたい…‼︎」→強制的に一点がけ（チップ5枚を0〜36の数字に置き、当たった1枚あたり36倍）。出た数字はゲーム開始からずっと画面に記録される')};
 const rk=n=>({1:'A',11:'J',12:'Q',13:'K'}[n]||n),draw=()=>({n:1+(Math.random()*13|0),s:Math.random()*4|0});
 const card=(c,h)=>h?`<div class='cd b'>?</div>`:`<div class='cd ${c.s===1||c.s===2?'r':''}'><span>${rk(c.n)}</span><span>${SU[c.s]}</span></div>`;
-const GT={slot:_T("Gambling",'ギャンブル'),bj:'BJ',hl:_T("Hi-Lo",'ハイロー'),bac:_T("Baccarat",'バカラ'),rou:_T("Roulette",'ルーレット'),chin:_T("Chinchiro",'チンチロ'),horse:_T("Horse Racing",'競馬')};
+const GT={bj:'BJ',hl:_T("Hi-Lo",'ハイロー'),bac:_T("Baccarat",'バカラ'),rou:_T("Roulette",'ルーレット'),chin:_T("Chinchiro",'チンチロ'),horse:_T("Horse Racing",'競馬')};
 // 掛け金（ハイローは500円固定）。進行度 GP（0=序盤〜1=ゴールへ）に応じて配分が変わる
 //  競馬　　　：2000/3000/5000 = 5/4/1割 → 後半ほど均等（各1/3）
 //  チンチロ　：序盤〜中盤1は下記「その他」と同じ → 中盤2以降は 2000/3000/4000 = 35/35/30%
@@ -2478,15 +2448,8 @@ async function land(p){
   else if(q.k==='hosp')await hospital(p);
   else if(q.k==='shop')await shop(p);
   else if(q.k==='duel')await duel(p);
-  else if(q.k==='gam'&&q.g&&q.g!=='slot'){FAST=!!p.npc;try{await game(p,q)}finally{FAST=false}}
-  else if(q.k==='gam'){
-    const i=await ask(_TT("{0}: bet {1}?",[``,`：`,`を賭ける？`],[(q.t
-),(yen(q.st)
-)]),[{l:_T("Bet",'賭ける'),s:_T("Dice 6: +4× / 5: +1× / 4: ±0 / 1–3: forfeited",'サイコロ 6:+4倍 5:+1倍 4:±0 1〜3:没収'),c:'#e8a317'},{l:_T("Pass",'やめておく'),c:'#888'}]);
-    if(i===0){const d=d6();await jackpot(p,d,q.st>=3000);let v=d===6?q.st*4:d===5?q.st:d===4?0:-q.st;if(v>0&&p.job==='ギャンブラー')v=Math.round(v*1.3/10)*10;sd(d);add(p,v,_TT("{0} (roll {1})",[``,`（出目`,`）`],[(q.t
-),(d
-)]),true)}
-  }else if(q.k==='house'){
+  else if(q.k==='gam'){FAST=!!p.npc;try{await game(p,q)}finally{FAST=false}}
+  else if(q.k==='house'){
     const rent=q.pr/10;
     if(!q.owner){
       if(p.m>=q.pr){const i=await ask(_TT("Buy {0}?",[``,`を買う？`],[(q.t
