@@ -1654,7 +1654,7 @@ async function fireScene(tx){
   document.body.appendChild(f);
   for(let k=0;k<12;k++)snd(80+k*9,.22,'sawtooth',.05,k*.18);
   [392,523,659].forEach((fq,i)=>snd(fq,.5,'triangle',.08,1.6+i*.22));
-  await sleep(3400);f.remove();
+  await sleep(2720);f.remove();   // 炎の演出（再チャレンジ・流れに乗る等すべて共通）：3.4秒→20%短縮
 }
 // 掛け金の選択肢：ギャンブラーは 1／1.5／2倍の3択、会社員・起業家は 1.0〜1.5倍を0.1刻み
 const stakeOpts=(p,st,xr,h)=>{if(h)return p.m>=500?[{m:1,b:500,fx:1}]:[];const ms=p.job==='ギャンブラー'?(xr>0?[1]:[1,1.5,2]):[10,11,12,13,14,15].map(k=>k/10);return ms.map(m=>({m,b:Math.round(st*m/10)*10})).filter(x=>x.b<=p.m)};
