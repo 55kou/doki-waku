@@ -2078,7 +2078,7 @@ const plHTML=(p,k)=>{
   STD.filter(x=>p.std[x.k]!==undefined).forEach(x=>L.push(_TT("🦠{0} {1} turn(s) left",[`🦠`,` あと`,`T`],[(x.n),(x.t-p.std[x.k])])));
   if(p.cc)L.push(_T("👶Parenting cost/turn: -",'👶子育て金 毎T-')+p.cc);
   if(p.sup)L.push(_T("💴Child support/turn: -",'💴養育費 毎T-')+p.sup);
-  const tt=[p.grand?_T("🌟Grand Nightlife Master",'🌟グランド風俗マスター'):p.master?_T("👑Nightlife Master",'👑風俗マスター'):'',p.king?_T("🎰Casino King",'🎰カジノ王'):'',p.baikin?_T("🦠Germ Man",'🦠バイキンマン'):'',p.ichizu?_T("💞Devoted",'💞一途'):'',p.boss?_T("🐵Boss Monkey",'🐵ボス猿'):'',(!p.boss&&bigDad(p))?_T("🧔‍♂️Big Daddy",'🧔‍♂️ビッグダディ'):'',(!p.boss&&monkey(p))?_T("🐒Monkey",'🐒猿'):'',(!p.boss&&haramase(p))?_T("🍼Baby Maker",'🍼孕ませマン'):'',gkrT(p)?_T("🎲Kakegurui",'🎲賭ケグルイ'):'',fzkT(p)?_T("💋Nightlife Addict",'💋風俗狂い'):''].filter(Boolean);
+  const tt=[p.grand?_T("🌟Grand Nightlife Master",'🌟グランド風俗マスター'):p.master?_T("👑Nightlife Master",'👑風俗マスター'):'',p.king?_T("🎰Casino King",'🎰カジノ王'):'',p.baikin?_T("🦠Germ Man",'🦠バイキンマン'):'',p.ichizu?_T("💞Devoted",'💞一途'):'',p.boss?_T("🐵Boss Monkey",'🐵ボス猿'):'',(!p.boss&&bigDad(p))?_T("🧔‍♂️Big Daddy",'🧔‍♂️ビッグダディ'):'',(!p.boss&&monkey(p))?_T("🐒Monkey",'🐒猿'):'',(!p.boss&&haramase(p))?_T("🍼Baby Maker",'🍼孕ませマン'):'',gkrT(p)?_T("🎲Kakegurui",'🎲賭ケグルイ'):'',fzkT(p)?_T("💋Nightlife Addict",'💋風俗狂い'):'',p.kok?_T("🏩Home of the Heart",'🏩心の故郷'):''].filter(Boolean);
   if(tt.length)L.push(tt.join(' '));
   return `<div class="pl ${k===cur&&!over?'on':''}" style="--pc:${p.c};${k===cur&&!over?'border-color:'+p.c:''}"><b><span class="dot" style="background:${p.c}"></span>${p.npc?'🤖 ':''}${p.n}</b><div class="m ${p.m<0?'neg':''}">${yen(p.m)}</div>${L.join('<br>')}</div>`};
 /* 盤面の背景：序盤(春)→中盤(夏・秋)→終盤(冬)へ色が移り、四季の絵文字を毎ゲーム新しくランダム配置（最背面） */
@@ -2349,9 +2349,10 @@ async function fuzoku(p,q){
     }
   }
   if(p.fv[sub]>=3){   // 3回目以降は毎回
-    const ad=sub==='uri',mine=false,wedNow=!!(p.wed||Object.keys(p.fm).length);let pays=true;if(p.single||wedNow){{const bx=$('box');   // 養育費の前置き：ふわっと（1.2秒で不透明度0→100%）出して、さらに1.3秒後に本編へ
+    const ad=sub==='uri',mine=false,wedNow=!!(p.wed||Object.keys(p.fm).length);let pays=true;if(!(p.single||wedNow)&&p.fv[sub]>=5)await kokoroTitle(p);if(p.single||wedNow){{const bx=$('box');   // 養育費の前置き：ふわっと（1.2秒で不透明度0→100%）出して、さらに1.3秒後に本編へ
       bx.innerHTML=`<div style='font-size:20px;font-weight:900;line-height:1.6;text-align:center;padding:10px 0'>${p.fv[sub]===5?_TT("Coming to {0} again — {1} time already… This place is my spiritual home 🏩",[``,`にくるのも`,`回目か…。ここは心の故郷だな🏩`],[(F.n),(p.fv[sub])]):_TT("Coming to {0} again — {1} time already… Maybe I'll go all out 💪",[``,`にくるのも`,`回目か…。はりきっちゃおうかな💪`],[(F.n),(p.fv[sub])])}</div>`;
       $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+1300);$('ov').classList.remove('show')}
+    if(p.fv[sub]>=5)await kokoroTitle(p);
     pays=await supLottery(ad?_T("adopted",'養子'):_T("child",'子供'),[_T("😠 Child support dispute…",'😠 養育費で揉める…'),ad?_T("You adopted a child with someone who isn't your spouse… so you'll argue over child support…",'結婚相手ではない相手と養子を迎えました…養育費を出すか出さないかで揉めます…'):_T("A child was born with someone who isn't your spouse… so you'll argue over child support…",'結婚相手ではない相手との間に子供ができました…養育費を出すか出さないかで揉めます…')]);}   // 風俗に3回通ってできた子供は、結婚相手とは別の相手（その店の人）との子供＝親権のない養育費。結婚中・独身宣言中は「払う／払わない」を抽選
     if(mine)p.cc=(p.cc||0)+500;else if(pays){p.sup=(p.sup||0)+800;if(ad)p.adk=(p.adk||0)+1;else p.pk=(p.pk||0)+1}else p.ape=(p.ape||0)+1;   // 養子（売り専）は血のつながりがないので、養育費はかかるが「孕ませマン」の子供の数には数えない（adk）
     const nm=mine?_T("Parenting cost",'子育て金'):_T("Child support",'養育費'),tt=mine?p.cc:p.sup;
@@ -2490,6 +2491,12 @@ async function addictCheck(p){
     await ask(_T("🎲 \"Kakegurui\" title",'🎲 称号「賭ケグルイ」'),[{l:_T("Landed on gambling squares 10 times… earned the \"Kakegurui\" title!",'ギャンブルマスに10回止まった…称号「賭ケグルイ」を獲得！'),s:_T("Goal bonus +¥5,000",'ゴールボーナス +5,000円'),c:'#e8a317'}])}
   if(fzkT(p)&&!p.fzkN){p.fzkN=1;log(_TT("💋 {0}: visited nightlife 10 times! Earned the \"Nightlife Addict\" title (goal bonus +¥5,000)",[`💋 `,`：風俗に10回通った！ 称号「風俗狂い」を獲得（ゴールボーナス +5,000円）`],[(p.n)]));
     await ask(_T("💋 \"Nightlife Addict\" title",'💋 称号「風俗狂い」'),[{l:_T("Visited nightlife 10 times… earned the \"Nightlife Addict\" title!",'風俗に10回通った…称号「風俗狂い」を獲得！'),s:_T("Goal bonus +¥5,000",'ゴールボーナス +5,000円'),c:'#c2185b'}])}
+}
+// 心の故郷：同じ風俗に5回通うと獲得（ゴールボーナス+5,000円・剥奪されない）
+async function kokoroTitle(p){
+  if(p.kok)return;p.kok=1;
+  log(_TT("🏩 {0}: visited the same venue 5 times! Earned the \"Home of the Heart\" title (goal bonus +¥5,000 · can't be stripped)",[`🏩 `,`：同じ風俗に5回通い、称号「心の故郷」を獲得！（ゴールボーナス+5,000円・剥奪されない）`],[(p.n)]));
+  await ask(_T("🏩 \"Home of the Heart\" title",'🏩 称号「心の故郷」'),[{l:_T("Five visits to the same venue… earned the \"Home of the Heart\" title!",'同じ風俗に5回通い…称号「心の故郷」を獲得！'),s:_T("Goal bonus +¥5,000",'ゴールボーナス +5,000円'),c:'#c2185b'}]);
 }
 async function kidTitle(p){
   if(bigDad(p)&&!p.bdl){p.bdl=1;await bigDadScene(p);log(_TT("🧔‍♂️ {0}: now has {1} children in total! Earned the \"Big Daddy\" title (goal bonus +¥5,000 · can't be stripped)",[`🧔‍♂️ `,`：子供が合計`,`人に！ 称号「ビッグダディ」を獲得（ゴールボーナス +5,000円・剥奪されない）`],[(p.n
@@ -2726,7 +2733,7 @@ $('roll').onclick=async()=>{
     if(sell){add(p,sell,_TT("Sold {0} propert(ies)",[`物件`,`件を売却`],[(ps.length)]));gsT.push({e:'🏠',t:_TT("Sold {0} propert(ies)",[`物件`,`件を売却`],[(ps.length)]),v:sell})}
     if(bonus){add(p,bonus,_T("Goal order bonus",'ゴール順ボーナス'));gsT.push({e:['🥇','🥈','🥉'][fin.length-1],t:_T("Goal order bonus",'ゴール順ボーナス'),v:bonus})}
     // 称号ボーナス（グランドは風俗マスターを兼ねるが、風俗系はグランド5,000円のみ＝高い方）
-    [[p.grand?7000:p.master?3000:0,p.grand?_T("Grand Nightlife Master",'グランド風俗マスター'):_T("Nightlife Master",'風俗マスター'),p.grand?'🌟':'👑'],[p.king?8000:0,_T("Casino King",'カジノ王'),'🎰'],[p.baikin?7000:0,_T("Germ Man",'バイキンマン'),'🦠'],[p.ichizu?3000:0,_T("Devoted",'一途'),'💞'],[p.boss?8000:0,_T("Boss Monkey",'ボス猿'),'🐵'],[(!p.boss&&bigDad(p))?5000:0,_T("Big Daddy",'ビッグダディ'),'🧔‍♂️'],[gkrT(p)?5000:0,_T("Kakegurui",'賭ケグルイ'),'🎲'],[fzkT(p)?5000:0,_T("Nightlife Addict",'風俗狂い'),'💋'],[p.fstop?0:10000,_T("Great Sage",'大賢者'),'🧙']].forEach(([v,t,e])=>{if(v){add(p,v,_TT("🏅 Title bonus ({0})",[`🏅 称号ボーナス（`,`）`],[(t)]));gsT.push({e,t,v})}});
+    [[p.grand?7000:p.master?3000:0,p.grand?_T("Grand Nightlife Master",'グランド風俗マスター'):_T("Nightlife Master",'風俗マスター'),p.grand?'🌟':'👑'],[p.king?8000:0,_T("Casino King",'カジノ王'),'🎰'],[p.baikin?7000:0,_T("Germ Man",'バイキンマン'),'🦠'],[p.ichizu?3000:0,_T("Devoted",'一途'),'💞'],[p.boss?8000:0,_T("Boss Monkey",'ボス猿'),'🐵'],[(!p.boss&&bigDad(p))?5000:0,_T("Big Daddy",'ビッグダディ'),'🧔‍♂️'],[gkrT(p)?5000:0,_T("Kakegurui",'賭ケグルイ'),'🎲'],[fzkT(p)?5000:0,_T("Nightlife Addict",'風俗狂い'),'💋'],[p.kok?5000:0,_T("Home of the Heart",'心の故郷'),'🏩'],[p.fstop?0:10000,_T("Great Sage",'大賢者'),'🧙']].forEach(([v,t,e])=>{if(v){add(p,v,_TT("🏅 Title bonus ({0})",[`🏅 称号ボーナス（`,`）`],[(t)]));gsT.push({e,t,v})}});
     if(!p.boss&&monkey(p)){const v=-2500*p.ape;add(p,v,_TT("🐒 \"Monkey\" title goal bonus (children with unpaid support {0} × −¥2,500)",[`🐒 称号「猿」ゴールボーナス（養育費を払わない子供 `,`人×−2,500円）`],[(p.ape)]),true);gsT.push({e:'🐒',t:_T("Monkey",'猿'),v})}
     if(!p.boss&&(p.pk||0)>0){const v=-1000*p.pk;add(p,v,_TT("🍼 \"Baby Maker\" title goal bonus ({0} × −¥1,000)",[`🍼 称号「孕ませマン」ゴールボーナス（`,`人×−1,000円）`],[(p.pk)]),true);gsT.push({e:'🍼',t:_T("Baby Maker",'孕ませマン'),v})}
     gs={start:gsS,steps:gsT};
@@ -2831,7 +2838,7 @@ function resultScreen(rk){
     const cols=['#ff4d6d','#ffd23f','#3ddc97','#4cc9f0','#b388ff','#ff9f1c','#ffffff'],md=['🥇','🥈','🥉'];
     const d=document.createElement('div');d.id='fscr';
     const cf=Array.from({length:110},()=>`<i class='cf' style='left:${Math.random()*100}%;background:${pick(cols)};--dx:${(Math.random()*30-15).toFixed(0)}vw;width:${6+Math.random()*7|0}px;height:${9+Math.random()*10|0}px;animation-duration:${(3.2+Math.random()*3.4).toFixed(2)}s;animation-delay:${(-Math.random()*6).toFixed(2)}s;border-radius:${Math.random()<.3?'50%':'2px'}'></i>`).join('');
-    const rows=rk.map((p,i)=>{const tt=[p.grand?_T("🌟Grand Nightlife Master",'🌟グランド風俗マスター'):p.master?_T("👑Nightlife Master",'👑風俗マスター'):'',p.king?_T("🎰Casino King",'🎰カジノ王'):'',p.baikin?_T("🦠Germ Man",'🦠バイキンマン'):'',p.ichizu?_T("💞Devoted",'💞一途'):'',p.boss?_T("🐵Boss Monkey",'🐵ボス猿'):'',(!p.boss&&bigDad(p))?_T("🧔‍♂️Big Daddy",'🧔‍♂️ビッグダディ'):'',(!p.boss&&monkey(p))?_T("🐒Monkey",'🐒猿'):'',(!p.boss&&haramase(p))?_T("🍼Baby Maker",'🍼孕ませマン'):'',gkrT(p)?_T("🎲Kakegurui",'🎲賭ケグルイ'):'',fzkT(p)?_T("💋Nightlife Addict",'💋風俗狂い'):'',p.fstop?'':_T("🧙Great Sage",'🧙大賢者')].filter(Boolean).join(' ');
+    const rows=rk.map((p,i)=>{const tt=[p.grand?_T("🌟Grand Nightlife Master",'🌟グランド風俗マスター'):p.master?_T("👑Nightlife Master",'👑風俗マスター'):'',p.king?_T("🎰Casino King",'🎰カジノ王'):'',p.baikin?_T("🦠Germ Man",'🦠バイキンマン'):'',p.ichizu?_T("💞Devoted",'💞一途'):'',p.boss?_T("🐵Boss Monkey",'🐵ボス猿'):'',(!p.boss&&bigDad(p))?_T("🧔‍♂️Big Daddy",'🧔‍♂️ビッグダディ'):'',(!p.boss&&monkey(p))?_T("🐒Monkey",'🐒猿'):'',(!p.boss&&haramase(p))?_T("🍼Baby Maker",'🍼孕ませマン'):'',gkrT(p)?_T("🎲Kakegurui",'🎲賭ケグルイ'):'',fzkT(p)?_T("💋Nightlife Addict",'💋風俗狂い'):'',p.kok?_T("🏩Home of the Heart",'🏩心の故郷'):'',p.fstop?'':_T("🧙Great Sage",'🧙大賢者')].filter(Boolean).join(' ');
       return `<div class='fr ${i===0?'top':''}' style='--pc:${p.c}'><span class='fm'>${md[i]||i+1+_T("th",'位')}</span><span class='fn'><b>${p.npc?'🤖 ':''}${p.n}</b><small>${p.job}${tt?'　'+tt:''}</small></span><span class='fy'>${yen(p.m)}</span></div>`}).join('');
     d.innerHTML=_TT("<div class='fsp l'></div><div class='fsp r'></div><div class='flamp l'></div><div class='flamp r'></div><div class='fbd'><div class='fh'>🏆 RESULTS 🏆</div>{0}<div class='fhint'>Double-tap to close</div></div>{1}",[`<div class='fsp l'></div><div class='fsp r'></div><div class='flamp l'></div><div class='flamp r'></div><div class='fbd'><div class='fh'>🏆 結果発表 🏆</div>`,`<div class='fhint'>ダブルタップで閉じる</div></div>`,``],[(rows+mhChart(rk)
 ),(cf
