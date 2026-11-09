@@ -1205,6 +1205,7 @@ async function bj(p,st){
       let r=a>21?-1:d>21||a>d?1:a<d?-1:0;if(FB&&d===22&&a<=21&&r===1)r=0;   // フリーベット：ディーラー22はプッシュ
       return{b,f,r}});
   }
+  await sleep(1500);   // 両者の結果が出てから結果画面に移るまでを1.5秒長く
   const net=R.reduce((s,x)=>s+(x.r>0?(x.b+(x.f||0))*x.r:x.r<0?x.r*x.b:0),0);   // 無料ベットは勝った時だけ配当に加わる（負けても失わない）
   const v=await finale(net/st,st,(nat||H.some(h=>(h.sp||h.nat)&&h.c.length===2&&bv(h.c)===21))&&net>0?'🃏 BLACKJACK!! 🃏':(!nat&&H.length===1&&bv(H[0].c)>21)?'💥 BUST 💥':net>0?'🎉 YOU WIN 🎉':net<0?'💧 YOU LOSE 💧':'🤝 PUSH 🤝',true,(()=>{
     const dT=bv(D),stat=(a,r)=>r>1?_T("🃏 BLACKJACK",'🃏 ブラックジャック'):r>0?_T("🎉 WIN",'🎉 勝ち'):r<0?(a>21?_T("💥 BUST",'💥 バスト'):_T("💧 LOSE",'💧 負け')):_T("🤝 PUSH",'🤝 引き分け');
