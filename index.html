@@ -1708,6 +1708,8 @@ async function fireScene(tx){
   f.id='fire';
   f.innerHTML=`<div class='fglow'></div><div class='fls'>${Array.from({length:17},(_,i)=>`<span class='fl' style='left:${i*6-3}%;font-size:${14+Math.random()*12}vh;animation-delay:${-Math.random()*1.2}s;animation-duration:${.5+Math.random()*.6}s'>🔥</span>`).join('')}</div><div class='ftx'><span>${t}</span></div>`;
   document.body.appendChild(f);
+  {const tx0=f.querySelector('.ftx'),n=[...t].length,vw=Math.min(innerWidth,460),sz=Math.min(.09*vw*(innerWidth/Math.min(innerWidth,460)),(vw*.9)/(n*1.02));   // 文字が一行に収まるよう、長さに合わせてフォントを調整（小さくなりすぎる場合だけ折り返し）
+   if(tx0){const px=Math.min(72,Math.max(0,sz));if(px>=18){tx0.style.fontSize=px+'px';tx0.style.whiteSpace='nowrap'}}}
   for(let k=0;k<12;k++)snd(80+k*9,.22,'sawtooth',.05,k*.18);
   [392,523,659].forEach((fq,i)=>snd(fq,.5,'triangle',.08,1.6+i*.22));
   await sleep(2720);f.remove();   // 炎の演出（再チャレンジ・流れに乗る等すべて共通）：3.4秒→20%短縮
