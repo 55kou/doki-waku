@@ -361,6 +361,7 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 .dn{background:#fff!important;color:#222;font-size:34px;line-height:1;padding:8px 10px!important;transition:transform .15s}
 .dn.on{background:#ffd23f!important;box-shadow:0 0 18px #ffd23f;transform:translateY(-6px) scale(1.1)}
 .c-gov{--x:#6b7a8f}.c-fz{--x:#c2185b}.c-hosp{--x:#17a2b8}.c-shop{--x:#ff7043}.c-item{--x:#26a69a}.c-fz .v{font-size:9px}
+.bjh .cd{animation-duration:.45s}   /* ブラックジャックのカードが着くまで・合計が出るまでを半分に */
 .cd{animation:flp .9s ease-out}@keyframes flp{from{transform:perspective(400px) rotateY(95deg) translateY(-80px);opacity:.1}60%{transform:perspective(400px) rotateY(-14deg)}}
 .sticky{padding-top:2px}
 h1{padding-right:125px;font-size:clamp(14px,4.8vw,24px);line-height:1.3}
@@ -1094,11 +1095,11 @@ function bjFit(){const g=$('gm'),gs=$('gs'),gt=g.querySelector('.gt'),bh=$('bjh'
 const actHB=hi=>document.querySelectorAll('#bjh .hb').forEach((el,i)=>{el.classList.toggle('act',hi>=0&&i===hi);el.classList.toggle('idle',hi>=0&&i!==hi)});
 function totMark(e,cs){if(!e)return;e.classList.add('pt');const n=cs.length;
   if(n<2){e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');return}
-  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),900)}   // 合計は、カードが完全に着いた瞬間（配るアニメ0.9秒）に表示
+  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),450)}   // 合計は、カードが完全に着いた瞬間（配るアニメ0.45秒）に表示
 function bustMark(e,on){if(!e)return;
   if(!on){if(e._bt){e._bt.forEach(clearTimeout);e._bt=null}e.classList.remove('bust','bt');return}
   if(e._bt||e.classList.contains('bust'))return;
-  e._bt=[setTimeout(()=>e.classList.add('bust'),900),setTimeout(()=>e.classList.add('bt'),900+100)]}   // バースト：合計と同時（着いた瞬間）にグレー、その0.1秒後にBUST
+  e._bt=[setTimeout(()=>e.classList.add('bust'),450),setTimeout(()=>e.classList.add('bt'),450+100)]}   // バースト：合計と同時（着いた瞬間）にグレー、その0.1秒後にBUST
 function setHand(id,cs,hid){const el=$(id);cs.forEach((c,i)=>{const h=hid(i),key=h?'b':c.n+'-'+c.s,ch=el.children[i];if(!ch||ch.dataset.k!==key){const t=document.createElement('div');t.innerHTML=card(c,h);const n=t.firstChild;n.dataset.k=key;if(ch)el.replaceChild(n,ch);else el.appendChild(n)}});while(el.children.length>cs.length)el.removeChild(el.lastChild)}
 const tease=async n=>{for(let k=0;k<n;k++){snd(150+k*35,.1,'sawtooth',.08);await sleep(240)}};
 async function gov(p){
@@ -1150,7 +1151,8 @@ async function bj(p,st){
   const txt=s=>{$('gs').textContent=s};
   const lab=i=>H.length>1?_TT("Hand {0}",[`ハンド`,``],[(i+1
 )]):p.n;
-  const sh=()=>{setHand('dh',D.slice(0,nd),i=>hd&&i===1);{const e=$('dh');bustMark(e,!hd&&bv(D.slice(0,nd))>21);if(dd&&!hd)e.setAttribute('data-tot',bv(D));else e.removeAttribute('data-tot')}H.forEach((h,i)=>{setHand('ph'+i,dealing?h.c.slice(0,dn[i]||0):h.c,()=>0);{const e=$('ph'+i);bustMark(e,bv(dealing?h.c.slice(0,dn[i]||0):h.c)>21);totMark(e,dealing?h.c.slice(0,dn[i]||0):h.c)}const e=$('l'+i),bet=h.r+h.pd,fr=h.fr||0;if(e)e.innerHTML=`${lab(i)}　${chipSvg(bet,p.c)}${fr?chipSvg(fr,'#2f6fe0'):''}<b style='color:#ffd54f'> 💰${yen(bet+fr)}</b>${fr?_TT("<small>(of which Free Bet {0})</small>",[`<small>（うち Free Bet `,`）</small>`],[(yen(fr)
+  // ディーラーもプレイヤーと同条件：表に見えるカードが2枚以上で合計を表示
+  const sh=()=>{setHand('dh',D.slice(0,nd),i=>hd&&i===1);{const e=$('dh');bustMark(e,!hd&&bv(D.slice(0,nd))>21);totMark(e,hd?D.slice(0,nd).filter((_,i)=>i!==1):D.slice(0,nd))}H.forEach((h,i)=>{setHand('ph'+i,dealing?h.c.slice(0,dn[i]||0):h.c,()=>0);{const e=$('ph'+i);bustMark(e,bv(dealing?h.c.slice(0,dn[i]||0):h.c)>21);totMark(e,dealing?h.c.slice(0,dn[i]||0):h.c)}const e=$('l'+i),bet=h.r+h.pd,fr=h.fr||0;if(e)e.innerHTML=`${lab(i)}　${chipSvg(bet,p.c)}${fr?chipSvg(fr,'#2f6fe0'):''}<b style='color:#ffd54f'> 💰${yen(bet+fr)}</b>${fr?_TT("<small>(of which Free Bet {0})</small>",[`<small>（うち Free Bet `,`）</small>`],[(yen(fr)
 )]):''}`});bjFit()};   // ハンドごとに今の賭け金を表示
   for(const[a,b,y]of(mh?[[1,0,0],[1,1,0],[1,1,1],[2,1,1],[2,2,1],[2,2,2]]:[[1,0,0],[1,0,1],[2,0,1],[2,0,2]])){dn=[a,b];nd=y;sh();snd(420,.1,'triangle',.1);await sleep(mh?650:900)}
   dealing=false;
