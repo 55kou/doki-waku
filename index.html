@@ -1164,7 +1164,7 @@ async function bj(p,st){
   // ディーラーもプレイヤーと同条件：表に見えるカードが2枚以上で合計を表示
   const sh=()=>{setHand('dh',D.slice(0,nd),i=>hd&&i===1);{const e=$('dh');bustMark(e,!hd&&bv(D.slice(0,nd))>21);totMark(e,hd?D.slice(0,nd).filter((_,i)=>i!==1):D.slice(0,nd))}H.forEach((h,i)=>{setHand('ph'+i,dealing?h.c.slice(0,dn[i]||0):h.c,()=>0);{const e=$('ph'+i);bustMark(e,bv(dealing?h.c.slice(0,dn[i]||0):h.c)>21);totMark(e,dealing?h.c.slice(0,dn[i]||0):h.c)}const e=$('l'+i),bet=h.r+h.pd,fr=h.fr||0;if(e)e.innerHTML=`${lab(i)}　${chipSvg(bet,p.c)}${fr?chipSvg(fr,'#2f6fe0'):''}<b style='color:#ffd54f'> 💰${yen(bet+fr)}</b>${fr?_TT("<small>(of which Free Bet {0})</small>",[`<small>（うち Free Bet `,`）</small>`],[(yen(fr)
 )]):''}`});bjFit()};   // ハンドごとに今の賭け金を表示
-  for(const[a,b,y]of(mh?[[1,0,0],[1,1,0],[1,1,1],[2,1,1],[2,2,1],[2,2,2]]:[[1,0,0],[1,0,1],[2,0,1],[2,0,2]])){dn=[a,b];nd=y;sh();snd(420,.1,'triangle',.1);await sleep(mh?650:900)}
+  for(const[a,b,y]of(mh?[[1,0,0],[1,1,0],[1,1,1],[2,1,1],[2,2,1],[2,2,2]]:[[1,0,0],[1,0,1],[2,0,1],[2,0,2]])){dn=[a,b];nd=y;sh();snd(420,.1,'triangle',.1);await sleep(900)}   // カードを配る間隔：通常のブラックジャックと同じ（2ハンドでも900ms）
   dealing=false;
   const pay=()=>{p.m-=st;U+=st;setStk(st*(mh?2:1)+U);pop(p,-st);log(_TT("🃏 {0}: extra bet -{1} (from cash)",[`🃏 `,`：追加ベット -`,`（持ち金から）`],[(p.n
 ),(yen(st)
