@@ -1649,8 +1649,8 @@ async function game(p,q){
     if(v>0)await crownCheck(p,q.g);
     if(v<0){
       rd=0;   // 連勝が途切れたら「流れに乗る」確率は50%に戻る
-      // 負け：再チャレンジはマス毎に1回まで。会社員・起業家は追加勝負の連続なし
-      if(rr>=1||(!G&&xr>=1))return;
+      // 負け：再チャレンジは、そのマスで最初のプレイに負けたときだけ（全職業）。流れに乗った後や再チャレンジ後の負けでは起こらない
+      if(xr>=1)return;
       if(G||Math.random()<.5){st=await retry(p,st,xr,isH);if(!st)return;rr++;xr++;continue}
       return;
     }
