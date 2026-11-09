@@ -174,6 +174,18 @@ body.pkon{padding-bottom:90px}
 @keyframes bsbk{0%,91.8%{opacity:0}100%{opacity:1}}
 #bossm .bst{position:absolute;left:0;right:0;top:46%;text-align:center;transform:translateY(-50%) scale(.2);opacity:0;animation:bspop .8s cubic-bezier(.2,1.5,.4,1) 7.4s forwards}
 @keyframes bspop{to{opacity:1;transform:translateY(-50%) scale(1)}}
+/* 全員競馬：緑の背景に、紙吹雪とたくさんの小さな馬が横切る。「全員競馬」が奥から迫ってバウンスし、キラッと光る（全体で3秒） */
+#ahm{position:fixed;inset:0;z-index:99999;overflow:hidden;pointer-events:none;background:radial-gradient(circle at 50% 45%,#3fcf74 0,#0f7a3c 62%,#0a5a2c 100%);animation:ahin .2s ease-out,ahout .25s 2.75s forwards}
+@keyframes ahin{from{opacity:0}to{opacity:1}}@keyframes ahout{to{opacity:0}}
+#ahm .aht{position:absolute;left:0;right:0;top:46%;text-align:center;transform:translateY(-50%);z-index:3}
+#ahm .aht b{position:relative;display:inline-block;color:#fff;-webkit-text-stroke:8px #0a6a32;paint-order:stroke fill;text-shadow:0 0 10px #fff8,0 6px 0 #075c2a;font-size:clamp(40px,15vw,130px);white-space:nowrap;font-weight:900;animation:ahz .85s cubic-bezier(.2,.8,.3,1) both}
+@keyframes ahz{0%{transform:scale(.03);opacity:0}40%{transform:scale(1.4);opacity:1}58%{transform:scale(.85)}74%{transform:scale(1.12)}88%{transform:scale(.97)}100%{transform:scale(1)}}
+#ahm .aht b::after{content:attr(data-t);position:absolute;left:0;top:0;-webkit-text-stroke:0;text-shadow:none;color:transparent;background:linear-gradient(105deg,transparent 38%,#fff 48%,#eaffef 52%,transparent 62%) -150% 0/250% 100% no-repeat;-webkit-background-clip:text;background-clip:text;animation:ahs 1s ease-in-out .9s 2}
+@keyframes ahs{0%{background-position:-150% 0}70%,100%{background-position:150% 0}}
+#ahm .ahc{position:absolute;top:-6vh;width:9px;height:15px;opacity:.95;animation:ahf var(--d) linear var(--w) both}
+@keyframes ahf{0%{transform:translate(0,0) rotate3d(1,1,0,0deg)}25%{transform:translate(calc(var(--dx)*.6),30vh) rotate3d(1,.4,.6,200deg)}50%{transform:translate(calc(var(--dx)*-.3),65vh) rotate3d(1,1,0,420deg)}75%{transform:translate(calc(var(--dx)*.8),95vh) rotate3d(.4,1,.6,640deg)}100%{transform:translate(var(--dx),118vh) rotate3d(1,1,0,860deg)}}
+#ahm .ahh{position:absolute;left:0;line-height:1;animation:ahr var(--d) linear var(--w) both}
+@keyframes ahr{from{transform:translateX(-12vw)}to{transform:translateX(112vw)}}
 #bossm.bdm{background:radial-gradient(circle at 50% 50%,#2b4a9e 0,#101f55 72%)}   /* ビッグダディ誕生：青と紺の中間色の背景→ホワイトアウト→淡い空色に称号 */
 #bossm.bdm .bsg{background:radial-gradient(circle,#fff 0,#e3efff 14%,#8fb8ff88 34%,transparent 66%)}
 #bossm.bdm .bse{filter:drop-shadow(0 0 14px #8fb8ff)}
@@ -1225,6 +1237,75 @@ async function bac(p,st,borrow,cons){
   return finale(res,st,w===0?'👤 PLAYER WIN':w===1?'🏦 BANKER WIN':'🤝 TIE',true,cdWrap(cdHand('PLAYER',A,pa)+cdHand('BANKER',K,kb)+`<div class='cd3'>${_T("Your bet",'あなたの賭け')}: ${SJ[side]} ${yen(st)}<br>${_T("Result",'結果')}: ${SJ[w]}</div>`,res*st,st%100?10:100),true);
 }
 const HRN=_LANG==='en'?['Hayate','Doki Doki','Waku Waku','Gold','Yumeno','Kachiuma','Thunder','Black','Miracle','Silver','Hero','Lucky','Tornado','Kingdom']:['ハヤテ','ドキドキ','ワクワク','ゴールド','ユメノ','カチウマ','サンダー','ブラック','ミラクル','シルバー','ヒーロー','ラッキー','トルネード','キングダム'];
+let HRD=false;   // 全員競馬は1ゲームに1回
+// 全員競馬：全員が折り返しを過ぎたところで一度だけ。2,000円の特別給付金で、資金と前借りの合計が最下位の人から順に単勝の馬を選ぶ（他の人が選んだ馬は選べない）
+async function allHorseIntro(){
+  const f=document.createElement('div');f.id='ahm';
+  const cf=Array.from({length:70},()=>`<i class='ahc' style='left:${(Math.random()*100).toFixed(1)}%;background:hsl(${Math.random()*360|0},85%,${60+Math.random()*15|0}%);--dx:${(Math.random()*30-15).toFixed(1)}vw;--d:${(2+Math.random()*.6).toFixed(2)}s;--w:${(Math.random()*.45).toFixed(2)}s'></i>`).join('');
+  const hs=Array.from({length:34},()=>`<span class='ahh' style='top:${(Math.random()*92).toFixed(1)}%;font-size:${(14+Math.random()*16)|0}px;--d:${(1.3+Math.random()*.5).toFixed(2)}s;--w:${(Math.random()*1.15).toFixed(2)}s'>🐎</span>`).join('');
+  const t=_T("All-Horse Race",'全員競馬');
+  f.innerHTML=`${cf}${hs}<div class='aht'><b data-t='${t}'>${t}</b></div>`;
+  document.body.appendChild(f);
+  for(let k=0;k<14;k++)snd(180+k*60,.07,'sawtooth',.05,k*.035);
+  snd(70,.35,'sine',.18,.45);[784,988,1175].forEach((fq,i)=>snd(fq,.25,'triangle',.07,.9+i*.08));
+  await sleep(3000);f.remove();
+}
+async function allHorse(){
+  const pl=P.filter(x=>!x.done);if(pl.length<1)return;
+  const GR=2000,keep=actor;
+  log(_TT("🐎 All-Horse Race! Everyone bets on a Win ticket with a ¥{0} special grant",[`🐎 全員競馬！ 全員が特別給付金 `,`円で単勝に賭ける`],[GR.toLocaleString()]));
+  await allHorseIntro();
+  const n=Math.max(pl.length+1,5+(Math.random()*4|0)),names=[...HRN].sort(()=>Math.random()-.5).slice(0,n),od=mkOdds(n,15);
+  const ip=od.map(o=>1/o),sp=ip.reduce((x,y)=>x+y,0),pr=ip.map(x=>x/sp);
+  const gam=Math.min(2.2,Math.max(.6,1.2*Math.exp(Math.sqrt(-2*Math.log(1-Math.random()))*Math.cos(2*Math.PI*Math.random())*.35)));
+  const q=pr.map(x=>Math.pow(x,gam)),ord=[];{const rest=[...Array(n).keys()];while(rest.length){const tw=rest.reduce((a,i)=>a+q[i],0);let r=Math.random()*tw,k=0;for(;k<rest.length-1;k++){r-=q[rest[k]];if(r<=0)break}ord.push(rest.splice(k,1)[0])}}
+  const win=ord[0];
+  // 選ぶ順番：資金＋前借りの合計が少ない人から（同額はランダム）
+  const order=shuf([...pl]).sort((a,b)=>wealth(a)-wealth(b)),pick=new Map(),taken=new Map();
+  for(let oi=0;oi<order.length;oi++){
+    const p=order[oi];actor=p;
+    gopen('felt',_TT("<div class='gt'>🐎 All-Horse Race 🐎</div><div class='lab'>Bet a ¥{0} special grant on a Win ticket (your money won't drop even if you miss)</div><div class='lab' style='color:#ffd54f'>👤 {1}'s turn to pick ({2}/{3}) — lowest funds + advance picks first</div><div class='hp' id='hp'></div>",[`<div class='gt'>🐎 全員競馬 🐎</div><div class='lab'>特別給付金 ¥`,` で単勝に賭けよう（外れても資金は減りません）</div><div class='lab' style='color:#ffd54f'>👤 `,` さんの番（`,`/`,`）― 資金＋前借りが少ない人から選びます</div><div class='hp' id='hp'></div>`],[(GR.toLocaleString()),(p.n),(oi+1),(order.length)]));
+    const avail=names.map((_,i)=>i).filter(i=>!taken.has(i));
+    $('hp').innerHTML=names.map((m,i)=>{const o=taken.get(i);return `<button class='hr' data-i='${i}' ${o?"disabled style='filter:grayscale(1);opacity:.35;pointer-events:none'":''}><span><b>${i+1}</b> ${m}${o?' <small>('+o.n+')</small>':''}</span><span>${od[i].toFixed(1)}${_T('×','倍')}</span></button>`}).join('');
+    let me;
+    if(p.npc){await sleep(900);me=avail[wIdx(avail.length,.3)]}
+    else me=await new Promise(res=>$('hp').querySelectorAll('button').forEach(b=>b.onclick=()=>{snd(600,.06,'square',.07);res(+b.dataset.i)}));
+    pick.set(p,me);taken.set(me,p);
+    log(`🐎 ${p.n}：${me+1}${_T(" ",'番 ')}${names[me]}（${od[me].toFixed(1)}${_T('×','倍')}）`);
+    await sleep(300);
+  }
+  // レース画面（直線）
+  actor=keep;
+  gopen('felt',`<div class='gt' id='gt2'>${_T("🐎 Just before the start… 🐎",'🐎 スタート直前… 🐎')}</div><div id='ln'></div><div class='gs' id='gs'></div>`);
+  $('ln').innerHTML=names.map((m,i)=>{const o=taken.get(i);return `<div class='ln ${o?'':''}'><b>${i+1}</b><div class='lt'><span class='hs' id='h${i}'>🐎</span></div><span class='od'>${od[i].toFixed(1)}×</span>${o?`<span style='font-size:10px;font-weight:800;width:58px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:${o.c}'>${o.n}</span>`:'<span style="width:58px"></span>'}</div>`}).join('');
+  await tease(6);$('gt2').textContent=_T("🏇 And they're off! 🏇",'🏇 レース開始！ 🏇');snd(880,.25,'square',.1);
+  const Tw=7+Math.random()*1.5,T=(()=>{const t=[];let c=Tw;ord.forEach((h,r)=>{if(r>0)c+=.25+Math.random()*(r<3?.5:.9);t[h]=c});return t})(),ph=names.map(()=>Math.random()*6);
+  const comeback=Math.random()<.65,G=names.map((_,i)=>i===win?(comeback?1.35+Math.random()*.4:.72+Math.random()*.2):(Math.random()<.4?.55+Math.random()*.2:Math.random()<.4?1.15+Math.random()*.3:.85+Math.random()*.3));
+  let k=0,fin=false,pl2=-1,msg='',until=0;
+  for(let t=0;t<=Tw+1.2;t+=.06){
+    let lead=0,lp=-1;
+    names.forEach((_,i)=>{const f=Math.pow(Math.min(1,t/T[i]),G[i]),x=Math.max(0,Math.min(1,f+.035*Math.sin(t*2.2+ph[i])*(1-f)));if(x>lp){lp=x;lead=i}$('h'+i).style.left=x*88+'%'});
+    if(t<Tw){
+      if(pl2>=0&&lead!==pl2&&t>Tw*.35){msg=`🔥 ${lead+1}${_T(" ",'番 ')}${names[lead]}${_T(" takes the lead!!",' 抜いた！！')}`;until=t+1.5;[660,880,1175].forEach((fq,i)=>snd(fq,.12,'square',.07,i*.06))}
+      pl2=lead;
+      $('gs').textContent=t<until?msg:`${_T("Leader: ",'先頭：')}${lead+1}${_T(" ",'番 ')}${names[lead]}`+(t>Tw-1.6?_T(" Final stretch!",'　ゴール前！'):'');
+      if(k++%3===0)snd(110+(t>Tw-1.6?40:0),.05,'square',.06)}
+    else if(!fin){fin=true;$('gt2').textContent=_T("🏁 FINISH!! 🏁",'🏁 ゴール！！ 🏁');$('gs').textContent='';snd(1047,.3,'square',.1)}
+    await sleep(60);
+  }
+  await sleep(900);
+  // 結果：1着の馬を選んだ人が、給付金×オッズを受け取る（給付金そのものは元手なので、外れても資金は減らない）
+  const winner=taken.get(win),pay=Math.round(GR*od[win]/10)*10,medal=['🥇','🥈','🥉'];
+  const rows=ord.slice(0,3).map((h,r)=>`${medal[r]} ${h+1}${_T(" ",'番 ')}${names[h]}${taken.get(h)?`（${taken.get(h).n}）`:`（${_T("no bettor",'購入者なし')}）`}`).join('<br>');
+  snd(784,.2,'triangle',.08);snd(988,.3,'triangle',.08,.15);
+  if(winner){
+    add(winner,pay,_TT("🐎 All-Horse Race Win hit ({0})",[`🐎 全員競馬 単勝的中（給付金 `,`円）`],[GR.toLocaleString()]),true);
+    log(`🐎 ${winner.n}：${_T("All-Horse Race hit! ",'全員競馬で的中！ ')}${win+1}${_T(" ",'番 ')}${names[win]}${_T(" won. Payout ",'が1着。払戻 ')}${yen(pay)}`);
+  }else log(`🐎 ${_T("All-Horse Race: no one bet on the winner",'全員競馬：1着の馬を選んだ人はいませんでした')}（${win+1}${_T(" ",'番 ')}${names[win]}）`);
+  actor=keep;
+  await ask(`🐎 ${_T("All-Horse Race Results",'全員競馬 結果発表')}<br><small>${rows}</small>`,[{l:winner?_T(`🎉 ${winner.n} hit! +${yen(pay)}`,`🎉 ${winner.n} の的中！ +${yen(pay)}`):_T("Nobody hit… (no one lost money)",'的中者なし…（誰の資金も減りません）'),s:_T("Everyone bet with the ¥2,000 special grant",'全員が特別給付金2,000円で参加'),c:winner?'#1d9e75':'#888'}]);
+  const g=$('gm');g.className='';g.innerHTML='';
+}
 let G1F=null;   // G1の開催を固定する（テスト用）。null＝35%の抽選
 // 1着→2着→3着をこの順で当てる確率（Plackett-Luce）
 function triProb(W,a,b,c){const S=W.reduce((x,y)=>x+y,0);return W[a]/S*W[b]/(S-W[a])*W[c]/(S-W[a]-W[b])}
@@ -2552,6 +2633,7 @@ $('roll').onclick=async()=>{
   if(gs)await settleShow(p,gs);else await turnSum(p,m0);
   MH.push(P.map(x=>x.m));ACHscan();
   if(P.every(x=>x.done)){over=true;actor=null;render();finish();return}
+  if(!HRD&&P.every(x=>x.done||x.s>=7)){HRD=true;await allHorse();render()}   // 全員が折り返しを過ぎたら、一度だけ全員競馬
   do{cur=(cur+1)%P.length}while(P[cur].done);
   setGold();render();await camTo(P[cur]);busy=false;render();npcKick();
 };
@@ -3128,7 +3210,7 @@ function setup(){
 async function init(){BGMX=0;bgmVol();try{if(NET.role==='host'&&NET.guests.length)NETbc({t:'bgm',on:0})}catch(e){}NET.playing=false;
   const cfg=await setup();NCFG=cfg;actor=null;
   B=build();fin=[];cur=0;goldNow=false;over=false;busy=true;$('log').innerHTML='';$('dice').textContent='-';
-  ROUH.length=0;MH.length=0;P=Array.from({length:cfg.n},(_,i)=>({n:NMname(cfg,i),npc:cfg.npc[i]?1:0,c:COL[i],m:10000,s:0,r:null,i:0,done:false,kids:0,wed:0,job:null,conf:0,baikin:0,cc:0,sup:0,pk:0,ape:0,kt:'',ichizu:0,last:null,streak:0,lg:[],gw:{},king:0,std:{},fv:{},fm:{},cand:0,pend:[],tk:0,prep:0,gold:0,sage:0,fstop:0,master:0,mfirst:0,grand:0,ost:0,loan:0,fwed:0,div:0,hist:{},it:{sigoro:0,news:0,sagami:0,dbl:0},single:0}));
+  HRD=false;ROUH.length=0;MH.length=0;P=Array.from({length:cfg.n},(_,i)=>({n:NMname(cfg,i),npc:cfg.npc[i]?1:0,c:COL[i],m:10000,s:0,r:null,i:0,done:false,kids:0,wed:0,job:null,conf:0,baikin:0,cc:0,sup:0,pk:0,ape:0,kt:'',ichizu:0,last:null,streak:0,lg:[],gw:{},king:0,std:{},fv:{},fm:{},cand:0,pend:[],tk:0,prep:0,gold:0,sage:0,fstop:0,master:0,mfirst:0,grand:0,ost:0,loan:0,fwed:0,div:0,hist:{},it:{sigoro:0,news:0,sagami:0,dbl:0},single:0}));
   if(NET.role==='host')NETseat(cfg);
   {const nm=P.map(p=>p.n);P.forEach((p,i)=>{if(nm.indexOf(p.n)!==i)p.n+=(i+1)})}
   MH.push(P.map(x=>x.m));
