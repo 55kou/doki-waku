@@ -3238,10 +3238,12 @@ function setup(){
     draw();$('ov').classList.add('show');
   });
 }
+const mkP=cfg=>Array.from({length:cfg.n},(_,i)=>({n:NMname(cfg,i),npc:cfg.npc[i]?1:0,c:COL[i],m:10000,s:0,r:null,i:0,done:false,kids:0,wed:0,job:null,conf:0,baikin:0,cc:0,sup:0,pk:0,ape:0,kt:'',ichizu:0,last:null,streak:0,lg:[],gw:{},king:0,std:{},fv:{},fm:{},cand:0,pend:[],tk:0,prep:0,gold:0,sage:0,fstop:0,master:0,mfirst:0,grand:0,ost:0,loan:0,fwed:0,div:0,hist:{},it:{sigoro:0,news:0,sagami:0,dbl:0},single:0}));
 async function init(){BGMX=0;bgmVol();try{if(NET.role==='host'&&NET.guests.length)NETbc({t:'bgm',on:0})}catch(e){}NET.playing=false;
+  if(!NCFG){try{P=mkP({n:3,npc:[0,0,0],names:[]});B=build();cur=0;busy=true;over=false;render()}catch(e){}}   /* 設定画面の背後に盤面を見せる（初回のみ） */
   const cfg=await setup();NCFG=cfg;actor=null;seaInit();
   B=build();fin=[];cur=0;goldNow=false;over=false;busy=true;$('log').innerHTML='';$('dice').textContent='-';
-  HRD=false;ROUH.length=0;MH.length=0;P=Array.from({length:cfg.n},(_,i)=>({n:NMname(cfg,i),npc:cfg.npc[i]?1:0,c:COL[i],m:10000,s:0,r:null,i:0,done:false,kids:0,wed:0,job:null,conf:0,baikin:0,cc:0,sup:0,pk:0,ape:0,kt:'',ichizu:0,last:null,streak:0,lg:[],gw:{},king:0,std:{},fv:{},fm:{},cand:0,pend:[],tk:0,prep:0,gold:0,sage:0,fstop:0,master:0,mfirst:0,grand:0,ost:0,loan:0,fwed:0,div:0,hist:{},it:{sigoro:0,news:0,sagami:0,dbl:0},single:0}));
+  HRD=false;ROUH.length=0;MH.length=0;P=mkP(cfg);
   if(NET.role==='host')NETseat(cfg);
   {const nm=P.map(p=>p.n);P.forEach((p,i)=>{if(nm.indexOf(p.n)!==i)p.n+=(i+1)})}
   MH.push(P.map(x=>x.m));
