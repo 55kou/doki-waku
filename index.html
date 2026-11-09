@@ -2023,15 +2023,16 @@ const SEAS=[
  {a:.23,b:.49,em:['🌻','☀️','🍉','🏖️','🌴','🍦','🌊','🐚'],big:'🌻'},
  {a:.49,b:.75,em:['🍁','🍂','🍂','🎃','🌰','🍄','🍇'],big:'🍁'},
  {a:.75,b:1,em:['❄️','❄️','⛄','🎄','☃️','🧣','⭐','🧤'],big:'❄️'}];
+/* 大きい絵文字は左40%・真ん中20%・右40%に配置（左右は見切れてもOK）。小さい絵文字は全体に満遍なく */
 function seaInit(){
   document.documentElement.classList.add('sea');
   let d=$('sea');if(d)d.remove();
   d=document.createElement('div');d.id='sea';
   const rnd=Math.random;
   const strat=n=>{const a=Array.from({length:n},(_,k)=>(k+rnd())/n);for(let i=n-1;i>0;i--){const j=rnd()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-  SEAS.forEach(z=>{const n=Math.round((z.b-z.a)*4200/32),xs=strat(n),ys=strat(n);   // 横・縦とも満遍なく散らす（左右に偏らない）
-    for(let i=0;i<n;i++){const big=rnd()<.28,sz=big?60+rnd()*60:20+rnd()*24,
-      left=-4+xs[i]*100,e=big?z.big:z.em[rnd()*z.em.length|0],
+  SEAS.forEach(z=>{const n=Math.round((z.b-z.a)*4200/23.5),xs=strat(n),ys=strat(n);   // 横・縦とも満遍なく散らす（左右に偏らない）
+    for(let i=0;i<n;i++){const big=rnd()<.206,sz=big?60+rnd()*60:20+rnd()*24,
+      left=big?(()=>{const r=rnd(),cx=r<.4?-5+rnd()*35:r<.6?40+rnd()*20:70+rnd()*35;return cx-sz/8.6})():-4+xs[i]*100,e=big?z.big:z.em[rnd()*z.em.length|0],
       sp=document.createElement('span');sp.textContent=e;
       sp.style.cssText=`left:${left}%;top:${(z.a+ys[i]*(z.b-z.a))*100}%;font-size:${sz}px;opacity:${e==='🌊'?.5:.7};transform:rotate(${(rnd()*60-30)|0}deg);${big?'filter:blur(1.5px)':''}`;
       d.appendChild(sp)}});
