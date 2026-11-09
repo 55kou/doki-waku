@@ -2053,7 +2053,7 @@ let PK={};
 function cell(q,si,key,i){
   const tk=P.filter(p=>p.s===si&&p.r===key&&p.i===i).map(p=>`<i class="${p===P[cur]&&!over?'on':''}" style="background:${p.c}"></i>`).join('');
   const cls=q.k==='m'?(q.v>0?'p':'n'):q.k;
-  const sub=q.k==='m'?fmt(q.v):q.k==='house'?'¥'+q.pr/1000+_T("k",'千'):q.k==='gam'?'¥'+(q.st>=1000?q.st/1000+_T("k",'千'):q.st):q.k==='fz'?FZ[q.sub].sub:'';const ic=q.k==='m'?(q.v>0?'💴':'💸'):q.k==='house'?'🏠':q.k==='gam'?GI[q.g||'slot']:ICON[q.k]||'';
+  const sub=q.k==='m'?fmt(q.v):q.k==='house'?'¥'+q.pr/1000+_T("k",'千'):q.k==='gam'?'¥'+(q.st>=1000?q.st/1000+_T("k",'千'):q.st):q.k==='fz'?FZ[q.sub].sub:q.k==='duel'?'¥3'+(si<=2?'':'~5')+_T("k",'千'):'';const ic=q.k==='m'?(q.v>0?'💴':'💸'):q.k==='house'?'🏠':q.k==='gam'?GI[q.g||'slot']:ICON[q.k]||'';
   const ow=q.owner?`box-shadow:inset 0 -4px 0 ${q.owner.c}`:'';
   const pn=PK[si+'|'+key+'|'+i];   // 「マス目を見る」中：盤面のマスに「何マス先か」の番号バッジを付ける
   return `<div class="cell c-${cls}" style="${ow}">${pn?`<em class="pkn">${pn}</em>`:''}<span class="ic">${ic}</span><span class="nm">${q.k==='fz'?FZ[q.sub].n:q.t}</span><span class="v">${sub}</span><span class="tk">${tk}</span></div>`;
