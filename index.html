@@ -1255,6 +1255,7 @@ async function bac(p,st,borrow,cons){
   for(let s=0;s<S.length;s++){const[w,n,t]=S[s];
     if(n===3){if(w==='A')da=3;else dk=3;sh();$('gs').textContent=(w==='A'?'PLAYER':'BANKER')+_T(" third card…",' 第3カード…')}
     await btz(t);if(w==='A')ra=n;else rk=n;sh();snd(450,.12,'triangle',.1);await bsl(s===S.length-1?400:950)}
+  await sleep(1500);   // 全カードが表になって勝敗がついてから結果画面に移るまでを1.5秒延ばす
   const pa=bcv(A),kb=bcv(K),w=pa>kb?0:kb>pa?1:2;
   const res=side===w?(w===0?1:w===1?.95:8):-1;
   return finale(res,st,w===0?'👤 PLAYER WIN':w===1?'🏦 BANKER WIN':'🤝 TIE',true,cdWrap(cdHand('PLAYER',A,pa)+cdHand('BANKER',K,kb)+`<div class='cd3'>${_T("Your bet",'あなたの賭け')}: ${SJ[side]} ${yen(st)}<br>${_T("Result",'結果')}: ${SJ[w]}</div>`,res*st,st%100?10:100),true);
