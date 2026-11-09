@@ -1929,8 +1929,8 @@ async function shop(p){
 }
 // ランダム決着：2人の勝利ランプが交互に点滅し、ゆっくり減速して止まった方が勝ち
 // 独身宣言中の子供：養育費を「払う／払わない」を、直接対決のランダム決定と同じランプ点滅で抽選（true＝払う）
-async function lampLottery(head,aL,bL,aC,bC,aR,bR,aS,bS){   // 2択のランプ点滅抽選（true＝A側）
-  const w=Math.random()<.5?0:1,n=22+(Math.random()*8|0),k=((n%2===1)===(w===0))?n:n+1;   // k回目の点灯がwになる（奇数→0／偶数→1）
+async function lampLottery(head,aL,bL,aC,bC,aR,bR,aS,bS,pA=.5){   // 2択のランプ点滅抽選（true＝A側）
+  const w=Math.random()<pA?0:1,n=22+(Math.random()*8|0),k=((n%2===1)===(w===0))?n:n+1;   // k回目の点灯がwになる（奇数→0／偶数→1）
   $('box').innerHTML=`<b>${head}</b><div class='dlr'><div class='dlp' id='dl0' style='background:${aC}'>${aL}</div><div class='dlp' id='dl1' style='background:${bC}'>${bL}</div></div><div class='dlt' id='dlt'>…</div>`;
   $('ov').classList.add('show');
   let d=70;
@@ -1953,7 +1953,7 @@ async function kidResult(p,title,emo,n,line,sub,c){await ask(title,[{l:emo.repea
 // 独身宣言中の子供・離婚時の子供：養育費を「払う／払わない」をランプ点滅で抽選（true＝払う）
 async function supLottery(what,intro){
   if(intro)await kidIntro(intro[0],intro[1]);
-  return lampLottery(_TT("🎲 Will you pay child support for {0}… or not?",[`🎲 `,`の養育費を…払う？ 払わない？`],[(what)]),_T("Pay<br>child support",'養育費を<br>払う'),_T("Don't pay<br>child support",'養育費を<br>払わない'),'#c2185b','#7b4a1e',_T("💴 Pays child support!",'💴 養育費を払う！'),_T("🐒 Doesn't pay child support!",'🐒 養育費を払わない！'),784,330);
+  return lampLottery(_TT("🎲 Will you pay child support for {0}… or not?",[`🎲 `,`の養育費を…払う？ 払わない？`],[(what)]),_T("Pay<br>child support",'養育費を<br>払う'),_T("Don't pay<br>child support",'養育費を<br>払わない'),'#c2185b','#7b4a1e',_T("💴 Pays child support!",'💴 養育費を払う！'),_T("🐒 Doesn't pay child support!",'🐒 養育費を払わない！'),784,330,.34);   // 払わない66%
 }
 // 離婚時：親権を失うかどうかをランプ点滅で抽選（true＝失う）
 async function custLottery(what,intro){
