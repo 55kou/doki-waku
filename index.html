@@ -233,7 +233,7 @@ html.sea body{background:none}
 #sea span{position:absolute;line-height:1}
 h1{font-size:clamp(12px,4vw,25px);font-weight:900;letter-spacing:.02em;margin:0 0 6px;padding:8px 10px;white-space:nowrap;text-align:center;overflow:hidden;background:linear-gradient(160deg,#262c70,#151944);border:1px solid #363c7a;border-radius:14px;box-shadow:0 4px 0 #080a22}
 h1 span{background:linear-gradient(90deg,#ffd86b,#ff7ab6,#7ad7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sticky{background:linear-gradient(#0e1230 88%,transparent)}
+.sticky{background:none}   /* 紺色はプレイヤーカード・ログの角丸の枠内だけにする */
 .pl{background:linear-gradient(160deg,#262c70,#151944);border-color:#363c7a;border-radius:14px;box-shadow:0 4px 0 #080a22;transition:transform .3s,box-shadow .3s}
 .pl.on{transform:translateY(-3px);box-shadow:0 0 0 1px var(--pc),0 0 20px var(--pc),0 4px 0 #080a22}
 .pl .m{font-size:18px;font-weight:900;color:#ffe27a;font-variant-numeric:tabular-nums}.pl .m.neg{color:var(--neg)}
@@ -2028,8 +2028,8 @@ function seaInit(){
   d=document.createElement('div');d.id='sea';
   const rnd=Math.random;
   const strat=n=>{const a=Array.from({length:n},(_,k)=>(k+rnd())/n);for(let i=n-1;i>0;i--){const j=rnd()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-  SEAS.forEach(z=>{const n=Math.round((z.b-z.a)*4200/29.5),xs=strat(n),ys=strat(n);   // 横・縦とも満遍なく散らす（左右に偏らない）
-    for(let i=0;i<n;i++){const big=rnd()<.336,sz=big?60+rnd()*60:20+rnd()*24,
+  SEAS.forEach(z=>{const n=Math.round((z.b-z.a)*4200/32),xs=strat(n),ys=strat(n);   // 横・縦とも満遍なく散らす（左右に偏らない）
+    for(let i=0;i<n;i++){const big=rnd()<.28,sz=big?60+rnd()*60:20+rnd()*24,
       left=-4+xs[i]*100,e=big?z.big:z.em[rnd()*z.em.length|0],
       sp=document.createElement('span');sp.textContent=e;
       sp.style.cssText=`left:${left}%;top:${(z.a+ys[i]*(z.b-z.a))*100}%;font-size:${sz}px;opacity:${e==='🌊'?.5:.7};transform:rotate(${(rnd()*60-30)|0}deg);${big?'filter:blur(1.5px)':''}`;
