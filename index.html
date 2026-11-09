@@ -130,6 +130,8 @@ body.pkon{padding-bottom:90px}
 #stl .stc{position:absolute;top:-6vh;font-size:5vh;animation:stcf 3.2s linear forwards;opacity:.95}
 @keyframes stcf{to{transform:translateY(112vh) rotate(360deg);opacity:.9}}
 #gm.felt.suede{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E"),radial-gradient(ellipse at 50% 30%,#ffffff22,transparent 60%),radial-gradient(circle,#b3202e,#470910)}
+#box>b .rh{margin:6px -76px 2px 0;width:auto}
+.cldh{font-weight:900;font-size:12px;color:#bfe9ff;text-shadow:0 0 6px #4aa8f0}
 .rh{position:relative;z-index:1;margin:2px 0 6px;width:min(92vw,360px);color:#fff;text-align:center;font-size:11px;opacity:.95}
 .rhl{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;align-items:center;max-height:52px;overflow-y:auto;margin-top:2px}
 .rn{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:3px;font-size:11px;font-weight:800;border:1.5px solid #fff8;color:#fff;background:#111}
@@ -893,7 +895,8 @@ const RW=[0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14
 const rouCold=x=>ROUH.includes(x);
 function rouDraw(){const w=Array.from({length:37},(_,x)=>rouCold(x)?.5:1);let t=w.reduce((a,b)=>a+b,0)*Math.random();for(let x=0;x<37;x++){t-=w[x];if(t<0)return x}return 36}
 const ROUH=[];   // ゲーム開始からのルーレットの出目（出た順）
-const rhHTML=()=>!ROUH.length?'':`<div class='rh' id='rh'><small>${_T("Spins so far (oldest → newest)",'これまでの出目（左が古い→右が最新）')}</small>${ROUH.length?`<div class='rhl'>${ROUH.map((n,i)=>`<span class='rn ${n===0?'g':REDS.includes(n)?'r':''} ${i===ROUH.length-1?'last':''}'>${n}</span>`).join('')}</div>`:''}</div>`;
+const rhPop=()=>rhHTML().replace(" id='rh'",'');   // 選択ポップアップ用（赤黒・ダースの選択時にも出す）
+const rhHTML=()=>!ROUH.length?'':`<div class='rh' id='rh'><div class='cldh'>${_T("❄️ Cold numbers: odds halved",'❄️ コールドナンバー：出現確率半減')}</div><small>${_T("Spins so far (oldest → newest)",'これまでの出目（左が古い→右が最新）')}</small>${ROUH.length?`<div class='rhl'>${ROUH.map((n,i)=>`<span class='rn ${n===0?'g':REDS.includes(n)?'r':''} ${i===ROUH.length-1?'last':''}'>${n}</span>`).join('')}</div>`:''}</div>`;
 const rhAdd=()=>{const g=$('gm'),t=g.querySelector('.gt');if(t)t.insertAdjacentHTML('afterend',rhHTML());const l=g.querySelector('.rhl');if(l)l.scrollTop=l.scrollHeight};
 const rhUpd=()=>{const r=$('rh');if(!r){rhAdd();return}if(r){r.outerHTML=rhHTML();const l=$('gm').querySelector('.rhl');if(l)l.scrollTop=l.scrollHeight}};
 // 一点がけ：チップ5枚を0〜36の数字に置く（同じ数字に何枚でも／数字の上だけ）。当たると1枚あたり36倍
@@ -920,12 +923,12 @@ async function rou(p,st){
   let one=false;   // 30%の確率で「今はデカく勝ちたい…‼︎」→ 強制的に一点がけモード（赤黒・ダースの選択はなし）
   if(Math.random()<.3){await fireScene(_T("I want to win big right now…‼︎",'今はデカく勝ちたい…‼︎'));one=true}
   const put=Array(37).fill(0),c1=Math.max(10,Math.round(st/50)*10);
-  const mode=one?2:await ask(_T("Roulette: choose how to play",'ルーレット：遊び方を選ぼう'),[{l:_T("🔴⚫ Red or Black",'🔴⚫ 赤か黒'),s:_TT("Bet {0} on one spot / hit +1×",[``,`を1つに賭ける／当たり +1倍`],[(yen(st)
+  const mode=one?2:await ask(_T("Roulette: choose how to play",'ルーレット：遊び方を選ぼう')+rhPop(),[{l:_T("🔴⚫ Red or Black",'🔴⚫ 赤か黒'),s:_TT("Bet {0} on one spot / hit +1×",[``,`を1つに賭ける／当たり +1倍`],[(yen(st)
 )]),c:'#e24b4a'},{l:_T("🔢 Dozens (1-12 / 13-24 / 25-36)",'🔢 ダース（1-12／13-24／25-36）'),s:_TT("Chips of {0}, up to 2 (both can go on the same spot / max total {1}) / each winning chip +2×",[`1口 `,`を最大2口まで（同じ場所に2口もOK／合計で最大 `,`）／当たった口は +2倍`],[(yen(chip)
 ),(yen(st)
 )]),c:'#8e5bd1'}]);
   let side=0,cnt=[0,0,0];
-  if(mode===0){side=await ask(_T("Roulette: pick a color",'ルーレット：色を選ぼう'),[{l:_T("🔴 Red",'🔴 赤'),s:_T("Hit +1×",'当たり +1倍'),c:'#e24b4a'},{l:_T("⚫ Black",'⚫ 黒'),s:_T("Hit +1×",'当たり +1倍'),c:'#444'}])}
+  if(mode===0){side=await ask(_T("Roulette: pick a color",'ルーレット：色を選ぼう')+rhPop(),[{l:_T("🔴 Red",'🔴 赤'),s:_T("Hit +1×",'当たり +1倍'),c:'#e24b4a'},{l:_T("⚫ Black",'⚫ 黒'),s:_T("Hit +1×",'当たり +1倍'),c:'#444'}])}
   else if(mode===1){
     gopen('felt',_TT("<div class='gt'>🎡 ROULETTE 🎡</div><div class='lab'>Dozens: place 1–2 chips (chip {0} / both can go on the same spot)</div><div class='gb' id='dzp'></div><div class='gb'><button id='dzrs' style='background:#666'>Reset</button><button id='dzok' disabled style='background:#e8a317'>Go with this bet!</button></div><div class='gs' id='gs'>0/2 chips</div>",[`<div class='gt'>🎡 ROULETTE 🎡</div><div class='lab'>ダース：1〜2口を置こう（1口 `,`／同じ場所に2口もOK）</div><div class='gb' id='dzp'></div><div class='gb'><button id='dzrs' style='background:#666'>選び直す</button><button id='dzok' disabled style='background:#e8a317'>この賭けで勝負！</button></div><div class='gs' id='gs'>0/2 口</div>`],[(yen(chip)
 )]));
