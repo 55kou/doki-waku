@@ -49,6 +49,19 @@ p{margin:0 0 14px}
 .card .no{font-family:'Dela Gothic One',sans-serif;font-size:44px;color:#f2b632;line-height:1;margin:0 0 10px}
 .card ul{margin:10px 0 0;padding-left:20px}
 .card li{margin:4px 0}
+.kdg{margin:20px 0 0;background:#21193a;border:1px solid #3a2f57;border-radius:16px;padding:26px}
+.kdg h3{margin:0 0 4px}
+.kdg .kleg{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px}
+.kdg .krow{display:grid;grid-template-columns:200px 1fr;gap:14px;align-items:start;padding:16px 0;border-top:1px dashed #3a2f57}
+.kdg .kc{background:#f2b632;color:#14101f;border-radius:10px;padding:10px 12px;font-weight:700;font-size:14px;line-height:1.4}
+.kdg .kc small{display:block;font-weight:500;font-size:12px}
+.kdg .kb{display:flex;flex-direction:column;gap:10px}
+.kdg .kl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:14px;line-height:1.5}
+.kdg .kw{border:1px solid #5a4a86;border-radius:8px;padding:5px 10px;color:#e2d9f0}
+.kdg .ka{color:#f2b632;font-weight:700}
+.kdg .kr{border-radius:999px;padding:5px 12px;font-weight:700;font-size:13px;color:#14101f}
+.kdg .kr1{background:#4fd1a5}.kdg .kr2{background:#7cb7ff}.kdg .kr3{background:#ff8fc0}
+@media(max-width:640px){.kdg{padding:18px}.kdg .krow{grid-template-columns:1fr;gap:10px}}
 .tag{display:inline-block;padding:2px 12px;border-radius:999px;font-size:12px;font-weight:700;color:#14101f;margin:0 6px 8px 0}
 .box{overflow-x:auto;margin:30px 0 0;border:1px solid #3a2f57;border-radius:14px}
 table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
@@ -335,6 +348,25 @@ td.pos{color:#4fd1a5!important}td.neg{color:#ff7b7f!important}
 <li>離婚には慰謝料10,000円がかかり、親権を失うこともあります。養育費を払う子は👦、払わない子は🐒、親権を守った子は👶で表示されます</li>
 </ul>
 </div>
+</div>
+<div class="kdg">
+<h3>子供のでき方まとめ</h3>
+<p class="muted" style="margin:0">子供ができるのは4つのとき。状況によって、できる子供の種類が変わります。</p>
+<div class="kleg"><span class="kr kr1">👶 親権あり：毎ターン子育て金−500円</span><span class="kr kr2">👦 養育費を払う：毎ターン−800円</span><span class="kr kr3">🐒 養育費を払わない：費用なし（称号「猿」）</span></div>
+<div class="krow"><div class="kc">① 結婚中の毎ターン終了時</div><div class="kb"><div class="kl"><span class="ka">→</span><span class="kr kr1">15%で子供誕生（双子は20%）：出産祝い+5,000円（双子は+10,000円）</span></div></div></div>
+<div class="krow"><div class="kc">② 同じお店に3回目以降通う<small>（通うたびに毎回）</small></div><div class="kb">
+<div class="kl"><span class="kw">結婚中・独身宣言中</span><span class="ka">→</span><span class="kw">養育費の抽選</span><span class="ka">→</span><span class="kr kr2">34% 払う👦</span> / <span class="kr kr3">66% 払わない🐒</span></div>
+<div class="kl"><span class="kw">結婚していない</span><span class="ka">→</span><span class="kr kr2">払う👦（抽選なし）</span></div>
+<div class="kl"><span class="kw">離婚した相手と同じお店</span><span class="ka">→</span><span class="kw">再婚ルーレット（50%）</span><span class="ka">→</span><span class="kr kr1">再婚👶</span> / <span class="kr kr2">再婚せず養育費👦</span></div>
+</div></div>
+<div class="krow"><div class="kc">③ 出産マスに止まる</div><div class="kb">
+<div class="kl"><span class="kw">結婚中</span><span class="ka">→</span><span class="kr kr1">出産祝い+5,000円👶</span></div>
+<div class="kl"><span class="kw">結婚していない</span><span class="ka">→</span><span class="kr kr2">養育費を払う👦</span></div>
+<div class="kl"><span class="kw">独身宣言中</span><span class="ka">→</span><span class="kw">養育費の抽選</span><span class="ka">→</span><span class="kr kr2">34% 払う👦</span> / <span class="kr kr3">66% 払わない🐒</span></div>
+</div></div>
+<div class="krow"><div class="kc">④ 離婚するとき</div><div class="kb">
+<div class="kl"><span class="kw">親権ルーレット（50%）</span><span class="ka">→</span><span class="kr kr1">維持👶</span> / <span class="kr kr2">失う → 養育費の抽選（34%で払う👦／66%で払わない🐒）</span></div>
+</div></div>
 </div>
 </div>
 </section>
@@ -660,6 +692,25 @@ td.pos{color:#4fd1a5!important}td.neg{color:#ff7b7f!important}
 <li>A divorce costs ¥10,000 in alimony and you may lose custody. Children are shown as emoji: child-support-paying 👦, non-paying 🐒, custody kept 👶</li>
 </ul>
 </div>
+</div>
+<div class="kdg">
+<h3>How Children Happen</h3>
+<p class="muted" style="margin:0">Children come from 4 situations. The kind of child depends on your situation.</p>
+<div class="kleg"><span class="kr kr1">👶 Custody: −¥500 every turn</span><span class="kr kr2">👦 Pays child support: −¥800 every turn</span><span class="kr kr3">🐒 No child support: no cost ("Monkey" title)</span></div>
+<div class="krow"><div class="kc">① Married, at the end of each turn</div><div class="kb"><div class="kl"><span class="ka">→</span><span class="kr kr1">15% chance of a child (20% twins): baby shower +¥5,000 (twins +¥10,000)</span></div></div></div>
+<div class="krow"><div class="kc">② Visit the same venue a 3rd time or more<small>(every visit)</small></div><div class="kb">
+<div class="kl"><span class="kw">Married / Bachelor Pledge</span><span class="ka">→</span><span class="kw">Child support lottery</span><span class="ka">→</span><span class="kr kr2">34% pay 👦</span> / <span class="kr kr3">66% don't pay 🐒</span></div>
+<div class="kl"><span class="kw">Not married</span><span class="ka">→</span><span class="kr kr2">pays 👦 (no lottery)</span></div>
+<div class="kl"><span class="kw">Same venue as an ex-spouse</span><span class="ka">→</span><span class="kw">Remarriage roulette (50%)</span><span class="ka">→</span><span class="kr kr1">remarry 👶</span> / <span class="kr kr2">no remarriage, pay support 👦</span></div>
+</div></div>
+<div class="krow"><div class="kc">③ Land on the Birth square</div><div class="kb">
+<div class="kl"><span class="kw">Married</span><span class="ka">→</span><span class="kr kr1">baby shower +¥5,000 👶</span></div>
+<div class="kl"><span class="kw">Not married</span><span class="ka">→</span><span class="kr kr2">pays child support 👦</span></div>
+<div class="kl"><span class="kw">Bachelor Pledge</span><span class="ka">→</span><span class="kw">Child support lottery</span><span class="ka">→</span><span class="kr kr2">34% pay 👦</span> / <span class="kr kr3">66% don't pay 🐒</span></div>
+</div></div>
+<div class="krow"><div class="kc">④ At a divorce</div><div class="kb">
+<div class="kl"><span class="kw">Custody roulette (50%)</span><span class="ka">→</span><span class="kr kr1">keep 👶</span> / <span class="kr kr2">lose → support lottery (34% pay 👦 / 66% don't 🐒)</span></div>
+</div></div>
 </div>
 </div>
 </section>
