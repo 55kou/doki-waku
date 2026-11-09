@@ -228,7 +228,9 @@ body.pkon{padding-bottom:90px}
 :root,:root[data-theme]{--bg:#0e1230;--card:#1a1f4a;--tx:#f4f1ff;--mut:#9aa0d6;--bd:#363c7a;--pos:#5ff0a8;--neg:#ff8590;color-scheme:dark}
 body{background:radial-gradient(circle at 15% 0,#2f3490 0,transparent 45%),radial-gradient(circle at 100% 35%,#6a2282 0,transparent 40%),#0e1230;background-attachment:fixed;color:var(--tx)}
 html.sea{background:linear-gradient(#00000040,#00000040),linear-gradient(180deg,#c0568f 0%,#e49ab6 13%,#4aa8d8 28%,#27b3a0 42%,#d4742a 56%,#8e3a24 70%,#6a86b4 82%,#2a3a66 100%);background-size:100% 100%;background-attachment:scroll}   /* 黒25%を重ねて全体を少し暗く */
+html.sea{min-height:100vh}
 html.sea body{background:none}
+.ov.ovs{background:rgba(0,0,0,.1);backdrop-filter:none}   /* 設定画面では背景の四季グラデーションを見せる */
 #sea{position:absolute;left:0;top:0;width:100%;z-index:-1;pointer-events:none;overflow:hidden}
 #sea span{position:absolute;line-height:1}
 h1{font-size:clamp(12px,4vw,25px);font-weight:900;letter-spacing:.02em;margin:0 0 6px;padding:8px 10px;white-space:nowrap;text-align:center;overflow:hidden;background:linear-gradient(160deg,#262c70,#151944);border:1px solid #363c7a;border-radius:14px;box-shadow:0 4px 0 #080a22}
@@ -2035,7 +2037,7 @@ function seaInit(){
       sp.style.cssText=`left:${left}%;top:${(z.a+ys[i]*(z.b-z.a))*100}%;font-size:${sz}px;opacity:${e==='🌊'?.5:.7};transform:rotate(${(rnd()*60-30)|0}deg);${big?'filter:blur(1.5px)':''}`;
       d.appendChild(sp)}});
   document.body.insertBefore(d,document.body.firstChild);seaSync()}
-function seaSync(){const d=$('sea');if(d)d.style.height=document.documentElement.scrollHeight+'px'}
+function seaSync(){const d=$('sea');if(d)d.style.height=Math.max(document.documentElement.scrollHeight,innerHeight)+'px'}
 function render(){seaSync();
   if(P){const n=P.length;$('pls').style.gridAutoColumns=n<3?`calc((100% - ${6*(n-1)}px)/${n})`:'calc((100% - 12px)/3)'}
   $('pls').innerHTML=P.map((p,k)=>plHTML(p,k)).join('');
@@ -3212,7 +3214,8 @@ function NETdecorate(cfg,draw,res){
   if(cfg.fr.slice(1,cfg.n).filter(Boolean).length>NET.guests.length)go.insertAdjacentHTML('afterend',`<div class='nerr'>${_T("Seats still waiting for a friend will be played by NPCs.",'参加待ちの席はNPCが担当します。')}</div>`)}
 function setup(){
   const cfg=NCFG?{n:NCFG.n,npc:[...NCFG.npc],fr:[...(NCFG.fr||[])],online:!!NCFG.online&&NET.role==='host',names:[...(NCFG.names||[])],nmOpen:false}:{n:3,npc:[0,0,0,0,0,0],fr:[],online:false,names:NMload(),nmOpen:false};
-  return new Promise(res=>{
+  return new Promise(res0=>{
+    $('ov').classList.add('ovs');const res=v=>{$('ov').classList.remove('ovs');res0(v)};
     const draw=()=>{
       $('box').innerHTML=_TT("<b>🎲 Heart-Pounding High-Roller Sugoroku</b><div class='su'>Number of players (2–6)</div><div class='sn'>{0}</div><div class='su'>Use NPCs (computer players)? Tap to switch Human / NPC</div><div class='sp'>{1}</div><button data-go style='background:#1d9e75;text-align:center;margin-top:14px'>🎲 Start!</button>",[`<b>🎲 ドキドキワクワク勝負師すごろく</b><div class='su'>プレイヤー人数（2〜6人）</div><div class='sn'>`,`</div><div class='su'>NPC（コンピューター）を使う？　タップで 人間／NPC を切り替え</div><div class='sp'>`,`</div><button data-go style='background:#1d9e75;text-align:center;margin-top:14px'>🎲 スタート！</button>`],[([2,3,4,5,6].map(n=>_TT("<button data-n='{0}' class='{1}'>{2}</button>",[`<button data-n='`,`' class='`,`'>`,`人</button>`],[(n
 ),(cfg.n===n?'sel':''
@@ -3260,5 +3263,5 @@ async function init(){BGMX=0;bgmVol();try{if(NET.role==='host'&&NET.guests.lengt
   busy=false;render();npcKick();
 }
 _staticEn();
-init();
+seaInit();init();
 </script></body></html>
