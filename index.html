@@ -994,7 +994,8 @@ const chRole=a=>{const s=[...a].sort((x,y)=>x-y);
 const CW=(()=>{
   const k0=(1-.5**3)/(1-.5),F={pz:1/216*k0,zr:1/216*k0,sg:6/216*k0,hf:6/216*k0,me:15/216*k0,nashi:.5**3};   // 調整前の最終確率（チョンボ除く）
   const up=F.pz+5*F.zr+(F.sg*.5),cut=up/7;
-  const N={pz:F.pz*2,zr:F.zr*2,sg:F.sg*1.5,hf:F.hf,me:F.me-cut,nashi:F.nashi-cut};
+  // 最終確率（1回の勝負・チョンボ除く）を直接指定：ピンゾロ2%／ゾロ目2〜6は各1.8%／シゴロ7.2%／ヒフミ5.8%／目1〜6は各11%／目なし10%（合計100%）
+  const N={pz:.02,zr:.018,sg:.072,hf:.058,me:.11,nashi:.10};
   const q=Math.cbrt(N.nashi),f=(1-q)/(1-q**3);   // 3投で役が出なかった確率が N.nashi になる、1投あたりの「目なし」確率 q
   return{pz:N.pz*f,zr:N.zr*f,sg:N.sg*f,hf:N.hf*f,me:N.me*f,nashi:q};
 })();
