@@ -2357,7 +2357,11 @@ async function fuzoku(p,q){
       $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+1300);$('ov').classList.remove('show')}
     if(rem){   // 離婚した相手との子供：再婚するかしないかをルーレットで決める（再婚＝親権のある子供／再婚しない＝養育費を払う子供）
       const re=await lampLottery(_T("🎲 Remarry… or not?",'🎲 再婚する？ しない？'),_T("Remarry",'再婚<br>する'),_T("Don't<br>remarry",'再婚<br>しない'),'#c2185b','#555',_T("💍 Remarries!",'💍 再婚する！'),_T("🚫 Doesn't remarry!",'🚫 再婚しない！'),784,330);
-      if(re){mine=true;p.fm[sub]=1;p.fwed=1;p.pend.push(sub);log(_TT("💍 {0}: remarries {1}!",[`💍 `,`：離婚した`,`と再婚！`],[(p.n),(FM[sub])]))}
+      if(re){mine=true;p.fm[sub]=1;p.fwed=1;p.pend.push(sub);log(_TT("💍 {0}: remarries {1}!",[`💍 `,`：離婚した`,`と再婚！`],[(p.n),(FM[sub])]));
+        // 再婚は無菌なしで100%：売り専は人工肛門／それ以外はカンジダ（バイキンマンなら即治癒）
+        if(sub==='uri'){p.ost=1;log(_TT("🩹 {0}: <b class='neg'>needs a colostomy</b>! (-{1} every turn, permanent / cleared by divorce)",[`🩹 `,`：<b class='neg'>人工肛門</b>が必要に！（毎ターン-`,`が永続／離婚で解消）`],[(p.n),(yen(1500))]))}
+        else if(p.baikin)log(_TT("🦠 {0}: infected with Candida… but as a <b class='pos'>Germ Man</b> it was cured instantly!",[`🦠 `,`：カンジダに感染…しかし<b class='pos'>バイキンマン</b>なので一瞬で治った！`],[(p.n)]));
+        else{p.cand=1;(p.hist=p.hist||{}).cand=1;log(_TT("🦠 {0}: infected with <b class='neg'>Candida</b>! (-{1} every turn, permanent / cured by divorce)",[`🦠 `,`：<b class='neg'>カンジダ</b>に感染！（毎ターン-`,`が永続／離婚で治る）`],[(p.n),(yen(500))]));await baikinCheck(p)}}
       else{const bx=$('box');bx.innerHTML=`<div style='font-size:20px;font-weight:900;line-height:1.6;text-align:center;padding:10px 0'>${_T("I won't remarry, but I should at least pay child support 👦",'再婚はしないけど、流石に養育費は払おう👦')}</div>`;
         $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+1300);$('ov').classList.remove('show')}
     }
