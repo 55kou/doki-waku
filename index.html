@@ -1095,11 +1095,11 @@ function bjFit(){const g=$('gm'),gs=$('gs'),gt=g.querySelector('.gt'),bh=$('bjh'
 const actHB=hi=>document.querySelectorAll('#bjh .hb').forEach((el,i)=>{el.classList.toggle('act',hi>=0&&i===hi);el.classList.toggle('idle',hi>=0&&i!==hi)});
 function totMark(e,cs){if(!e)return;e.classList.add('pt');const n=cs.length;
   if(n<2){e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');return}
-  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),450)}   // 合計は、カードが完全に着いた瞬間（合計は配るアニメ0.45秒後に表示）
+  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),720)}   // 合計は、カードが完全に着いた瞬間（配るアニメ0.72秒）に表示
 function bustMark(e,on){if(!e)return;
   if(!on){if(e._bt){e._bt.forEach(clearTimeout);e._bt=null}e.classList.remove('bust','bt');return}
   if(e._bt||e.classList.contains('bust'))return;
-  e._bt=[setTimeout(()=>e.classList.add('bust'),450),setTimeout(()=>e.classList.add('bt'),450+100)]}   // バースト：合計と同時（着いた瞬間）にグレー、その0.1秒後にBUST
+  e._bt=[setTimeout(()=>e.classList.add('bust'),720),setTimeout(()=>e.classList.add('bt'),720+100)]}   // バースト：合計と同時（着いた瞬間）にグレー、その0.1秒後にBUST
 function setHand(id,cs,hid){const el=$(id);cs.forEach((c,i)=>{const h=hid(i),key=h?'b':c.n+'-'+c.s,ch=el.children[i];if(!ch||ch.dataset.k!==key){const t=document.createElement('div');t.innerHTML=card(c,h);const n=t.firstChild;n.dataset.k=key;if(ch)el.replaceChild(n,ch);else el.appendChild(n)}});while(el.children.length>cs.length)el.removeChild(el.lastChild)}
 const tease=async n=>{for(let k=0;k<n;k++){snd(150+k*35,.1,'sawtooth',.08);await sleep(240)}};
 async function gov(p){
