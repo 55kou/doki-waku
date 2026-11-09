@@ -612,7 +612,7 @@ async function npcAsk(title,opts){const title0=title,opts0=opts;title=_pk(title,
     for(let i=0;i<n-1;i++){
       const l=L(i)+(opts[i].s||'');if(l.includes('資金不足')||l.includes('所持中')||l.startsWith('💰'))continue;
       const pr=+((L(i).match(/¥([\d,]+)/)||[0,'0'])[1].replace(/,/g,''));let sc=0;
-      if(l.includes('徳政令'))sc=wealth(p)<0?100:0;
+      if(l.includes('自己破産'))sc=wealth(p)<0?100:0;
       else if(l.includes('独身宣言'))sc=0;
       else if(l.includes('ダブルチケット'))sc=p.job==='ギャンブラー'?55:0;   // 期待値プラスの職業だけ
       else if(l.includes('セカンドダイス'))sc=30;else if(l.includes('シゴロ賽'))sc=40;else if(l.includes('サガミ'))sc=35;else if(l.includes('競馬新聞'))sc=30;
@@ -1736,6 +1736,7 @@ async function game(p,q){
     if(v&&typeof v==='object'){paid=v.paid;if(v.stake)st=v.stake;v=v.net}
     p.m+=paid;
     if(v>0&&p.job==='ギャンブラー')v=Math.round(v*1.3/10)*10;
+    if(v>=30000)p.big30=1;   // 実績「ヤメドキ」：1回のギャンブルで3万円以上勝つ
     add(p,v,`${q.t}${xr?_T(" (bonus round)",'（追加勝負）'):''}${v>0?_T(" — won",'に勝利'):v<0?_T(" — lost",'に敗北'):_T(" — draw",'は引き分け')}`,true);
     if(v>0)await crownCheck(p,q.g);
     if(v<0){
@@ -1787,11 +1788,11 @@ const SHOP=[
   {k:'single',e:'🚫',n:_T("Bachelor Pledge",'独身宣言'),pr:0,d:_T("You can never marry again (and never get Candida). Used while married: divorce with no alimony, and you give up custody of children paid for by child support (random: pays child support / doesn't)",'永続的に結婚できなくなる（カンジダにもならない）。結婚中に使うと慰謝料なしで離婚し、子育て金の子は親権を放棄（養育費を払う／払わないを抽選）')},
   {k:'dbl',e:'🎟️',n:_T("Double Ticket",'ダブルチケット'),pr:1000,d:_T("Doubles your stake in your next gambling",'次回のギャンブルの掛け金が2倍')},
   {k:'second',e:'🎲',n:_T("Second Dice",'セカンドダイス'),pr:2000,d:_T("Re-roll the dice (you choose whether to use it on each roll / not used up unless you use it)",'サイコロの目をやり直せる（振るたびに使うか選べる・使わなければ消費されない）')},
-  {k:'tokusei',e:'📜',n:_T("Debt Forgiveness Decree",'徳政令'),pr:0,d:_T("Wipes out all negative funds and advances (also zeroes positive funds)",'資金のマイナスも前借りも全て0になる（プラスでも0になる）')}];
+  {k:'tokusei',e:'📜',n:_T("Personal Bankruptcy",'自己破産'),pr:0,d:_T("Wipes out all negative funds and advances (also zeroes positive funds)",'資金のマイナスも前借りも全て0になる（プラスでも0になる）')}];
 // 出現確率（ショップの品揃え・緑マスのアイテムとも共通。重み付き抽選）
 const IW={sigoro:15,dbl:15,second:15,sagami:15,news:14,single:13,tokusei:13};
 const wsample=(arr,k)=>{const a=[...arr],o=[];while(o.length<k&&a.length){const x=wpick(a.map(y=>[y,IW[y.k]]));o.push(x);a.splice(a.indexOf(x),1)}return o};
-// アイテム入手（購入・無料共通）：独身宣言と徳政令は即時発動、それ以外は使う機会まで保持
+// アイテム入手（購入・無料共通）：独身宣言と自己破産は即時発動、それ以外は使う機会まで保持
 async function giveItem(p,x){
   if(x.k==='single'){
     p.single=1;log(_TT("🚫 {0}: <b class='neg'>Bachelor Pledge</b>! No more marriage or Candida from now on",[`🚫 `,`：<b class='neg'>独身宣言</b>！今後は結婚もカンジダもなし`],[(p.n
@@ -1823,8 +1824,8 @@ async function giveItem(p,x){
       }
     }
   }
-  else if(x.k==='tokusei'){const b=p.m,l=p.loan||0;add(p,-p.m,_TT("📜 Used the Debt Forgiveness Decree! Funds of {0} set to 0",[`📜 徳政令を使用！資金`,`を0に`],[(yen(b)
-)]),true);p.loan=0;log(_TT("📜 {0}: <b>Debt Forgiveness Decree</b>! Funds {1} / advance {2} all reset to ¥0",[`📜 `,`：<b>徳政令</b>！資金 `,`／前借り `,` が全て ¥0 に`],[(p.n
+  else if(x.k==='tokusei'){const b=p.m,l=p.loan||0;add(p,-p.m,_TT("📜 Used Personal Bankruptcy! Funds of {0} set to 0",[`📜 自己破産を使用！資金`,`を0に`],[(yen(b)
+)]),true);p.loan=0;log(_TT("📜 {0}: <b>Personal Bankruptcy</b>! Funds {1} / advance {2} all reset to ¥0",[`📜 `,`：<b>自己破産</b>！資金 `,`／前借り `,` が全て ¥0 に`],[(p.n
 ),(yen(b)
 ),(yen(l)
 )]))}
@@ -2794,6 +2795,7 @@ const ACHDEF=()=>[
  {id:'ichizu',rate:10,ok:p=>!!p.ichizu||!!p.ihad,t:_T("Devoted",'一途'),s:_T("Visit the same kind of venue 3 times in a row",'同じ種類の風俗に3回連続で通う')},
  {id:'ape',rate:10,ok:p=>monkey(p),t:_T("Monkey",'猿'),s:_T("Have a child who doesn't pay child support",'養育費を払わない子供がいる')},
  {id:'baikin',rate:8,ok:p=>!!p.baikin,t:_T("Germ Man",'バイキンマン'),s:_T("Catch each of chlamydia, syphilis, HIV and candidiasis at least once",'クラミジア・梅毒・HIV・カンジダにそれぞれ一度は感染する')},
+ {id:'yame',rate:4,ok:p=>!!p.big30,t:_T("Quit While Ahead",'ヤメドキ'),s:_T("Win ¥30,000 or more in a single game",'一度のゲームで30000円以上勝つ')},
  {id:'gkr',rate:8,ok:p=>gkrT(p),t:_T("Kakegurui",'賭ケグルイ'),s:_T("Land on gambling squares 10 times or more",'ギャンブルマスに10回以上止まる')},
  {id:'big7',rate:7,ok:p=>kidTotal(p)>=10,t:_T("Huge Family",'大家族'),s:_T("Have 10 or more children",'子供を10人以上作る')},
  {id:'fzk',rate:5,ok:p=>!!p.fv&&Object.values(p.fv).reduce((a,b)=>a+b,0)>=10,t:_T("Nightlife Addict",'風俗狂い'),s:_T("Visit nightlife 10 times or more",'風俗に10回以上通う')},
