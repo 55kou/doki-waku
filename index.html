@@ -2412,11 +2412,6 @@ async function land(p){
 ),(w
 )]));return;
   }
-  if(q.k==='m'&&p.m-(p.loan||0)<-15000){   // 資金−前借りが−15,000円を下回ると行政が出る確率1.5倍（この区間の行政マス割合の+50%分を緑・赤マスで発生）
-    const arr=B[p.s].c||B[p.s][p.r],gc=arr.filter(x=>x.k==='gov').length,mc=arr.filter(x=>x.k==='m').length;
-    if(gc&&mc&&Math.random()<.5*gc/mc){log(_TT("🏛️ {0}: debt ballooned and the government stepped in!",[`🏛️ `,`：借金が膨らみ行政が動いた！`],[(p.n
-)]));await gov(p);return}
-  }
   if(q.k==='m')add(p,q.v,q.t==='風俗'?_T("Went to nightlife…",'風俗に行った…'):q.t);
   else if(q.k==='item')await freeItem(p);
   else if(q.k==='wed'){
