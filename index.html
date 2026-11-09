@@ -1254,7 +1254,7 @@ async function bac(p,st,borrow,cons){
   if(nA)A.push(draw());if(nK)K.push(draw());
   let da=2,dk=2,ra=0,rk=0;
   const sh=()=>{setHand('ph',A.slice(0,da),i=>i>=ra);setHand('dh',K.slice(0,dk),i=>i>=rk);$('gs').textContent=`PLAYER ${ra?bcv(A.slice(0,ra)):'-'}　BANKER ${rk?bcv(K.slice(0,rk)):'-'}`};
-  const BK=1/1.08,bsl=ms=>sleep(ms*BK),btz=async n=>{for(let k=0;k<n;k++){snd(150+k*35,.1,'sawtooth',.08);await bsl(240)}};   // バカラは進行を8%速く（待ち時間を1/1.08に）
+  const BK=1/1.08/1.3,bsl=ms=>sleep(ms*BK),btz=async n=>{for(let k=0;k<n;k++){snd(150+k*35,.1,'sawtooth',.08);await bsl(240)}};   // バカラは進行を8%速く＋カードが捲れるまでをさらに30%速く（待ち時間を1/1.08/1.3に）
   sh();await bsl(1000);
   const S=[['A',1,3],['K',1,3],['A',2,6],['K',2,8]];if(nA)S.push(['A',3,7]);if(nK)S.push(['K',3,7]);
   for(let s=0;s<S.length;s++){const[w,n,t]=S[s];
