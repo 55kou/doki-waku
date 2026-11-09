@@ -2296,10 +2296,10 @@ async function bossCheck(p){
   await bossScene();
   await ask(_T("🐵 \"Boss Monkey\" is born!",'🐵 称号「ボス猿」誕生！'),[{l:_T("Monkey + Baby Maker + Big Daddy → Boss Monkey!",'猿＋孕ませマン＋ビッグダディ → ボス猿！'),s:_T("With all three titles and 7+ children in total, they become one. Goal bonus: a flat +¥8,000 (the three titles' separate bonuses and penalties no longer apply)",'3つの称号をすべて持ち、子供が累計7人以上になったので一つに。ゴールボーナスは一律 +8,000円（3つの称号それぞれのボーナス・マイナスはなくなる）'),c:'#e8a317'}]);
 }
-const fvN=p=>Object.values(p.fv||{}).reduce((a,b)=>a+b,0),gkrT=p=>(p.gcnt||0)>=15,fzkT=p=>fvN(p)>=10;   // 称号：賭ケグルイ＝ギャンブルに15回挑む／風俗狂い＝風俗に10回通う（ゴール +5,000円ずつ）
+const fvN=p=>Object.values(p.fv||{}).reduce((a,b)=>a+b,0),gkrT=p=>(p.gland||0)>=10,fzkT=p=>fvN(p)>=10;   // 称号：賭ケグルイ＝ギャンブルマスに10回止まる／風俗狂い＝風俗に10回通う（ゴール +5,000円ずつ）
 async function addictCheck(p){
-  if(gkrT(p)&&!p.gkrN){p.gkrN=1;log(_TT("🎲 {0}: gambled 15 times! Earned the \"Kakegurui\" title (goal bonus +¥5,000)",[`🎲 `,`：ギャンブルに15回挑んだ！ 称号「賭ケグルイ」を獲得（ゴールボーナス +5,000円）`],[(p.n)]));
-    await ask(_T("🎲 \"Kakegurui\" title",'🎲 称号「賭ケグルイ」'),[{l:_T("Gambled 15 times… earned the \"Kakegurui\" title!",'ギャンブルに15回挑んだ…称号「賭ケグルイ」を獲得！'),s:_T("Goal bonus +¥5,000",'ゴールボーナス +5,000円'),c:'#e8a317'}])}
+  if(gkrT(p)&&!p.gkrN){p.gkrN=1;log(_TT("🎲 {0}: landed on gambling squares 10 times! Earned the \"Kakegurui\" title (goal bonus +¥5,000)",[`🎲 `,`：ギャンブルマスに10回止まった！ 称号「賭ケグルイ」を獲得（ゴールボーナス +5,000円）`],[(p.n)]));
+    await ask(_T("🎲 \"Kakegurui\" title",'🎲 称号「賭ケグルイ」'),[{l:_T("Landed on gambling squares 10 times… earned the \"Kakegurui\" title!",'ギャンブルマスに10回止まった…称号「賭ケグルイ」を獲得！'),s:_T("Goal bonus +¥5,000",'ゴールボーナス +5,000円'),c:'#e8a317'}])}
   if(fzkT(p)&&!p.fzkN){p.fzkN=1;log(_TT("💋 {0}: visited nightlife 10 times! Earned the \"Nightlife Addict\" title (goal bonus +¥5,000)",[`💋 `,`：風俗に10回通った！ 称号「風俗狂い」を獲得（ゴールボーナス +5,000円）`],[(p.n)]));
     await ask(_T("💋 \"Nightlife Addict\" title",'💋 称号「風俗狂い」'),[{l:_T("Visited nightlife 10 times… earned the \"Nightlife Addict\" title!",'風俗に10回通った…称号「風俗狂い」を獲得！'),s:_T("Goal bonus +¥5,000",'ゴールボーナス +5,000円'),c:'#c2185b'}])}
 }
@@ -2411,6 +2411,7 @@ async function evt(p){const L=p.s<=2?EVT.filter(e=>!e.big):EVT;   // 序盤〜�
   let x=Math.random()*L.reduce((a,e)=>a+e.w,0);for(const e of L){if(x<e.w){await e.f(p);return}x-=e.w}}
 async function land(p){
   const q=cs(p);
+  if(q.k==='gam')p.gland=(p.gland||0)+1;   // 称号・実績「賭ケグルイ」用：ギャンブルマスに止まった回数（賭けなくても数える）
   if(q.k==='gam'&&Object.keys(p.fm).length&&Math.random()<.25){
     const w=FM[pick(Object.keys(p.fm))];
     await ask(_T("💍 Stop!",'💍 ストップ！'),[{l:_TT("{0} stopped you: \"No gambling!\"",[``,`に「ギャンブルはダメ！」と止められた…`],[(w
@@ -2675,7 +2676,7 @@ const ACHDEF=()=>[
  {id:'ichizu',rate:10,ok:p=>!!p.ichizu||!!p.ihad,t:_T("Devoted",'一途'),s:_T("Visit the same kind of venue 3 times in a row",'同じ種類の風俗に3回連続で通う')},
  {id:'ape',rate:10,ok:p=>monkey(p),t:_T("Monkey",'猿'),s:_T("Have a child who doesn't pay child support",'養育費を払わない子供がいる')},
  {id:'baikin',rate:8,ok:p=>!!p.baikin,t:_T("Germ Man",'バイキンマン'),s:_T("Catch each of chlamydia, syphilis, HIV and candidiasis at least once",'クラミジア・梅毒・HIV・カンジダにそれぞれ一度は感染する')},
- {id:'gkr',rate:8,ok:p=>(p.gcnt||0)>=15,t:_T("Kakegurui",'賭ケグルイ'),s:_T("Gamble 15 times or more",'ギャンブルに15回以上通う')},
+ {id:'gkr',rate:8,ok:p=>gkrT(p),t:_T("Kakegurui",'賭ケグルイ'),s:_T("Land on gambling squares 10 times or more",'ギャンブルマスに10回以上止まる')},
  {id:'big7',rate:7,ok:p=>kidTotal(p)>=10,t:_T("Huge Family",'大家族'),s:_T("Have 10 or more children",'子供を10人以上作る')},
  {id:'fzk',rate:5,ok:p=>!!p.fv&&Object.values(p.fv).reduce((a,b)=>a+b,0)>=10,t:_T("Nightlife Addict",'風俗狂い'),s:_T("Visit nightlife 10 times or more",'風俗に10回以上通う')},
  {id:'boss',rate:5,ok:p=>!!p.boss,t:_T("Boss Monkey",'ボス猿'),s:_T("Hold Monkey, Baby Maker and Big Daddy with 7+ children",'猿・孕ませマン・ビッグダディを持ち、子供が累計7人以上')},
