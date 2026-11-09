@@ -442,7 +442,7 @@ function _staticEn(){if(_LANG!=='en')return;document.documentElement.lang='en';d
 /* ===== /i18n ===== */
 
 const CAP=Infinity,COL=['#e24b4a','#378add','#1d9e75','#f08a24','#a855d6','#e84393'];
-const JOBS=[{n:'会社員',s:1500,d:_T("Payday +1,500 / losses are halved / bonus showdown on gambling wins & losses",'給料日 +1,500／マイナスが半分／ギャンブルの勝ち負けで追加勝負')},{n:'起業家',s:0,d:_T("Payday: dice ×800 / bonus showdown on gambling wins & losses",'給料日 サイコロ×800／ギャンブルの勝ち負けで追加勝負')},{n:'ギャンブラー',s:0,d:_T("Payday: +3,000 only when you land exactly on it (no pay for passing) / gambling wins ×1.2 / win to ride the streak",'給料日 ぴったり止まった時のみ+3,000（通過では貰えない）／ギャンブル勝ち1.2倍／勝つと流れに乗れる')}];
+const JOBS=[{n:'会社員',s:1500,d:_T("Payday +1,500 / losses reduced by 30% / bonus showdown on gambling wins & losses",'給料日 +1,500／マイナスが30%減／ギャンブルの勝ち負けで追加勝負')},{n:'起業家',s:0,d:_T("Payday: dice ×800 / bonus showdown on gambling wins & losses",'給料日 サイコロ×800／ギャンブルの勝ち負けで追加勝負')},{n:'ギャンブラー',s:0,d:_T("Payday: +3,000 only when you land exactly on it (no pay for passing) / gambling wins ×1.2 / win to ride the streak",'給料日 ぴったり止まった時のみ+3,000（通過では貰えない）／ギャンブル勝ち1.2倍／勝つと流れに乗れる')}];
 let FAST=false;   // NPCがギャンブル中は進行速度1.5倍
 const pick=a=>a[Math.random()*a.length|0],d6=()=>1+(Math.random()*6|0),sleep=ms=>new Promise(r=>setTimeout(r,FAST?ms/1.5:ms)),$=id=>document.getElementById(id);
 const yen=n=>'¥'+n.toLocaleString('ja-JP');
@@ -554,7 +554,7 @@ function sqVal(p,q,last){   // マスの期待値（円）
   const g=p.job==='ギャンブラー',sal=p.job==='会社員'?1500:p.job==='起業家'?3150:0;
   if(q.k==='pay')return g?(last?5000:0):sal;
   if(!last)return 0;
-  if(q.k==='m')return q.v<0&&p.job==='会社員'?q.v/2:q.v;
+  if(q.k==='m')return q.v<0&&p.job==='会社員'?q.v*.7:q.v;
   if(q.k==='gam')return q.st*(g?.03:-.02);
   if(q.k==='fz')return q.sub==='uri'?3000:-3500;
   if(q.k==='hosp')return Object.keys(p.std||{}).length?2000:0;
@@ -634,7 +634,7 @@ function log(s){TL.push(s);if(typeof P!=='undefined'&&P)P.forEach(p=>{if(s.inclu
 let actor=null,NCFG=null,gctx={};
 function askUI(title,opts){return new Promise(r=>{$('box').innerHTML=`<b>${title}</b>`+opts.map((o,i)=>`<button data-i="${i}" style="background:${o.c||'#378add'}">${o.l}<small>${o.s||''}</small></button>`).join('');$('ov').classList.add('show');$('box').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('ov').classList.remove('show');r(+b.dataset.i)})})}
 function add(p,v,why,raw){
-  if(!raw&&v<0&&p.job==='会社員')v=Math.round(v/20)*10;
+  if(!raw&&v<0&&p.job==='会社員')v=Math.round(v*.7/10)*10;
   const o=p.m;p.m=Math.min(CAP,p.m+v);pop(p,p.m-o);
   log(_TT("{0}: {1} <b class=\"{2}\">{3}{4}</b>{5}",[``,`：`,` <b class="`,`">`,``,`</b>`,``],[(p.n
 ),(why
