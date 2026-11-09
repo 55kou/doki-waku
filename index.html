@@ -2497,7 +2497,7 @@ async function roseScene(sub){
   const f=document.createElement('div');f.id='rose';
   f.innerHTML=Array.from({length:80},()=>`<span class='rs' style='left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${34+Math.random()*48}px;animation-delay:${Math.random()*1.52}s'>🌹</span>`).join('')+"<div class='rtx'><span id='rt'></span></div>";
   document.body.appendChild(f);
-  [523,659,784,1047,784,1047,1319,1568].forEach((fq,i)=>{snd(fq,.35,'triangle',.08,i*.176);snd(fq/2,.35,'sine',.06,i*.176)});   // 結婚演出は全体を20%短縮（音の高さは変えない）
+  [523,659,784,1047,784,1047,1319,1568].forEach((fq,i)=>{snd(fq,.35,'triangle',.08,i*.22);snd(fq/2,.35,'sine',.06,i*.22)});   // 結婚演出は全体を20%短縮。ただし最初のファンファーレの速さ・音の高さは元のまま
   await sleep(1920);
   const t=$('rt'),box=t.parentNode;
   const show=async(tx,hold,fs)=>{box.style.fontSize=fs;t.textContent=tx;box.style.animation='rin 1.04s ease-out forwards';await sleep(1040+hold);box.style.animation='rout .72s ease-in forwards';await sleep(720)};
