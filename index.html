@@ -2606,7 +2606,7 @@ async function peekShow(p,cd){   // cd：セカンドダイスで出ている今
   render();
   try{const fe=document.querySelector('.pkn');if(fe)fe.closest('.cell').scrollIntoView({block:'center',behavior:'smooth'})}catch(e){}
   $('ov').classList.add('pk');document.body.classList.add('pkon');
-  await ask('👀',[{l:'👀 '+(cd?_T("1st roll: ",'1回目の目は')+cd+_T(" | ",'｜'):'')+_T("Back to choosing",'選びなおす'),c:'#555'}]);
+  await ask('👀',[{l:'👀 '+(cd?_T("Current roll: ",'今の目は')+cd+_T(" | ",'｜'):'')+_T("Back to choosing",'選びなおす'),c:'#555'}]);
   $('ov').classList.remove('pk');document.body.classList.remove('pkon');
   PK={};render();
 }
