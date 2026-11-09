@@ -2027,11 +2027,12 @@ function seaInit(){
   let d=$('sea');if(d)d.remove();
   d=document.createElement('div');d.id='sea';
   const rnd=Math.random;
-  SEAS.forEach(z=>{const n=Math.round((z.b-z.a)*4200/29.5);
+  const strat=n=>{const a=Array.from({length:n},(_,k)=>(k+rnd())/n);for(let i=n-1;i>0;i--){const j=rnd()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+  SEAS.forEach(z=>{const n=Math.round((z.b-z.a)*4200/29.5),xs=strat(n),ys=strat(n);   // 横・縦とも満遍なく散らす（左右に偏らない）
     for(let i=0;i<n;i++){const big=rnd()<.336,sz=big?60+rnd()*60:20+rnd()*24,
-      left=big?(rnd()<.5?-18+rnd()*10:88+rnd()*10):rnd()*94,e=big?z.big:z.em[rnd()*z.em.length|0],
+      left=-4+xs[i]*100,e=big?z.big:z.em[rnd()*z.em.length|0],
       sp=document.createElement('span');sp.textContent=e;
-      sp.style.cssText=`left:${left}%;top:${(z.a+rnd()*(z.b-z.a))*100}%;font-size:${sz}px;opacity:${e==='🌊'?.5:.7};transform:rotate(${(rnd()*60-30)|0}deg);${big?'filter:blur(1.5px)':''}`;
+      sp.style.cssText=`left:${left}%;top:${(z.a+ys[i]*(z.b-z.a))*100}%;font-size:${sz}px;opacity:${e==='🌊'?.5:.7};transform:rotate(${(rnd()*60-30)|0}deg);${big?'filter:blur(1.5px)':''}`;
       d.appendChild(sp)}});
   document.body.insertBefore(d,document.body.firstChild);seaSync()}
 function seaSync(){const d=$('sea');if(d)d.style.height=document.documentElement.scrollHeight+'px'}
