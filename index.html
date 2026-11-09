@@ -2533,8 +2533,7 @@ async function birthTick(p){
 ),(yen(500*k)
 ),(yen(p.cc)
 )]));
-  await ask(tw?_T("👶👶 Twins were born!",'👶👶 双子が産まれた！'):_T("👶 A child was born!",'👶 子供が産まれた！'),[{l:tw?_T("Twins born! Gift +¥10,000",'双子誕生！ご祝儀 +¥10,000'):_T("Child born! Gift +¥5,000",'子供誕生！ご祝儀 +¥5,000'),s:_TT("From now on parenting cost grows by -{0} every turn (total -{1}/turn)",[`以後 毎ターン子育て金 -`,` が増える（合計 -`,`／ターン）`],[(yen(500*k)
-),(yen(p.cc)
+  await ask(tw?_T("👶👶 Twins with your spouse were born!",'👶👶 結婚相手との双子が産まれた！'):_T("👶 A child with your spouse was born!",'👶 結婚相手との子供が産まれた！'),[{l:tw?_T("Twins born! Gift +¥10,000",'双子誕生！ご祝儀 +¥10,000'):_T("Child born! Gift +¥5,000",'子供誕生！ご祝儀 +¥5,000'),s:_TT("From now on parenting cost grows by -{0} every turn",[`以後 毎ターン子育て金 -`,` が増える`],[(yen(500*k)
 )]),c:'#c2185b'}]);
   await kidTitle(p);
 }
