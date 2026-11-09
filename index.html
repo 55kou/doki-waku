@@ -2323,7 +2323,7 @@ async function fuzoku(p,q){
 ),(p.wed?_T("married",'結婚'):fw.join(_T(", ",'・'))+_T(" is the spouse",'と結婚')
 ),(FM[sub]
 )]))}
-    else{
+    else if(p.fv[sub]===2){   // 強制結婚は「同じ風俗の2回目」のときだけ（3回目以降は再結婚しない）
       p.fm[sub]=1;p.fwed=1;
       const ster=Math.random()<.2;   // 20%で「新人〇〇嬢と結婚（無菌）」：結婚してもカンジダ（売り専は人工肛門）にならない
       p.pend.push(ster?sub+'*':sub);
