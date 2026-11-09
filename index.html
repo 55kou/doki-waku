@@ -357,7 +357,7 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 .hand.pu::after{content:'22 PUSH!';position:absolute;left:-30px;right:-30px;top:50%;white-space:nowrap;text-align:center;font-weight:900;letter-spacing:.06em;font-size:clamp(26px,9vw,44px);color:#ffd54f;text-shadow:0 0 10px #ffb300aa,0 2px 0 #fff,0 0 3px #000,0 4px 10px #000;transform:translateY(-50%) rotate(-8deg);pointer-events:none;z-index:4;animation:bustup .6s cubic-bezier(.2,1.4,.4,1) both}
 /* アクションを終えたハンドの合計 */
 .hand[data-tot],.hand.pt{position:relative;margin-top:20px}
-.hand[data-tot]::before{content:attr(data-tot);position:absolute;left:50%;top:-19px;transform:translateX(-50%);z-index:3;min-width:36px;height:34px;padding:0 9px;box-sizing:border-box;border-radius:17px;background:#ffd54f;color:#222;border:2px solid #fff;font-weight:900;font-size:21px;line-height:30px;text-align:center;box-shadow:0 2px 8px #000a;pointer-events:none}
+.hand[data-tot]::before{content:attr(data-tot);position:absolute;left:50%;top:-19px;transform:translateX(-50%);z-index:3;min-width:36px;height:34px;padding:0 9px;box-sizing:border-box;border-radius:17px;background:#ffd54f;color:#222;border:2px solid #fff;font-weight:900;font-size:21px;line-height:30px;text-align:center;white-space:nowrap;box-shadow:0 2px 8px #000a;pointer-events:none}
 .hand.bust[data-tot]::before,.hand.bt[data-tot]::before{background:#e53935;color:#fff}
 @keyframes bustup{from{opacity:0;transform:translateY(10%) rotate(-8deg) scale(.4)}to{opacity:1;transform:translateY(-50%) rotate(-8deg) scale(1)}}
 @keyframes dl{from{transform:translateY(-120px) rotate(-30deg);opacity:0}}
@@ -1182,9 +1182,10 @@ function bjFit(){const g=$('gm'),gs=$('gs'),gt=g.querySelector('.gt'),bh=$('bjh'
 // バースト演出：カードが完全に着いた瞬間（合計の表示と同時）にグレー、さらに0.1秒後に「BUST」（sh()が何度呼ばれても1回だけ進む）
 // プレイヤーのハンド：2枚揃ってから、カードが追加されるたびに合計を表示（カードが降り切って0.5秒後）
 const actHB=hi=>document.querySelectorAll('#bjh .hb').forEach((el,i)=>{el.classList.toggle('act',hi>=0&&i===hi);el.classList.toggle('idle',hi>=0&&i!==hi)});
+const bvs=cs=>{const h=cs.reduce((x,c)=>x+(c.n>10?10:c.n),0);return cs.some(c=>c.n===1)&&h+10<21?h+' or '+(h+10):String(bv(cs))};   // ソフトハンド（Aを11として数えている）は「低い方 or 高い方」で表示（ソフト21は21）
 function totMark(e,cs){if(!e)return;e.classList.add('pt');const n=cs.length;
   if(n<2){e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');return}
-  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bv(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),720)}   // 合計は、カードが完全に着いた瞬間（配るアニメ0.72秒）に表示
+  if(e._tn===n)return;e._tn=n;clearTimeout(e._tm);e.removeAttribute('data-tot');const v=bvs(cs);e._tm=setTimeout(()=>e.setAttribute('data-tot',v),720)}   // 合計は、カードが完全に着いた瞬間（配るアニメ0.72秒）に表示
 function bustMark(e,on){if(!e)return;
   if(!on){if(e._bt){e._bt.forEach(clearTimeout);e._bt=null}e.classList.remove('bust','bt');return}
   if(e._bt||e.classList.contains('bust'))return;
@@ -1235,7 +1236,8 @@ async function bj(p,st){
 ),(p.n
 ),(mh?"<div class='hb'><div class='lab' id='l1'></div><div class='hand' id='ph1'></div></div>":''
 )]));
-  $('gm').insertAdjacentHTML('beforeend',"<div id='cslot' style='min-height:64px;width:100%;display:flex;justify-content:center;align-items:flex-start'></div>");   // ボタン（ヒット・スタンド等）の場所を常に確保：ディーラーのターンでもハンドの位置がずれない
+  $('gs').style.minHeight='29px';   // 配るあいだも「あなた：◯」の行の高さを確保（ボタンが出た時にハンドがずれない）
+  $('gm').insertAdjacentHTML('beforeend',"<div id='cslot' style='min-height:132px;width:100%;display:flex;justify-content:center;align-items:flex-start'></div>");   // ボタン（ヒット・スタンド等）の場所を常に確保：ディーラーのターンでもハンドの位置がずれない
   if(mh)setStk(st*2);
   const D=[draw(),draw()],H=[{c:[draw(),draw()],r:st,pd:0}];if(mh)H.push({c:[draw(),draw()],r:st,pd:0});
   let nd=0,dn=[0,0],hd=true,U=0,dealing=true,R,dd=false;   // dd：ディーラーが引き終わった
@@ -1275,7 +1277,7 @@ async function bj(p,st){
           const ri={hit:0,stand:1,dbl:fi('dbl')>=0?fi('dbl'):fi('fdbl'),spl:fi('spl')>=0?fi('spl'):fi('fspl')}[rec];if(ri>=0)opts[ri].rec=1}
         actHB(H.length>1?hi:-1);   // 複数ハンド：いま操作中のハンドを光らせ、もう一方は少し暗くする
         txt((H.length>1?_TT("Hand {0}: ",[`ハンド`,`：`],[(hi+1
-)]):_T("You: ",'あなた：'))+bv(h.c));
+)]):_T("You: ",'あなた：'))+bvs(h.c));
         gctx={cards:h.c.map(c=>c.n),up:D[0].n,fb:FB};
         const a=act[await gbtn(opts)];
         if(a==='stand')break;
