@@ -576,11 +576,17 @@ function build(){
   return S;
 }
 let B,P,cur,busy,over,fin,goldNow=false;
-// 金のサイコロ：工程の後半以降（第4分岐〜）で、そのターン最下位（資金−前借りが最低・同点含む）の人に20%で出現
+// 金のサイコロ：工程の後半以降（第4分岐〜）で、最下位（資金−前借りが最低・同点含む）の人に50%で無料出現
 const wealth=p=>p.m-(p.loan||0);
-function setGold(){goldNow=false;const p=P[cur];if(!p||p.done)return;if(p.gold){p.gold=0;goldNow=true;log(_TT("🌟 {0}: got a <b>Golden Dice</b> from an event! (Pick any number)",[`🌟 `,`：イベントで手に入れた<b>金のサイコロ</b>！（好きな目を選べる）`],[(p.n
-)]));return}if(p.s<7)return;if(P.every(x=>wealth(p)<=wealth(x))&&Math.random()<.2){goldNow=true;log(_TT("🌟 {0}: a <b>Golden Dice</b> appeared for last place! (Pick any number)",[`🌟 `,`：最下位に<b>金のサイコロ</b>が現れた！（好きな目を選べる）`],[(p.n
-)]))}}
+async function setGold(){goldNow=false;const p=P[cur];if(!p||p.done)return;
+  // 折り返し後（第4分岐〜）の最下位（資金−前借りが最低・同点含む）は50%で金のサイコロが無料で振れる（アイテムは消費しない）。外れた時はアイテムの金のサイコロを使う
+  const last=p.s>=7&&P.every(x=>wealth(p)<=wealth(x)),free=last&&Math.random()<.5;
+  const pu=async(t,sub)=>{if(p.npc)return;actor=p;try{await ask(t,[{l:sub,s:_T("Tap to continue",'タップして続ける'),c:'#c78a00'}])}finally{actor=null}};
+  if(free){goldNow=true;log(_TT("🌟 {0}: a <b>Golden Dice</b> appeared for last place! (Pick any number)",[`🌟 `,`：最下位に<b>金のサイコロ</b>が現れた！（好きな目を選べる）`],[(p.n)]));
+    await pu(_T("🌟 Last-place bonus!",'🌟 最下位ボーナス！'),p.gold?_T("You're in last place, so you get a Golden Dice for free (your item is NOT used)",'最下位なので、無料で金のサイコロが振れます（アイテムは消費されません）'):_T("You're in last place, so you get a Golden Dice for free",'最下位なので、無料で金のサイコロが振れます'));return}
+  if(p.gold){p.gold=0;goldNow=true;log(_TT("🌟 {0}: used the <b>Golden Dice</b> item! (Pick any number)",[`🌟 `,`：アイテムの<b>金のサイコロ</b>を使用！（好きな目を選べる）`],[(p.n)]));
+    await pu(_T("🎒 Item used!",'🎒 アイテム使用！'),_T("You used your Golden Dice item",'アイテムの金のサイコロを使います'));return}
+}
 const cs=p=>{const s=B[p.s];return s.c?s.c[p.i]:s[p.r][p.i]};
 const props=p=>B.flatMap(s=>s.c?s.c:[...s.A,...s.B]).filter(q=>q.owner===p);
 const ask=(title,opts)=>(actor&&actor.npc)?npcAsk(title,opts):askUI(title,opts);
@@ -2689,7 +2695,7 @@ $('roll').onclick=async()=>{
   if(P.every(x=>x.done)){over=true;actor=null;render();finish();return}
   if(!HRD&&P.every(x=>x.done||x.s>=7)){HRD=true;await allHorse();render()}   // 全員が折り返しを過ぎたら、一度だけ全員競馬
   do{cur=(cur+1)%P.length}while(P[cur].done);
-  setGold();render();await camTo(P[cur]);busy=false;render();npcKick();
+  await setGold();render();await camTo(P[cur]);busy=false;render();npcKick();
 };
 function npcKick(){if(over||!P||!P[cur]||!P[cur].npc)return;setTimeout(()=>{if(!busy&&!over&&P[cur]&&P[cur].npc)$('roll').onclick()},900)}
 // 画面中央のリアルなサイコロ（タップで振る）
