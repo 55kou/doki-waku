@@ -2350,7 +2350,7 @@ async function fuzoku(p,q){
   }
   if(p.fv[sub]>=3){   // 3回目以降は毎回
     const ad=sub==='uri',mine=false,wedNow=!!(p.wed||Object.keys(p.fm).length);let pays=true;if(p.single||wedNow){{const bx=$('box');   // 養育費の前置き：ふわっと（1.2秒で不透明度0→100%）出して、さらに1.3秒後に本編へ
-      bx.innerHTML=`<div style='font-size:20px;font-weight:900;line-height:1.6;text-align:center;padding:10px 0'>${_TT("Coming to {0} again — {1} time already… Maybe I'll go all out 💪",[``,`にくるのも`,`回目か…。はりきっちゃおうかな💪`],[(F.n),(p.fv[sub])])}</div>`;
+      bx.innerHTML=`<div style='font-size:20px;font-weight:900;line-height:1.6;text-align:center;padding:10px 0'>${p.fv[sub]===5?_TT("Coming to {0} again — {1} time already… This place is my spiritual home 🏩",[``,`にくるのも`,`回目か…。ここは心の故郷だな🏩`],[(F.n),(p.fv[sub])]):_TT("Coming to {0} again — {1} time already… Maybe I'll go all out 💪",[``,`にくるのも`,`回目か…。はりきっちゃおうかな💪`],[(F.n),(p.fv[sub])])}</div>`;
       $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+1300);$('ov').classList.remove('show')}
     pays=await supLottery(ad?_T("adopted",'養子'):_T("child",'子供'),[_T("😠 Child support dispute…",'😠 養育費で揉める…'),ad?_T("You adopted a child with someone who isn't your spouse… so you'll argue over child support…",'結婚相手ではない相手と養子を迎えました…養育費を出すか出さないかで揉めます…'):_T("A child was born with someone who isn't your spouse… so you'll argue over child support…",'結婚相手ではない相手との間に子供ができました…養育費を出すか出さないかで揉めます…')]);}   // 風俗に3回通ってできた子供は、結婚相手とは別の相手（その店の人）との子供＝親権のない養育費。結婚中・独身宣言中は「払う／払わない」を抽選
     if(mine)p.cc=(p.cc||0)+500;else if(pays){p.sup=(p.sup||0)+800;if(ad)p.adk=(p.adk||0)+1;else p.pk=(p.pk||0)+1}else p.ape=(p.ape||0)+1;   // 養子（売り専）は血のつながりがないので、養育費はかかるが「孕ませマン」の子供の数には数えない（adk）
