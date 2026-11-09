@@ -231,7 +231,8 @@ html.sea{background:linear-gradient(180deg,#c0568f 0%,#e49ab6 13%,#4aa8d8 28%,#2
 html.sea body{background:none}
 #sea{position:absolute;left:0;top:0;width:100%;z-index:-1;pointer-events:none;overflow:hidden}
 #sea span{position:absolute;line-height:1}
-h1{font-size:25px;font-weight:900;letter-spacing:.05em;margin:0;background:linear-gradient(90deg,#ffd86b,#ff7ab6,#7ad7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:clamp(12px,4vw,25px);font-weight:900;letter-spacing:.02em;margin:0 0 6px;padding:8px 10px;white-space:nowrap;text-align:center;overflow:hidden;background:linear-gradient(160deg,#262c70,#151944);border:1px solid #363c7a;border-radius:14px;box-shadow:0 4px 0 #080a22}
+h1 span{background:linear-gradient(90deg,#ffd86b,#ff7ab6,#7ad7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
 .sticky{background:linear-gradient(#0e1230 88%,transparent)}
 .pl{background:linear-gradient(160deg,#262c70,#151944);border-color:#363c7a;border-radius:14px;box-shadow:0 4px 0 #080a22;transition:transform .3s,box-shadow .3s}
 .pl.on{transform:translateY(-3px);box-shadow:0 0 0 1px var(--pc),0 0 20px var(--pc),0 4px 0 #080a22}
@@ -424,7 +425,7 @@ z-index:15;display:none;flex-direction:column;align-items:center;gap:20px;cursor
 #rdie .cap{white-space:nowrap;background:rgba(20,20,40,.78);color:#fff;font-weight:800;font-size:15px;padding:9px 18px;border-radius:999px;border:2px solid var(--pc,#fff);box-shadow:0 4px 14px #0006;animation:cpulse 1.2s ease-in-out infinite alternate}
 @keyframes cpulse{to{transform:scale(1.06)}}
 </style></head><body>
-<h1>🎲 ドキドキワクワク勝負師すごろく</h1>
+<h1><span>🎲 ドキドキワクワク勝負師すごろく</span></h1>
 
 <div class="sticky"><div class="players" id="pls"></div>
 <div class="ctl"><div class="dice" id="dice" style="display:none">-</div><button id="roll">サイコロ</button><button id="menub" style="position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;background:#555;padding:2px 11px;font-size:19px;line-height:1.2;border-radius:8px;box-shadow:none;opacity:.85">☰</button></div>
