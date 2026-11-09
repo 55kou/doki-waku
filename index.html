@@ -2913,7 +2913,7 @@ function NETtick(){
 function NEThost(){return new Promise(async(ok,ng)=>{
   try{await NETloadLib()}catch(e){return ng(new Error('lib'))}
   let tries=0;const mk=()=>{
-    const code=Array.from({length:4},()=>NETCH[Math.random()*NETCH.length|0]).join('');
+    const code=Array.from({length:3},()=>NETCH[Math.random()*NETCH.length|0]).join('');
     const peer=new Peer(NETPFX+code,NETopts());
     peer.on('open',()=>{NET.role='host';NET.peer=peer;NET.code=code;NET.guests=[];NETmoStart();NETbannerUpd();ok(code)});
     peer.on('error',e=>{if(e.type==='unavailable-id'&&tries++<6){try{peer.destroy()}catch(_){}mk()}else if(!NET.role)ng(e)});
@@ -2977,7 +2977,7 @@ function NETclose(){
 function NETaudioKick(){try{SND=true;BGMX=0;bgmStart();if(AC&&AC.state!=='running'){AC.resume().catch(()=>{});try{const b=AC.createBuffer(1,1,22050),o=AC.createBufferSource();o.buffer=b;o.connect(AC.destination);o.start(0)}catch(e){}}bgmVol()}catch(e){}}
 function NETjoin(code,name){NETaudioKick();return new Promise(async(ok,ng)=>{
   try{await NETloadLib()}catch(e){return ng(new Error('lib'))}
-  code=String(code||'').replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-65248)).replace(/[^0-9]/g,'');if(code.length!==4)return ng(new Error('code'));
+  code=String(code||'').replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-65248)).replace(/[^0-9]/g,'');if(code.length!==3)return ng(new Error('code'));
   const peer=new Peer(undefined,NETopts());let done=false;
   const fail=e=>{if(done)return;done=true;try{peer.destroy()}catch(_){}ng(e)};
   const to=setTimeout(()=>fail(new Error('timeout')),20000);
@@ -3056,7 +3056,7 @@ function NETmenu(cfg,draw){
   box.innerHTML=`<b>${_T("🌐 Online battle with friends",'🌐 フレンドとオンライン対戦')}</b>
   <button data-mk style='background:#1d9e75;text-align:center;margin-top:10px'>${_T("🏠 Create a room",'🏠 ルームを作る')}<small>${_T("You become the host and share the code",'あなたがホストになり、コードをフレンドに伝える')}</small></button>
   <div class='su' style='margin-top:14px'>${_T("Join a friend's room",'フレンドのルームに入る')}</div>
-  <input class='nin' id='nc' maxlength='4' placeholder='${_T("Room code (4 digits)",'ルームコード（数字4桁）')}' value='${pre.replace(/[^0-9]/g,'').slice(0,4)}' inputmode='numeric' pattern='[0-9]*' autocomplete='off'>
+  <input class='nin' id='nc' maxlength='3' placeholder='${_T("Room code (3 digits)",'ルームコード（数字3桁）')}' value='${pre.replace(/[^0-9]/g,'').slice(0,3)}' inputmode='numeric' pattern='[0-9]*' autocomplete='off'>
   <input class='nin' id='nn' maxlength='8' placeholder='${_T("Your name (up to 8 letters)",'あなたの名前（8文字まで）')}' value='${(function(){try{return localStorage.getItem('sugoroku_name')||''}catch(e){return''}})()}'>
   <button data-jn style='background:#0b7285;text-align:center'>${_T("🚪 Join the room",'🚪 ルームに入る')}</button>
   <div class='nerr' id='ne'></div>
@@ -3071,7 +3071,7 @@ function NETmenu(cfg,draw){
     const code=$('nc').value,name=$('nn').value;try{localStorage.setItem('sugoroku_name',name)}catch(e){}
     err(_T("Connecting…",'接続中…'));
     try{await NETjoin(code,name)}
-    catch(e){err(e&&e.message==='code'?_T("Enter the 4-digit room code.",'数字4桁のルームコードを入力してください。'):e&&e.message==='lib'?_T("Couldn't load the online library. Check your connection.",'オンライン用ライブラリを読み込めませんでした。通信環境を確認してください。'):_T("Couldn't find the room. Check the code and that the host is waiting.",'ルームが見つかりませんでした。コードと、ホストが待機中か確認してください。'))}}}
+    catch(e){err(e&&e.message==='code'?_T("Enter the 3-digit room code.",'数字3桁のルームコードを入力してください。'):e&&e.message==='lib'?_T("Couldn't load the online library. Check your connection.",'オンライン用ライブラリを読み込めませんでした。通信環境を確認してください。'):_T("Couldn't find the room. Check the code and that the host is waiting.",'ルームが見つかりませんでした。コードと、ホストが待機中か確認してください。'))}}}
 // ---- プレイヤー名の変更（スタート前の画面） ----
 function NMload(){try{return JSON.parse(localStorage.getItem('sugoroku_names')||'[]')}catch(e){return[]}}
 function NMsave(a){try{localStorage.setItem('sugoroku_names',JSON.stringify(a))}catch(e){}}
