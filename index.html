@@ -216,7 +216,7 @@ body.pkon{padding-bottom:90px}
 #msn::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 100% 0,rgba(255,196,160,.55) 0,rgba(255,150,120,.28) 9%,transparent 24%),radial-gradient(ellipse 95% 75% at 100% 0,rgba(255,138,108,.3) 0,rgba(255,120,128,.15) 38%,transparent 72%);opacity:0;animation:mslamp 1.5s ease-in-out .3s forwards}
 @keyframes mslamp{from{opacity:0}to{opacity:1}}
 #msn .m1{animation:msf1 3.5s linear 1.8s forwards}   /* 暗転しきる（消える）のが次のセリフの開始（5.3秒）と同時 */
-@keyframes msf1{0%{opacity:0}57.14%{opacity:.5}100%{opacity:0}}
+@keyframes msf1{0%{opacity:0}22.86%,57.14%{opacity:.5}100%{opacity:0}}   /* ライトが灯りきった（1.8秒）直後に0.8秒でセリフが現れ、そのまま保持→5.3秒で暗転しきる */
 #msn .m2{animation:msf2 2s linear 5.3s forwards}
 @keyframes msf2{from{opacity:0}to{opacity:.5}}
 @keyframes ltbg{0%,8%{background:#000}10%,100%{background:#050a1a}}
