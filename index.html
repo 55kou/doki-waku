@@ -2375,6 +2375,10 @@ async function fuzoku(p,q){
 async function divorce(p){p.hdiv=1;
   const ws=[...(p.wed?[_T("Spouse",'結婚相手')]:[]),...Object.keys(p.fm).map(k=>FM[k])],hadC=p.cand,hadO=p.ost,hadI=p.ichizu;
   p.wed=0;p.fm={};p.cand=0;p.ost=0;p.ichizu=0;p.streak=0;p.last=null;   // 離婚で「一途」は剥奪＆連続記録もリセット（同じ条件でまた何度でも獲得できる）
+  {const bx=$('box');   // 離婚の前置き：ふわっと（1.2秒で不透明度0→100%）出して、さらに1.3秒後に離婚のポップアップへ
+   bx.innerHTML=`<div style='font-size:20px;font-weight:900;line-height:1.6;text-align:center;padding:10px 0'>${_T("Married, yet caught an STD… 💦",'結婚しているのに性病にかかってしまった…💦')}</div>`;
+   $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});
+   await sleep(1200+1300);$('ov').classList.remove('show')}
   await ask(_T("💔 Divorce…",'💔 離婚…'),[{l:_TT("Caught an STD and divorced {0}!",[`性病に感染して `,` と離婚！`],[(ws.join(_T(", ",'・'))
 )]),s:_TT("Alimony -{0}",[`慰謝料 -`,``],[(yen(10000)
 )])+(hadC?_T(" / Candida cured",'／カンジダが治った'):'')+(hadO?_T(" / colostomy cost gone",'／人工肛門費用がなくなった'):'')+(hadI?_T(" / lost the \"Devoted\" title",'／称号「一途」を剥奪された'):''),c:'#555'}]);
