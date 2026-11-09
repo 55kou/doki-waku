@@ -2311,7 +2311,7 @@ async function fuzoku(p,q){
 )]))}
   else log(_TT("{0}: {1}… {2}",[``,`：`,`…`,``],[(p.n
 ),(F.n
-),(pick([_T("finished safely",'無事に終了'),_T("that felt good…",'気持ち良かった…'),_T("avoided mucous contact",'粘膜接触は避けた'),_T("can't bring an STD home",'性病を持ち帰る訳にはいかない'),_T("no itching…",'痒く…ない')])
+),(F.opt&&!opt?_T("There's no way to catch an STD. It's just a massage.",'性病になりようがない。マッサージだけだから。'):pick([_T("finished safely",'無事に終了'),_T("that felt good…",'気持ち良かった…'),_T("avoided mucous contact",'粘膜接触は避けた'),_T("can't bring an STD home",'性病を持ち帰る訳にはいかない'),_T("no itching…",'痒く…ない')])
 )]));
   p.fv[sub]=(p.fv[sub]||0)+1;
   if(p.fv[sub]>=2){
