@@ -361,6 +361,15 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 .dn{background:#fff!important;color:#222;font-size:34px;line-height:1;padding:8px 10px!important;transition:transform .15s}
 .dn.on{background:#ffd23f!important;box-shadow:0 0 18px #ffd23f;transform:translateY(-6px) scale(1.1)}
 .c-gov{--x:#6b7a8f}.c-fz{--x:#c2185b}.c-hosp{--x:#17a2b8}.c-shop{--x:#ff7043}.c-item{--x:#26a69a}.c-fz .v{font-size:9px}
+/* ブラックジャックで3ハンド以上：見出し・説明・余白を詰め、合計の丸をカードの左に並べて、カードをできる限り大きくする */
+#gm.bjm .gt{font-size:18px;margin-bottom:0}
+#gm.bjm .fbd{display:none}
+#gm.bjm .gs{margin-top:6px;font-size:16px}
+#gm.bjm .hand{gap:calc(4px*var(--cs,1));min-height:calc(82px*var(--cs,1))}
+#gm.bjm .hand[data-tot],#gm.bjm .hand.pt{margin-top:2px}
+#gm.bjm .hand[data-tot]::before{position:static;transform:none;order:-1;flex:none;margin-right:4px;min-width:26px;height:24px;padding:0 6px;font-size:15px;line-height:20px;border-width:2px;border-radius:12px}
+#gm.bjm .bjh.c2 .lab{font-size:10px;margin:2px 0 0}#gm.bjm .bjh.c2 .lab svg{height:20px}
+#gm.bjm .bjh{gap:0 2px;padding:0 2px}
 .bjh .cd{animation-duration:.72s}   /* ブラックジャックのカードが着くまでを20%短縮（0.9秒→0.72秒） */
 .cd{animation:flp .9s ease-out}@keyframes flp{from{transform:perspective(400px) rotateY(95deg) translateY(-80px);opacity:.1}60%{transform:perspective(400px) rotateY(-14deg)}}
 .sticky{padding-top:2px}
@@ -789,7 +798,8 @@ const betHTML=(amt,pc,tag,col='#ffd23f')=>_TT("<div class='bbet' id='bpn' style=
 ),(tag?`<b style='color:${col}'>${tag}</b>`:''
 ),(yen(amt)
 )]);
-const gopen=(c,h)=>{const g=$('gm');g.className='show '+c;g.innerHTML=(CURST>0&&!/賭け /.test(h)?_TT("<div class='stk' id='stk'>💰 {0}</div>",[`<div class='stk' id='stk'>💰 `,`</div>`],[(yen(CURST)
+const gopen=(c,h)=>{const g=$('gm');g.className='show '+c;g.style.removeProperty('--cs');   // ブラックジャックで縮めたカードの大きさ(--cs)が次のゲームに残らないようにリセット
+  g.innerHTML=(CURST>0&&!/賭け /.test(h)?_TT("<div class='stk' id='stk'>💰 {0}</div>",[`<div class='stk' id='stk'>💰 `,`</div>`],[(yen(CURST)
 )]):'')+h;return g};
 const gbtnUI=o=>new Promise(r=>{const d=document.createElement('div');d.className='gb';d.innerHTML=o.map((x,i)=>`<button data-i='${i}' ${x.dis?'disabled':''} style='background:${x.c||'#7b61ff'}'>${x.l}</button>`).join('');($('cslot')||$('gm')).appendChild(d);d.querySelectorAll('button').forEach(b=>b.onclick=()=>{d.remove();r(+b.dataset.i)})});
 function coins(n){const g=$('gm');for(let k=0;k<n;k++){const c=document.createElement('span');c.className='coin';c.textContent='🪙';c.style.left=Math.random()*95+'%';c.style.animationDuration=(1+Math.random()*1.3)+'s';c.style.animationDelay=Math.random()*.7+'s';g.appendChild(c)}}
@@ -1082,14 +1092,14 @@ async function chin(p,st){
 const put2=(a,i)=>{a[i]={k:'gov',t:_T("Government",'行政')}};
 // ブラックジャック画面：ボタンが押せる位置まで収まるよう、カード・余白の大きさを自動で縮める（ボタン用に下120pxを確保）
 function bjFit(){const g=$('gm'),gs=$('gs'),gt=g.querySelector('.gt'),bh=$('bjh');if(!gs||!bh)return;
-  const n=bh.children.length;let cs=1;g.style.setProperty('--cs',cs);bh.style.maxHeight='';bh.style.overflowY='';
+  const n=bh.children.length;let cs=1;g.classList.toggle('bjm',n>=3);g.style.setProperty('--cs',cs);bh.style.maxHeight='';bh.style.overflowY='';
   const ok=()=>gs.getBoundingClientRect().bottom<=innerHeight-120&&(!gt||gt.getBoundingClientRect().top>=48);
   if(n>4){   // 3行目以降（5ハンド〜）：カードは0.7倍で止め、ハンド欄をスクロールできるようにする（ボタンは常に画面内）
     cs=.7;g.style.setProperty('--cs',cs);
     const over=gs.getBoundingClientRect().bottom-(innerHeight-120);
     if(over>0){bh.style.maxHeight=Math.max(150,bh.offsetHeight-over-8)+'px';bh.style.overflowY='auto';bh.style.webkitOverflowScrolling='touch';bh.scrollTop=bh.scrollHeight}
     return}
-  while(!ok()&&cs>.42){cs=Math.round((cs-.04)*100)/100;g.style.setProperty('--cs',cs)}}
+  while(!ok()&&cs>(n>=3?.3:.42)){cs=Math.round((cs-.03)*100)/100;g.style.setProperty('--cs',cs)}}
 // バースト演出：カードが完全に着いた瞬間（合計の表示と同時）にグレー、さらに0.1秒後に「BUST」（sh()が何度呼ばれても1回だけ進む）
 // プレイヤーのハンド：2枚揃ってから、カードが追加されるたびに合計を表示（カードが降り切って0.5秒後）
 const actHB=hi=>document.querySelectorAll('#bjh .hb').forEach((el,i)=>{el.classList.toggle('act',hi>=0&&i===hi);el.classList.toggle('idle',hi>=0&&i!==hi)});
@@ -1140,7 +1150,7 @@ async function bj(p,st){
 )]));
   gopen(FB?'felt fb':'felt',_TT("{0}<div class='gt'>{1}</div>{2}<div class='lab'>Dealer</div><div class='hand' id='dh'></div><div class='bjh{3}' id='bjh'><div class='hb'><div class='lab' id='l0'>{4}</div><div class='hand' id='ph0'></div></div>{5}</div><div class='gs' id='gs'></div>",[``,`<div class='gt'>`,`</div>`,`<div class='lab'>ディーラー</div><div class='hand' id='dh'></div><div class='bjh`,`' id='bjh'><div class='hb'><div class='lab' id='l0'>`,`</div><div class='hand' id='ph0'></div></div>`,`</div><div class='gs' id='gs'></div>`],[(fbbg
 ),(FB?'FREE BET BLACKJACK':'🃏 BLACKJACK 🃏'
-),(FB?_TT("<div class='lab' style='font-size:12px;opacity:.95;padding:0 16px;text-align:center'>9, 10, 11 free double / any pair except 10s free split / dealer 22 is a push</div>",[`<div class='lab' style='font-size:12px;opacity:.95;padding:0 16px;text-align:center'>9・10・11は無料ダブル／10以外のペアは無料スプリット／ディーラー22は引き分け</div>`],[]):''
+),(FB?_TT("<div class='lab fbd' style='font-size:12px;opacity:.95;padding:0 16px;text-align:center'>9, 10, 11 free double / any pair except 10s free split / dealer 22 is a push</div>",[`<div class='lab fbd' style='font-size:12px;opacity:.95;padding:0 16px;text-align:center'>9・10・11は無料ダブル／10以外のペアは無料スプリット／ディーラー22は引き分け</div>`],[]):''
 ),(mh?' c2':''
 ),(p.n
 ),(mh?"<div class='hb'><div class='lab' id='l1'></div><div class='hand' id='ph1'></div></div>":''
