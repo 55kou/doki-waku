@@ -2305,17 +2305,14 @@ async function fuzoku(p,q){
 )]),true);
     else{
       const nmOf=x=>x.grand?_T("Grand Nightlife Master",'グランド風俗マスター'):_T("Nightlife Master",'風俗マスター'),pay=Math.round(base*(1+sr)/10)*10;
-      add(p,-pay,_TT("Nightlife ({0}) regular price {1} plus {2}% ({3})",[`風俗（`,`）正規料金`,`の`,`%増し（`,`）`],[(FN
+      const trs=ot.map(x=>Math.round(base*mrate(x)/10)*10),trT=trs.reduce((a,b)=>a+b,0);   // 上納金は割増と合わせて1行で表示（合計の出費を右端に）
+      add(p,-(pay+trT),_TT("Nightlife ({0}) regular price {1} plus {2}% + tribute ({3})",[`風俗（`,`）正規料金`,`の`,`%増し＋上納金（`,`）`],[(FN
 ),(yen(base)
 ),(Math.round(sr*100)
 ),(ot.map(x=>x.n+_T(": ",'：')+nmOf(x)).join(_T(" / ",'／'))
 )]),true);
-      for(const mt of ot){const tr=Math.round(base*mrate(mt)/10)*10;
-        add(p,-tr,_TT("Tribute to {0}{1} ({2}% of the regular price)",[``,``,`への上納（正規料金の`,`%）`],[(nmOf(mt)
-),(mt.n
-),(mrate(mt)*100
-)]),true);
-        mt.m=Math.min(CAP,mt.m+tr);pop(mt,tr);ACHrecv(mt,p,tr);log(_TT("{0} {1}: received <b class='pos'>+{3}</b> as {2}",[``,` `,`：`,`として <b class='pos'>+`,`</b> を受け取った`],[(mt.grand?'🌟':'👑'
+      for(const [mi,mt] of ot.entries()){const tr=trs[mi];
+        mt.m=Math.min(CAP,mt.m+tr);pop(mt,tr);ACHrecv(mt,p,tr);log(_TT("{0} {1}: received tribute <b class='pos'>+{3}</b> as {2}",[``,` `,`：`,`として上納金 <b class='pos'>+`,`</b> を受け取った`],[(mt.grand?'🌟':'👑'
 ),(mt.n
 ),(nmOf(mt)
 ),(yen(tr)
