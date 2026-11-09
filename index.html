@@ -2412,6 +2412,14 @@ async function land(p){
 ),(w
 )]));return;
   }
+  if(q.k==='m'&&q.v<0&&p.m<-25000&&Math.random()<.3){   // 自己破産：資金（前借りは別）が−25,000円を超えて赤マスに止まると30%で、資金と前借りを両方0にする
+    const b=p.m,l=p.loan||0;
+    await ask(_T("We can't pile on any more debt!",'これ以上借金を重ねるわけにはいかない！'),[{l:_T("……",'……'),c:'#888'}]);
+    await ask(_T("Unable to stand by, the government accepted your personal bankruptcy!",'見かねた行政が自己破産を受け入れてくれた！'),[{l:_T("Funds and advance both reset to ¥0",'資金と前借りがどちらも0円に！'),s:_TT("Funds {0} / advance {1} → ¥0",[`資金 `,` ／前借り `,` → 0円`],[(yen(b)),(yen(l))]),c:'#1d9e75'}]);
+    add(p,-b,_T("🏛️ Personal bankruptcy",'🏛️ 自己破産'),true);p.loan=0;
+    log(_TT("🏛️ {0}: personal bankruptcy accepted! Funds {1} / advance {2} all reset to ¥0",[`🏛️ `,`：自己破産が認められた！資金 `,` ／前借り `,` がすべて0円に`],[(p.n),(yen(b)),(yen(l))]));
+    return;
+  }
   if(q.k==='m')add(p,q.v,q.t==='風俗'?_T("Went to nightlife…",'風俗に行った…'):q.t);
   else if(q.k==='item')await freeItem(p);
   else if(q.k==='wed'){
