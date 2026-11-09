@@ -137,6 +137,7 @@ body.pkon{padding-bottom:90px}
 .rtb{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;width:min(74vw,290px);margin:2px 0 4px;padding:5px;border:3px solid #ffe27acc;border-radius:8px;background:#0a5a2ecc}
 .rtb .rc{position:relative;padding:0!important;height:29px;font-size:16px;font-weight:900;border-radius:3px;border:2px solid #ffffffaa;color:#fff;background:#111}
 .rtb .rc.r{background:#d22}.rtb .rc.g{background:#0a9c4a;grid-column:1/-1;height:30px}
+.rtb .rc.cld::before{content:'❄️';position:absolute;left:1px;top:-2px;font-size:11px;line-height:1}
 .rtb .rc.on{box-shadow:0 0 14px #ffd23f;border-color:#ffd23f}
 .chp{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;background:radial-gradient(#ffe27a,#e0a100);color:#3a2500;font-size:12px;font-weight:900;border:2px dashed #fff;box-shadow:0 2px 4px #0008}
 .rtb .rc .chp{position:absolute;right:-5px;top:-9px;z-index:2}
@@ -358,8 +359,17 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 .gb{position:relative;z-index:1;display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center}.gb button{padding:12px 16px}
 .lab{position:relative;z-index:1;color:#fff;font-weight:800;margin:8px 0 2px;text-shadow:0 2px 0 #000;font-size:13px}
 .wh{position:relative;z-index:1;margin-top:18px}.ptr{position:absolute;top:-24px;left:50%;transform:translateX(-50%);z-index:3;font-size:28px}
-.whl{position:relative;width:265px;height:265px;border-radius:50%;border:9px solid #ffd23f;box-shadow:0 0 30px #ffd23f}
+.whl{position:relative;width:265px;height:265px;border-radius:50%;border:4.5px solid #ffd23f;box-shadow:0 0 30px #ffd23f}
 .whl::after{content:'';position:absolute;inset:32%;border-radius:50%;background:radial-gradient(#444,#111);border:4px solid #ffd23f}
+/* 中心の持ち手（本物のルーレットのターレット）：十字のハンドル＋先端の玉＋中央のつまみ */
+.whl::before{content:'';position:absolute;inset:32%;z-index:2;border-radius:50%;filter:drop-shadow(0 2px 2px #000a);background:
+ radial-gradient(circle at 38% 34%,#fffbd0 0,#ffd23f 30%,#9a6000 70%,transparent 72%) 50% 50%/34% 34% no-repeat,
+ radial-gradient(circle at 38% 34%,#fff6bf 0,#ffd23f 35%,#9a6000 75%,transparent 77%) 50% 2%/17% 17% no-repeat,
+ radial-gradient(circle at 38% 34%,#fff6bf 0,#ffd23f 35%,#9a6000 75%,transparent 77%) 50% 98%/17% 17% no-repeat,
+ radial-gradient(circle at 38% 34%,#fff6bf 0,#ffd23f 35%,#9a6000 75%,transparent 77%) 2% 50%/17% 17% no-repeat,
+ radial-gradient(circle at 38% 34%,#fff6bf 0,#ffd23f 35%,#9a6000 75%,transparent 77%) 98% 50%/17% 17% no-repeat,
+ linear-gradient(90deg,#8a5600,#ffe58a 50%,#8a5600) 50% 50%/8% 84% no-repeat,
+ linear-gradient(180deg,#8a5600,#ffe58a 50%,#8a5600) 50% 50%/84% 8% no-repeat}
 .dn{background:#fff!important;color:#222;font-size:34px;line-height:1;padding:8px 10px!important;transition:transform .15s}
 .dn.on{background:#ffd23f!important;box-shadow:0 0 18px #ffd23f;transform:translateY(-6px) scale(1.1)}
 .c-gov{--x:#6b7a8f}.c-fz{--x:#c2185b}.c-hosp{--x:#17a2b8}.c-shop{--x:#ff7043}.c-item{--x:#26a69a}.c-fz .v{font-size:9px}
@@ -879,6 +889,9 @@ async function hl(p,st,borrow){
 }
 const bcv=h=>h.reduce((a,c)=>a+(c.n>9?0:c.n),0)%10;
 const RW=[0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
+// コールドナンバー❄️：ゲーム中に一度でも出た数字は、まだ出ていない数字に比べて出る確率が半分（毎回その時点の出目履歴から重みを計算）
+const rouCold=x=>ROUH.includes(x);
+function rouDraw(){const w=Array.from({length:37},(_,x)=>rouCold(x)?.5:1);let t=w.reduce((a,b)=>a+b,0)*Math.random();for(let x=0;x<37;x++){t-=w[x];if(t<0)return x}return 36}
 const ROUH=[];   // ゲーム開始からのルーレットの出目（出た順）
 const rhHTML=()=>!ROUH.length?'':`<div class='rh' id='rh'><small>${_T("Spins so far (oldest → newest)",'これまでの出目（左が古い→右が最新）')}</small>${ROUH.length?`<div class='rhl'>${ROUH.map((n,i)=>`<span class='rn ${n===0?'g':REDS.includes(n)?'r':''} ${i===ROUH.length-1?'last':''}'>${n}</span>`).join('')}</div>`:''}</div>`;
 const rhAdd=()=>{const g=$('gm'),t=g.querySelector('.gt');if(t)t.insertAdjacentHTML('afterend',rhHTML());const l=g.querySelector('.rhl');if(l)l.scrollTop=l.scrollHeight};
@@ -889,7 +902,7 @@ async function rouPlace(p,put,c1){
   gopen('felt suede rp',_TT("<div class='gt' style='font-size:22px;margin-bottom:6px'>🎡 ONE-NUMBER BETS 🎡</div><div class='lab' style='font-size:12px'>Place 5 chips on numbers (1 chip = {0}, total {1}). Each winning chip pays 36×!</div><div class='rtb rcw' id='rtb'></div><div class='rtray' id='rtray'></div><div class='gb'><button id='rrs' style='background:#666'>Reset</button><button id='rud' style='background:#777'>Undo 1 chip</button><button id='rok' disabled style='background:#e8a317'>Go with this bet!</button></div><div class='gs' id='gs' style='margin-top:4px;font-size:14px'></div>",[`<div class='gt' style='font-size:22px;margin-bottom:6px'>🎡 一点がけ 🎡</div><div class='lab' style='font-size:12px'>チップ5枚を数字に置こう（1枚 `,`・合計 `,`）。当たったチップは1枚あたり36倍！</div><div class='rtb rcw' id='rtb'></div><div class='rtray' id='rtray'></div><div class='gb'><button id='rrs' style='background:#666'>選び直す</button><button id='rud' style='background:#777'>1枚戻す</button><button id='rok' disabled style='background:#e8a317'>この賭けで勝負！</button></div><div class='gs' id='gs' style='margin-top:4px;font-size:14px'></div>`],[(yen(c1)),(yen(c1*N))]));
   rhAdd();
   const tb=$('rtb');
-  tb.innerHTML=Array.from({length:37},(_,n)=>`<button class='rc ${n===0?'g':REDS.includes(n)?'r':''}' data-n='${n}'>${n}</button>`).join('');
+  tb.innerHTML=Array.from({length:37},(_,n)=>`<button class='rc ${n===0?'g':REDS.includes(n)?'r':''}${rouCold(n)?' cld':''}' data-n='${n}'>${n}</button>`).join('');
   const upd=()=>{const left=N-put.reduce((x,y)=>x+y,0);
     tb.querySelectorAll('.rc').forEach(b=>{const n=+b.dataset.n,c=put[n];b.classList.toggle('on',c>0);b.innerHTML=n+(c?`<span class='chp'>${c>1?c:''}</span>`:'')});
     $('rtray').innerHTML=Array.from({length:left},()=>`<span class='chp'>${c1>=1000?c1/1000+'k':c1}</span>`).join('')||'';
@@ -926,7 +939,7 @@ async function rou(p,st){
       $('dzok').onclick=r;
     });
   }else await rouPlace(p,put,c1);
-  const n=Math.random()*37|0,col=n===0?2:REDS.includes(n)?0:1,idx=RW.indexOf(n),sl=360/37;
+  const n=rouDraw(),col=n===0?2:REDS.includes(n)?0:1,idx=RW.indexOf(n),sl=360/37;
   const stops=RW.map((x,i)=>`${x===0?'#0a9c4a':REDS.includes(x)?'#d22':'#111'} ${(i*sl).toFixed(3)}deg ${((i+1)*sl).toFixed(3)}deg`).join(',');
   const nums=RW.map((x,i)=>`<span class='wn' style='transform:translate(-50%,-50%) rotate(${((i+.5)*sl).toFixed(2)}deg) translateY(-104px)'>${x}</span>`).join('');
   const putText=put.map((c,i)=>c?i+(c>1?'×'+c:''):'').filter(Boolean).join(_T(", ",'・'));
