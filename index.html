@@ -697,8 +697,9 @@ function add(p,v,why,raw){
 const ICON={st:'🚩',pay:'💰',wed:'💍',baby:'👶',goal:'🏁',gam:'🎰',ev:'❓',rest:'♨️',duel:'⚔️',gov:'🏛️',fz:'🏮',hosp:'🏥',shop:'🛒',item:'🎁'};
 const JE={'会社員':'💼','公務員':'🏛️','起業家':'🚀','ギャンブラー':'🎩'};
 const FACE='⚀⚁⚂⚃⚄⚅',sd=n=>{$('dice').textContent=FACE[n-1]};
-let SND=true,AC,BGMV=1,SFXV=1;try{const s=JSON.parse(localStorage.getItem('dkwk_vol')||'{}');if(typeof s.b==='number')BGMV=s.b;if(typeof s.s==='number')SFXV=s.s}catch(e){}
-function snd(f,t=.1,ty='square',v=.07,w=0){if(!SND||SFXV<=0||document.hidden)return;v*=SFXV;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running'&&!document.hidden)AC.resume().catch(()=>{});const o=AC.createOscillator(),g=AC.createGain(),s=AC.currentTime+w;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+t);o.connect(g);g.connect(AC.destination);o.start(s);o.stop(s+t)}catch(e){}}
+let SND=true,AC,BGMV=1,SFXV=1;const VOLM=1.8;   // 全体の音量倍率（効果音・BGM共通。メニューのスライダーはこの上での割合）
+try{const s=JSON.parse(localStorage.getItem('dkwk_vol')||'{}');if(typeof s.b==='number')BGMV=s.b;if(typeof s.s==='number')SFXV=s.s}catch(e){}
+function snd(f,t=.1,ty='square',v=.07,w=0){if(!SND||SFXV<=0||document.hidden)return;v*=SFXV*VOLM;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running'&&!document.hidden)AC.resume().catch(()=>{});const o=AC.createOscillator(),g=AC.createGain(),s=AC.currentTime+w;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+t);o.connect(g);g.connect(AC.destination);o.start(s);o.stop(s+t)}catch(e){}}
 const BPM=77,BEAT=60/BPM,BAR=BEAT*4,NBARS=96,BK=[0,5,10,3,8,3,10,5,0,7,2,7];
 const BP=[[[2,'m'],[7,'d'],[0,'M'],[9,'d']],[[4,'m'],[9,'d'],[2,'m'],[7,'d']],[[0,'M'],[5,'M'],[4,'m'],[9,'d']],[[0,'M'],[9,'m'],[2,'m'],[7,'d']],[[2,'m'],[7,'d'],[0,'M'],[5,'M']],[[5,'m'],[10,'d'],[0,'M'],[0,'M']]];
 const BQ={M:{v:[4,11,14,7],s:[0,2,4,7,9,11],t:4},m:{v:[3,10,14,7],s:[0,2,3,5,7,10],t:3},d:{v:[4,10,14,9],s:[0,2,4,7,9,10],t:4}};
@@ -748,14 +749,14 @@ document.addEventListener('visibilitychange',()=>{document.hidden?ACpause():ACba
 addEventListener('pagehide',ACpause);addEventListener('pageshow',ACback);
 let BGMX=0;   // 1の間はBGMを切る（G1の専用BGM・ファンファーレの最中など）
 let bgmMute=on=>{BGMX=on?1:0;bgmVol()};
-function bgmVol(){if(BGM.m&&AC)BGM.m.gain.setTargetAtTime(SND&&!BGMX&&!HID?BGMV:0,AC.currentTime,.12)}
+function bgmVol(){if(BGM.m&&AC)BGM.m.gain.setTargetAtTime(SND&&!BGMX&&!HID?BGMV*VOLM:0,AC.currentTime,.12)}
 function bgmStart(){
   if(BGM.on)return;
   try{AC=AC||new(window.AudioContext||window.webkitAudioContext)()}catch(e){return}
   const m=AC.createGain(),bus=AC.createGain(),cv=AC.createConvolver(),wet=AC.createGain(),len=AC.sampleRate*2.4|0,ib=AC.createBuffer(2,len,AC.sampleRate),nb=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);
   for(let c=0;c<2;c++){const d=ib.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6)}
   const nd=nb.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
-  cv.buffer=ib;wet.gain.value=.4;bus.gain.value=.55;m.gain.value=SND?BGMV:0;
+  cv.buffer=ib;wet.gain.value=.4;bus.gain.value=.55;m.gain.value=SND?BGMV*VOLM:0;
   bus.connect(m);bus.connect(cv);cv.connect(wet);wet.connect(m);m.connect(AC.destination);
   BGM.m=m;BGM.bus=bus;BGM.nb=nb;BGM.on=true;BGM.next=AC.currentTime+.3;
   if(AC.state==='suspended')AC.resume().catch(()=>{});
