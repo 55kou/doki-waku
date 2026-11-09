@@ -130,7 +130,7 @@ body.pkon{padding-bottom:90px}
 #stl .stc{position:absolute;top:-6vh;font-size:5vh;animation:stcf 3.2s linear forwards;opacity:.95}
 @keyframes stcf{to{transform:translateY(112vh) rotate(360deg);opacity:.9}}
 #gm.felt.suede{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E"),radial-gradient(ellipse at 50% 30%,#ffffff22,transparent 60%),radial-gradient(circle,#b3202e,#470910)}
-#box>b .rh{margin:6px -76px 2px 0;width:auto}
+#box>b .rh{margin:6px calc(-1*var(--bp,0px)) 2px 0;width:auto}
 .cli{font-size:15px;line-height:1;margin-right:1px}
 .cldh{font-weight:900;font-size:12px;color:#bfe9ff;text-shadow:0 0 6px #4aa8f0}
 .rh{position:relative;z-index:1;margin:2px 0 6px;width:min(92vw,360px);color:#fff;text-align:center;font-size:11px;opacity:.95}
@@ -2812,7 +2812,7 @@ async function turnSum(p,m0){
 ),(d>=0?'+':'-'
 ),(yen(Math.abs(d))
 )])}).join('');
-  await ask(_TT("📋 {0}'s turn results<div style=\"font-weight:400;font-size:12.5px;text-align:left;max-height:46vh;overflow:auto;margin-top:8px;margin-right:-76px\"><div style=\"opacity:.75\">■ What happened</div>{1}<div style=\"opacity:.75;margin-top:8px\">■ Funds changes</div>{2}</div>",[`📋 `,` のターン結果<div style="font-weight:400;font-size:12.5px;text-align:left;max-height:46vh;overflow:auto;margin-top:8px;margin-right:-76px"><div style="opacity:.75">■ 起きたこと</div>`,`<div style="opacity:.75;margin-top:8px">■ 資金の変化</div>`,`</div>`],[(p.n
+  await ask(_TT("📋 {0}'s turn results<div style=\"font-weight:400;font-size:12.5px;text-align:left;max-height:46vh;overflow:auto;margin-top:8px;margin-right:calc(-1*var(--bp,0px))\"><div style=\"opacity:.75\">■ What happened</div>{1}<div style=\"opacity:.75;margin-top:8px\">■ Funds changes</div>{2}</div>",[`📋 `,` のターン結果<div style="font-weight:400;font-size:12.5px;text-align:left;max-height:46vh;overflow:auto;margin-top:8px;margin-right:0"><div style="opacity:.75">■ 起きたこと</div>`,`<div style="opacity:.75;margin-top:8px">■ 資金の変化</div>`,`</div>`],[(p.n
 ),(ev
 ),(mo
 )]),[{l:P.every(x=>x.done)?_T("To the results",'結果発表へ'):_T("Next player",'次のプレイヤーへ'),c:p.c}]);
@@ -2910,7 +2910,7 @@ function ACHgem(tier){
   const sp=(x,y,s)=>`<path d='M${x} ${y-s}L${x+s*.28} ${y-s*.28}L${x+s} ${y}L${x+s*.28} ${y+s*.28}L${x} ${y+s}L${x-s*.28} ${y+s*.28}L${x-s} ${y}L${x-s*.28} ${y-s*.28}Z' fill='#fff' opacity='.95'/>`;
   return `<svg viewBox='0 0 100 100'><circle cx='50' cy='50' r='49' fill='${B[1]}'/><circle cx='50' cy='50' r='47' fill='${B[0]}'/><circle cx='50' cy='50' r='44.5' fill='${B[1]}'/>${f}<ellipse cx='38' cy='30' rx='16' ry='8' transform='rotate(-35 38 30)' fill='#fff' opacity='.22'/>${sp(34,32,7)}${sp(64,58,4)}${sp(58,26,3)}</svg>`}
 (()=>{const s=document.createElement('style');s.textContent=`
-#box{position:relative}#box>b:first-child{display:block;padding-right:76px;font-size:15px}#box button[data-lang]{position:absolute;top:12px;right:12px;margin:0!important;width:auto;padding:3px 10px;font-size:11px!important;border-radius:999px;box-shadow:none}
+#box{position:relative;--bp:0px}#box:has([data-lang]){--bp:76px}#box>b:first-child{display:block;padding-right:var(--bp);font-size:15px}#box button[data-lang]{position:absolute;top:12px;right:12px;margin:0!important;width:auto;padding:3px 10px;font-size:11px!important;border-radius:999px;box-shadow:none}
 #achv{position:fixed;inset:0;z-index:100000;background:#0b0f2a;color:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch}
 #achv .ah{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 10px;background:linear-gradient(#151a45,#0b0f2aee);border-bottom:1px solid #ffffff1f}
 #achv .ah b{font-size:18px}#achv .ah small{display:block;font-size:11px;opacity:.65;margin-top:2px}
