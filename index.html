@@ -579,6 +579,11 @@ function build(){
 let B,P,cur,busy,over,fin,goldNow=false;
 // 金のサイコロ：工程の後半以降（第4分岐〜）で、最下位（資金−前借りが最低・同点含む）の人に50%で無料出現
 const wealth=p=>p.m-(p.loan||0);
+// 全員競馬のあと：最下位への金のサイコロ特典のお知らせ（2.5秒で自動で消える・緑のバーが減っていく）
+async function goldNotice(){
+  $('box').innerHTML=`<b>${_T("🌟 Last-place bonus",'🌟 最下位ボーナス')}</b><div style='font-size:18px;font-weight:900;line-height:1.6;margin:6px 0 12px'>${_T("The player in last place has a 50% chance each turn to roll the Golden Dice!",'最下位の人には毎ターン50%の確率で金のサイコロが振れます')}</div><div class='gnb'><i></i></div>`;
+  $('ov').classList.add('show');snd(660,.15,'triangle',.1);snd(880,.25,'triangle',.1,.12);
+  await sleep(2500);$('ov').classList.remove('show')}
 async function setGold(){goldNow=false;const p=P[cur];if(!p||p.done)return;
   // 折り返し後（第4分岐〜）の最下位（資金−前借りが最低・同点含む）は50%で金のサイコロが無料で振れる（アイテムは消費しない）。外れた時はアイテムの金のサイコロを使う
   const last=p.s>=7&&P.every(x=>wealth(p)<=wealth(x)),free=last&&Math.random()<.5;
@@ -2695,7 +2700,7 @@ $('roll').onclick=async()=>{
   if(gs)await settleShow(p,gs);else await turnSum(p,m0);
   MH.push(P.map(x=>x.m));ACHscan();
   if(P.every(x=>x.done)){over=true;actor=null;render();finish();return}
-  if(!HRD&&P.every(x=>x.done||x.s>=7)){HRD=true;await allHorse();render()}   // 全員が折り返しを過ぎたら、一度だけ全員競馬
+  if(!HRD&&P.every(x=>x.done||x.s>=7)){HRD=true;await allHorse();render();await goldNotice()}   // 全員が折り返しを過ぎたら、一度だけ全員競馬
   do{cur=(cur+1)%P.length}while(P[cur].done);
   await setGold();render();await camTo(P[cur]);busy=false;render();npcKick();
 };
@@ -2887,6 +2892,7 @@ function ACHgem(tier){
 #achP .ab{overflow:visible}
 #achP .gm{opacity:0;transform-origin:50% 50%;animation:achpop .75s cubic-bezier(.2,1.5,.4,1) 3s forwards}
 .flr{display:flex;align-items:center;gap:10px;margin:6px 0;padding:6px 10px;background:#0a0c1c;border:2px solid;border-radius:8px;perspective:300px;overflow:hidden}.flr i{font-style:normal;color:#fff;font-weight:900;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none}.flr span{font-size:22px;font-weight:900;flex:1;text-align:left;transform-origin:50% 100%;min-height:30px}.flr span.fp{animation:flp .09s ease-out}.flr.fin{background:#1c2250;box-shadow:0 0 12px #ffd54f88}@keyframes flp{0%{transform:rotateX(-90deg);opacity:.2}100%{transform:rotateX(0);opacity:1}}
+.gnb{height:10px;border-radius:5px;background:#ffffff22;overflow:hidden}.gnb i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#1d9e75,#5fe3a8);border-radius:5px;animation:gnbar 2.5s linear forwards}@keyframes gnbar{from{width:100%}to{width:0}}
 @keyframes achpop{0%{opacity:0;transform:scale(.15);filter:brightness(5) drop-shadow(0 0 22px #fff)}35%{opacity:1;transform:scale(1.22);filter:brightness(2.6) drop-shadow(0 0 26px #fff) drop-shadow(0 0 14px var(--tg))}100%{opacity:1;transform:scale(1);filter:brightness(1) drop-shadow(0 3px 6px #000a) drop-shadow(0 0 8px var(--tg))}}
 #achP .ab::before{content:'';position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#fff 12%,var(--tg) 38%,transparent 70%);opacity:0;transform:scale(.1);pointer-events:none;animation:achflash .9s ease-out 3s forwards}
 @keyframes achflash{0%{opacity:0;transform:scale(.1)}12%{opacity:1;transform:scale(.55)}100%{opacity:0;transform:scale(1.5)}}
