@@ -2878,6 +2878,7 @@ function ACHgem(tier){
 #achP .as{font-size:12px;opacity:.8;margin-top:3px;line-height:1.35}
 #achP .ab{overflow:visible}
 #achP .gm{opacity:0;transform-origin:50% 50%;animation:achpop .75s cubic-bezier(.2,1.5,.4,1) 3s forwards}
+.flr{display:flex;align-items:center;gap:10px;margin:6px 0;padding:6px 10px;background:#0a0c1c;border:2px solid;border-radius:8px;perspective:300px;overflow:hidden}.flr i{font-style:normal;color:#fff;font-weight:900;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none}.flr span{font-size:22px;font-weight:900;flex:1;text-align:left;transform-origin:50% 100%;min-height:30px}.flr span.fp{animation:flp .09s ease-out}.flr.fin{background:#1c2250;box-shadow:0 0 12px #ffd54f88}@keyframes flp{0%{transform:rotateX(-90deg);opacity:.2}100%{transform:rotateX(0);opacity:1}}
 @keyframes achpop{0%{opacity:0;transform:scale(.15);filter:brightness(5) drop-shadow(0 0 22px #fff)}35%{opacity:1;transform:scale(1.22);filter:brightness(2.6) drop-shadow(0 0 26px #fff) drop-shadow(0 0 14px var(--tg))}100%{opacity:1;transform:scale(1);filter:brightness(1) drop-shadow(0 3px 6px #000a) drop-shadow(0 0 8px var(--tg))}}
 #achP .ab::before{content:'';position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#fff 12%,var(--tg) 38%,transparent 70%);opacity:0;transform:scale(.1);pointer-events:none;animation:achflash .9s ease-out 3s forwards}
 @keyframes achflash{0%{opacity:0;transform:scale(.1)}12%{opacity:1;transform:scale(.55)}100%{opacity:0;transform:scale(1.5)}}
@@ -3274,10 +3275,20 @@ async function init(){BGMX=0;bgmVol();try{if(NET.role==='host'&&NET.guests.lengt
   {const sh=await askUI(_T("Shuffle the turn order?",'順番をシャッフルする？'),[{l:_T("🔀 Shuffle",'🔀 シャッフルする'),s:_T("Randomize who goes first",'順番をランダムに決める'),c:'#e8a317'},{l:_T("Keep as is",'このままでいい'),s:_T("Player 1 goes first",'上から順に'),c:'#378add'}]);
     if(sh===0){
       const o=P.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]]}
-      $('box').innerHTML=`<b>${_T("Shuffling the order…",'順番を決めています…')}</b><div id='shf' style='font-size:22px;font-weight:900;line-height:1.7;margin-top:8px'></div>`;$('ov').classList.add('show');
-      const shf=$('shf');for(let k=0;k<10;k++){const t=P.slice().sort(()=>Math.random()-.5);shf.innerHTML=t.map(p=>`<div style='color:${p.c}'>${p.n}</div>`).join('');snd(500+k*40,.06,'triangle',.08);await sleep(150)}
+      $('box').innerHTML=`<b>${_T("Shuffling the order…",'順番を決めています…')}</b><div id='shf' style='margin-top:10px'>${o.map((_,i)=>`<div class='flr' style='border-color:${COL[i]}'><i style='background:${COL[i]}'>${i+1}</i><span id='fl${i}'></span></div>`).join('')}</div>`;$('ov').classList.add('show');   // 反転フラップ式案内表示機
+      {const n=o.length,T0=performance.now(),stop=o.map((_,i)=>n>1?2400+i*(600/(n-1)):3000),done=o.map(()=>0);let nx=0,k=0;
+       const flip=(i,p)=>{const e=$('fl'+i);if(!e)return;e.textContent=p.n;e.style.color=p.c;e.classList.remove('fp');void e.offsetWidth;e.classList.add('fp')};
+       while(done.some(d=>!d)){
+         const t=performance.now()-T0;
+         o.forEach((p,i)=>{if(done[i])return;if(t>=stop[i]){done[i]=1;flip(i,p);$('fl'+i).parentNode.classList.add('fin');snd(700+i*90,.12,'triangle',.1)}else flip(i,P[Math.floor(Math.random()*P.length)])});
+         if(done.some(d=>!d))snd(300+(k++%5)*50,.03,'square',.03);
+         // 〜1.5秒は高速、1.5〜3秒でだんだん遅くなる
+         if(done.every(d=>d))break;
+         const iv=t<1500?75:75+(t-1500)/1500*330;
+         await sleep(iv)}
+      }
       o.forEach((p,i)=>P[i]=p);P.forEach((p,i)=>p.c=COL[i]);
-      shf.innerHTML=P.map((p,i)=>`<div style='color:${p.c}'>${i+1}. ${p.n}</div>`).join('');snd(784,.2,'triangle',.12);await sleep(500);
+      snd(784,.2,'triangle',.12);await sleep(1500);
       $('ov').classList.remove('show');
       log(_T("Turn order: ",'順番：')+P.map(p=>p.n).join(' → '))}
     else $('ov').classList.remove('show')}
