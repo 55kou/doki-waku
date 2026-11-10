@@ -209,15 +209,15 @@ body.pkon{padding-bottom:90px}
 #bossm .bst b{display:block;font-size:clamp(60px,24vw,200px);font-weight:900;line-height:1.1;background:linear-gradient(180deg,#fff9d6 0%,#ffd23f 45%,#a86a00 60%,#ffe27a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px #fff6) drop-shadow(0 6px 0 #5a3400);-webkit-text-stroke:2px #7a4b00}
 #bossm .bst small.bsu{margin:0 0 2px;font-size:clamp(15px,5.5vw,45px);line-height:1.15;color:#fff;text-shadow:0 0 14px #ffd23f}
 #bossm .bst small{display:block;margin-top:8px;font-size:clamp(14px,4.4vw,30px);font-weight:900;color:#4a2a00;text-shadow:0 0 10px #fff8}
-#msn{position:fixed;inset:0;z-index:99999;background:#000;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;animation:msbg .3s ease-out forwards}
+#msn{position:fixed;inset:0;z-index:99999;background:#000;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;animation:msbg .27s ease-out forwards}
 @keyframes msbg{to{opacity:1}}
 #msn span{position:absolute;left:8vw;right:8vw;text-align:center;color:#fff;font-size:clamp(16px,4.8vw,26px);font-weight:700;letter-spacing:.06em;opacity:0}
 #msn span i{display:block;font-style:normal;font-size:clamp(22px,7vw,38px);line-height:1.1;margin-bottom:10px}
-#msn::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 100% 0,rgba(255,196,160,.55) 0,rgba(255,150,120,.28) 9%,transparent 24%),radial-gradient(ellipse 95% 75% at 100% 0,rgba(255,138,108,.3) 0,rgba(255,120,128,.15) 38%,transparent 72%);opacity:0;animation:mslamp 1.5s ease-in-out .3s forwards}
+#msn::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 100% 0,rgba(255,196,160,.55) 0,rgba(255,150,120,.28) 9%,transparent 24%),radial-gradient(ellipse 95% 75% at 100% 0,rgba(255,138,108,.3) 0,rgba(255,120,128,.15) 38%,transparent 72%);opacity:0;animation:mslamp 1.35s ease-in-out .27s forwards}
 @keyframes mslamp{from{opacity:0}to{opacity:1}}
-#msn .m1{animation:msf1 3.5s linear 1.8s forwards}   /* 暗転しきる（消える）のが次のセリフの開始（5.3秒）と同時 */
+#msn .m1{animation:msf1 3.15s linear 1.62s forwards}   /* 暗転しきる（消える）のが次のセリフの開始（5.3秒）と同時 */
 @keyframes msf1{0%{opacity:0}22.86%,57.14%{opacity:.5}100%{opacity:0}}   /* ライトが灯りきった（1.8秒）直後に0.8秒でセリフが現れ、そのまま保持→5.3秒で暗転しきる */
-#msn .m2{animation:msf2 2s linear 5.3s forwards}
+#msn .m2{animation:msf2 1.8s linear 4.77s forwards}
 @keyframes msf2{from{opacity:0}to{opacity:.5}}
 @keyframes ltbg{0%,8%{background:#000}10%,100%{background:#050a1a}}
 @keyframes ltfl{0%,9%{opacity:0}10%{opacity:1}16%{opacity:.15}20%{opacity:.8}30%{opacity:.1}100%{opacity:0}}
@@ -2287,8 +2287,8 @@ async function menesuOption(){
   const f=document.createElement('div');f.id='msn';
   f.innerHTML=`<span class='m1'><i>👴🏻</i>${_T("Do you have any secret options?",'裏オプションってありますか？')}</span><span class='m2'><i>👩🏻</i>${fee?_TT("If you give me {0}…",[``,`円くれるなら…`],[(fee)]):_T("It's free… 💕",'タダでいいですよ…💕')}</span>`;
   document.body.appendChild(f);
-  snd(660,.1,'sine',.03,.3);snd(70,2.4,'sine',.05,1.8);snd(494,.5,'sine',.03,5.3);   // 右上のスタンドライトが1.5秒かけて灯る→その明るさのまま演出が続く
-  await sleep(8600);f.remove();
+  snd(660,.1,'sine',.03,.3);snd(70,2.16,'sine',.05,1.62);snd(494,.5,'sine',.03,4.77);   // 右上のスタンドライトが1.5秒かけて灯る→その明るさのまま演出が続く
+  await sleep(7740);f.remove();
   return{fee};
 }
 async function fuzoku(p,q){
