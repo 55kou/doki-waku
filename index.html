@@ -1010,16 +1010,16 @@ async function rou(p,st){
 ),(stops
 ),(nums
 )]));
-  rhAdd();
+  if(mode!==2)rhAdd();
   if(mode===2){const bb=$('gm').querySelector('.bbet');if(bb)bb.insertAdjacentHTML('afterend',`<div class='rbets'><small>${_T("Your bets (number × chips)",'あなたの賭け（数字 × 枚数）')}</small>${put.map((c,n)=>c?`<span class='rbi'><span class='rn ${n===0?'g':REDS.includes(n)?'r':''}'>${n}</span>×${c}${_T(" chip(s)",'枚')}</span>`:'').join('')}</div>`)}
   const wl=$('wl');void wl.offsetWidth;wl.style.transition='transform '+(7.5/(FAST?1.5:1))+'s cubic-bezier(.1,.6,.1,1)';wl.style.transform=`rotate(${360*6-(idx+.5)*sl}deg)`;
   let w=50,el=0;while(el<7300){snd(900,.03,'square',.04);await sleep(w);el+=w;w*=1.07}
   await sleep(600);
   const nm=col===2?'🟢':col===0?'🔴':'⚫';
-  ROUH.push(n);rhUpd();
+  ROUH.push(n);if(mode!==2)rhUpd();   // 一点がけの結果画面ではコールドナンバー欄を出さない（画面が見切れるため）
   if(mode===2){
     const hc=put[n],pay=hc*36*c1,net=pay-5*c1,hit=hc>0;if(hit)p.ten1=1;   // 実績：一点賭けの的中
-    const detail=_TT("<div class='cd1'>Number: <b>{0} {1}</b></div><div class='cd1'>Your chips: <b>{2}</b></div><div class='cd2 {3}'>{4}</div><div class='cd3'>{5}</div><div class='cd4'>👆 Tap to close</div>",[`<div class='cd1'>出た数字：<b>`,` `,`</b></div><div class='cd1'>あなたのチップ：<b>`,`</b></div><div class='cd2 `,`'>`,`</div><div class='cd3'>`,`</div><div class='cd4'>👆 タップで閉じる</div>`],[(nm),(n),(putText),(hit?'w':'l'),(hit?_T("🎉 HIT!",'🎉 的中！'):_T("💧 MISS…",'💧 ハズレ…')),(hit?_TT("{0} winning chip(s) × 36 × {1} = <b class='pos'>{2}</b><br>5 chips placed −{3}<br>Net <b class='{4}'>{5}{6}</b>",[``,`枚の当たりチップ × 36倍 × 1枚`,` ＝ <b class='pos'>`,`</b><br>賭けた5枚 −`,`<br>差し引き <b class='`,`'>`,``,`</b>`],[(hc),(yen(c1)),(yen(pay)),(yen(5*c1)),(net>=0?'pos':'neg'),(net>=0?'+':'-'),(yen(Math.abs(net)))]):_TT("None of the chips hit. 5 chips placed <b class='neg'>−{0}</b>",[`当たったチップはなし。賭けた5枚 <b class='neg'>−`,`</b>`],[(yen(5*c1))]))]);
+    const detail=_TT("<div class='cd1'>Your chips: <b>{0}</b></div><div class='cd3'>{1}</div><div class='cd4'>👆 Tap to close</div>",[`<div class='cd1'>あなたのチップ：<b>`,`</b></div><div class='cd3'>`,`</div><div class='cd4'>👆 タップで閉じる</div>`],[(putText),(hit?_TT("{0} winning chip(s) × 36 × {1} = <b class='pos'>{2}</b><br>5 chips placed −{3}<br>Net <b class='{4}'>{5}{6}</b>",[``,`枚の当たりチップ × 36倍 × 1枚`,` ＝ <b class='pos'>`,`</b><br>賭けた5枚 −`,`<br>差し引き <b class='`,`'>`,``,`</b>`],[(hc),(yen(c1)),(yen(pay)),(yen(5*c1)),(net>=0?'pos':'neg'),(net>=0?'+':'-'),(yen(Math.abs(net)))]):_TT("None of the chips hit. 5 chips placed <b class='neg'>−{0}</b>",[`当たったチップはなし。賭けた5枚 <b class='neg'>−`,`</b>`],[(yen(5*c1))]))]);
     return finale(net/st,st,`${nm} ${n}  ${hit?_T("HIT!",'的中！'):_T("MISS…",'ハズレ…')}`,false,detail,true);
   }
   if(mode===0){const win=col===side;return finale(win?1:-1,st,`${nm} ${n}  ${win?_T("HIT!",'的中！'):_T("MISS…",'ハズレ…')}`)}
@@ -1239,7 +1239,7 @@ async function bj(p,st){
 )]));
   gopen(FB?'felt fb':'felt',_TT("{0}<div class='gt'>{1}</div>{2}<div class='lab'>Dealer</div><div class='hand' id='dh'></div><div class='bjh{3}' id='bjh'><div class='hb'><div class='lab' id='l0'>{4}</div><div class='hand' id='ph0'></div></div>{5}</div><div class='gs' id='gs'></div>",[``,`<div class='gt'>`,`</div>`,`<div class='lab'>ディーラー</div><div class='hand' id='dh'></div><div class='bjh`,`' id='bjh'><div class='hb'><div class='lab' id='l0'>`,`</div><div class='hand' id='ph0'></div></div>`,`</div><div class='gs' id='gs'></div>`],[(fbbg
 ),(FB?'FREE BET BLACKJACK':'🃏 BLACKJACK 🃏'
-),(FB?_TT("<div class='lab fbd' style='font-size:12px;opacity:.95;padding:0 16px;text-align:center'>9, 10, 11 free double / any pair except 10s free split / dealer 22 is a push</div>",[`<div class='lab fbd' style='font-size:12px;opacity:.95;padding:0 16px;text-align:center'>9・10・11は無料ダブル／10以外のペアは無料スプリット／ディーラー22は引き分け</div>`],[]):''
+),(FB?_TT("<div class='lab fbd' style='font-size:12px;opacity:.95;padding:0 16px;text-align:center'>9, 10, 11 free double / any pair except 10s free split / dealer 22 is a push</div>",[`<div class='lab fbd' style='font-size:12px;opacity:.95;padding:0 16px;text-align:center'>9・10・11は無料ダブル／10以外のペアは無料スプリット<br>ディーラー22は引き分け</div>`],[]):''
 ),(mh?' c2':''
 ),(p.n
 ),(mh?"<div class='hb'><div class='lab' id='l1'></div><div class='hand' id='ph1'></div></div>":''
@@ -1661,7 +1661,7 @@ async function horse(p,st){
   for(let t=0;t<=Tw+1.2;t+=.06){
     let lead=0,lp=-1;
     names.forEach((_,i)=>{const f=Math.pow(Math.min(1,t/T[i]),G[i]),x=Math.max(0,Math.min(1,f+.035*Math.sin(t*2.2+ph[i])*(1-f)));if(x>lp){lp=x;lead=i}
-      if(g1){const ph2=Math.PI/2+x*2*Math.PI,el=$('h'+i);el.style.left=((CX+laneRX(i)*Math.cos(ph2))/340*100)+'%';el.style.top=((CY+laneRY(i)*Math.sin(ph2))/250*100)+'%';el.style.transform=Math.cos(2*Math.PI*x)<0?'scaleX(-1)':'';
+      if(g1){const ph2=Math.PI/2+x*2*Math.PI,el=$('h'+i);el.style.left=((CX+laneRX(i)*Math.cos(ph2))/340*100)+'%';el.style.top=((CY+laneRY(i)*Math.sin(ph2))/250*100)+'%';el.style.transform='';   // G1（三連単）のトラックでは馬番号を反転させない
         const v=(x-px[i])/.06;av[i]=av[i]?av[i]*.88+v*.12:v;
         if(t>1&&t<Tw&&t>=fcd[i]&&av[i]>.02){if(v>av[i]*1.3){$('x'+i).textContent='🔥';fxu[i]=t+.55;fcd[i]=t+.9}else if(v<av[i]*.6){$('x'+i).textContent='💦';fxu[i]=t+.55;fcd[i]=t+.9}}
         if(fxu[i]&&t>fxu[i]){$('x'+i).textContent='';fxu[i]=0}
