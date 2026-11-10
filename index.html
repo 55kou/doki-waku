@@ -573,7 +573,8 @@ function mainSeg(j,last){
   const sp=Math.random();
   if(sp<.05&&j>0){   // 特別区間（序盤には出ない）：2.5%でパタヤ（病院3マス＋残りは風俗）／2.5%でラスベガス（行政2＋風俗1＋残りはギャンブル）。STARTとGOAL以外は、給料日や固定の結婚/出産マスも置き換えて、パタヤ／ラスベガスを優先
     const fr2=shuf([...Array(15).keys()].filter(i=>!(i===0&&j===0)&&!(i===14&&last)));   // STARTとGOAL以外（給料日・固定の結婚/出産マスも）はパタヤ／ラスベガスを優先
-    if(sp<.025){fr2.forEach((i,k)=>{a[i]=k<3?{k:'hosp',t:_T("Hospital",'病院')}:mkFz()});limFz(a,2);a.sp=_T("🌴Pattaya",'🌴パタヤ')}
+    if(sp<.025){const nf=fr2.length-3,ex=shuf(Object.keys(FZW)),bag=[];ex.forEach((k,x)=>{for(let c=0;c<2+(x<nf-10?1:0);c++)bag.push(k)});shuf(bag);   /* パタヤ：病院3＋風俗は5種類すべて2〜3個ずつ（風俗が12個なら、2種類が3個・3種類が2個） */
+      fr2.forEach((i,k)=>{a[i]=k<3?{k:'hosp',t:_T("Hospital",'病院')}:{k:'fz',t:'風俗',sub:bag[k-3]}});a.sp=_T("🌴Pattaya",'🌴パタヤ')}
     else{fr2.forEach((i,k)=>{a[i]=k<2?{k:'gov',t:_T("Gov't",'行政')}:k===2?mkFz():gm(false)});a.sp=_T("🎰Las Vegas",'🎰ラスベガス')}
     return a;
   }
