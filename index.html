@@ -1010,13 +1010,13 @@ async function rou(p,st){
 ),(stops
 ),(nums
 )]));
-  if(mode!==2)rhAdd();
+  rhAdd();
   if(mode===2){const bb=$('gm').querySelector('.bbet');if(bb)bb.insertAdjacentHTML('afterend',`<div class='rbets'><small>${_T("Your bets (number × chips)",'あなたの賭け（数字 × 枚数）')}</small>${put.map((c,n)=>c?`<span class='rbi'><span class='rn ${n===0?'g':REDS.includes(n)?'r':''}'>${n}</span>×${c}${_T(" chip(s)",'枚')}</span>`:'').join('')}</div>`)}
   const wl=$('wl');void wl.offsetWidth;wl.style.transition='transform '+(7.5/(FAST?1.5:1))+'s cubic-bezier(.1,.6,.1,1)';wl.style.transform=`rotate(${360*6-(idx+.5)*sl}deg)`;
   let w=50,el=0;while(el<7300){snd(900,.03,'square',.04);await sleep(w);el+=w;w*=1.07}
   await sleep(600);
   const nm=col===2?'🟢':col===0?'🔴':'⚫';
-  ROUH.push(n);if(mode!==2)rhUpd();   // 一点がけの結果画面ではコールドナンバー欄を出さない（画面が見切れるため）
+  ROUH.push(n);if(mode!==2)rhUpd();else{const r=$('rh');if(r)r.remove()}   // 一点がけ：回転中はコールドナンバー欄を出し、結果発表に移る時に消す（画面が見切れるため）
   if(mode===2){
     const hc=put[n],pay=hc*36*c1,net=pay-5*c1,hit=hc>0;if(hit)p.ten1=1;   // 実績：一点賭けの的中
     const detail=_TT("<div class='cd1'>Your chips: <b>{0}</b></div><div class='cd3'>{1}</div><div class='cd4'>👆 Tap to close</div>",[`<div class='cd1'>あなたのチップ：<b>`,`</b></div><div class='cd3'>`,`</div><div class='cd4'>👆 タップで閉じる</div>`],[(putText),(hit?_TT("{0} winning chip(s) × 36 × {1} = <b class='pos'>{2}</b><br>5 chips placed −{3}<br>Net <b class='{4}'>{5}{6}</b>",[``,`枚の当たりチップ × 36倍 × 1枚`,` ＝ <b class='pos'>`,`</b><br>賭けた5枚 −`,`<br>差し引き <b class='`,`'>`,``,`</b>`],[(hc),(yen(c1)),(yen(pay)),(yen(5*c1)),(net>=0?'pos':'neg'),(net>=0?'+':'-'),(yen(Math.abs(net)))]):_TT("None of the chips hit. 5 chips placed <b class='neg'>−{0}</b>",[`当たったチップはなし。賭けた5枚 <b class='neg'>−`,`</b>`],[(yen(5*c1))]))]);
