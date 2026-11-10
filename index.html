@@ -552,6 +552,7 @@ function route(big){
     for(let i=0,n=rnd(1,2);i<n;i++)q.push(grn(true));   // 緑マス1〜2個（平均1.5）
     while(q.length<12)q.push(gm(true,'B'));
     if(Math.random()<.8){const gi=q.findIndex(x=>x.k==='gam');if(gi>=0)q[gi]={k:'shop',t:_T("Shop",'ショップ')}}   // ショップ：Bルート平均0.8個（ギャンブルマス1つと入れ替え／Aルートは0）
+    q.forEach((x,i)=>{if(x.k==='gam'&&Math.random()<.15)q[i]=Math.random()<.5?rSq(true):gSq(true)});   // Bルートのギャンブルマスは各15%の確率で赤マス／緑マス（半々）に置き換わる（平均15%減）
   }else{
     if(Math.random()<.5)q.push({k:'duel',t:_T("Duel",'直接対決')});
     const g=rnd(2,3),f=rnd(1,2),v=rnd(0,1);
