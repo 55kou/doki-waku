@@ -2044,7 +2044,7 @@ async function kidResult(p,title,emo,n,line,sub,c){await ask(title,[{l:emo.repea
 // 独身宣言中の子供・離婚時の子供：養育費を「払う／払わない」をランプ点滅で抽選（true＝払う）
 async function supLottery(what,intro){
   if(intro)await kidIntro(intro[0],intro[1]);
-  return lampLottery(_TT("🎲 Will you pay child support for {0}… or not?",[`🎲 `,`の養育費を…払う？ 払わない？`],[(what)]),_T("Pay<br>child support",'養育費を<br>払う'),_T("Don't pay<br>child support",'養育費を<br>払わない'),'#c2185b','#7b4a1e',_T("💴 Pays child support!",'💴 養育費を払う！'),_T("🐒 Doesn't pay child support!",'🐒 養育費を払わない！'),784,330,.34);   // 払わない66%
+  return lampLottery(_TT("🎲 Will you pay child support for {0}… or not?",[`🎲 `,`の養育費を…払う？ 払わない？`],[(what)]),_T("Pay<br>child support",'養育費を<br>払う'),_T("Don't pay<br>child support",'養育費を<br>払わない'),'#c2185b','#7b4a1e',_T("💴 Pays child support!",'💴 養育費を払う！'),_T("🐒 Doesn't pay child support!",'🐒 養育費を払わない！'),784,330,.4);   // 払わない60%
 }
 // 離婚時：親権を失うかどうかをランプ点滅で抽選（true＝失う）
 async function custLottery(what,intro){
@@ -2930,7 +2930,7 @@ const ACHDEF=()=>[
  {id:'big',rate:15,ok:p=>!!p.done&&p.m>=50000,t:_T("¥50,000 club",'5万円超えでゴール'),s:_T("Reach the goal with ¥50,000 or more",'所持金5万円以上でゴールする')},
  {id:'gomu',rate:15,ok:p=>!!p.done&&!(p.hist&&Object.keys(p.hist).length),t:_T("Always Protected",'ゴム派'),s:_T("Reach the goal without ever catching an STD",'一度も病気にならずにゴールする')},
  {id:'kokoro',rate:15,ok:p=>!!p.fv&&Object.values(p.fv).some(v=>v>=5),t:_T("Home of the Heart",'心の故郷'),s:_T("Visit the same kind of venue 5 times",'同じ風俗に5回通う')},
- {id:'sanzoku',rate:15,ok:p=>!!p.rcv&&Object.values(p.rcv).some(v=>v>=20000),t:_T("Bandit",'山賊'),s:_T("Take a total of ¥20,000 or more from one player",'あるプレイヤーから累計2万円以上もらう')},
+ {id:'sanzoku',rate:15,ok:p=>!!p.rcv&&Object.values(p.rcv).some(v=>v>=15000),t:_T("Bandit",'山賊'),s:_T("Take a total of ¥15,000 or more from one player",'あるプレイヤーから累計1万5千円以上もらう')},
  {id:'ichizu',rate:10,ok:p=>!!p.ichizu||!!p.ihad,t:_T("Devoted",'一途'),s:_T("Visit the same kind of venue 3 times in a row",'同じ種類の風俗に3回連続で通う')},
  {id:'ape',rate:10,ok:p=>monkey(p),t:_T("Monkey",'猿'),s:_T("Have a child who doesn't pay child support",'養育費を払わない子供がいる')},
  {id:'baikin',rate:8,ok:p=>!!p.baikin,t:_T("Germ Man",'バイキンマン'),s:_T("Catch each of chlamydia, syphilis, HIV and candidiasis at least once",'クラミジア・梅毒・HIV・カンジダにそれぞれ一度は感染する')},
