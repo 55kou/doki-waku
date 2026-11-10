@@ -2399,11 +2399,11 @@ async function fuzoku(p,q){
   if(p.fv[sub]>=3){   // 3回目以降は毎回
     const ad=sub==='uri';let mine=false;const wedNow=!!(p.wed||Object.keys(p.fm).length);let pays=true;const unm=!(p.single||wedNow),rem=unm&&!!(p.dvc&&p.dvc[sub]);{{const bx=$('box');   // rem＝離婚歴のある同じ相手との子供   // 養育費の前置き：ふわっと（1.2秒で不透明度0→100%）出して、さらに1.3秒後に本編へ
       bx.innerHTML=`<div style='font-size:20px;font-weight:900;line-height:1.6;text-align:center;padding:10px 0'>${rem?_TT("A child with the {0} I divorced… Maybe I should remarry?",[`離婚した`,`と子供ができちゃった…再婚しようかな？`],[(FM[sub])]):unm?_T("Got a child without even being married… 👦 I guess I should pay child support",'結婚してないのに子供できちゃった…👦流石に養育費は払おう'):p.fv[sub]===5?_TT("Coming to {0} again — {1} time already…<br>This place is my spiritual home 🏩",[``,`にくるのも`,`回目か…。<br>ここは心の故郷だな🏩`],[(F.n),(p.fv[sub])]):_TT("Coming to {0} again — {1} time already…<br>Maybe I'll go all out 💪",[``,`にくるのも`,`回目か…。<br>はりきっちゃおうかな💪`],[(F.n),(p.fv[sub])])}</div>`;
-      $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+1300);$('ov').classList.remove('show')}
+      $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+(rem||unm?2300:1800));$('ov').classList.remove('show')}   // ふわっと1.2秒＋その後：「はりきっちゃおうかな／心の故郷」は1.8秒（計3秒）、「結婚してないのに／再婚しようかな」は2.3秒（計3.5秒）
     if(p.fv[sub]>=5)await kokoroTitle(p);
     if(p.single){const bx=$('box');   // 独身宣言中：続けてもう一言（ふわっと1.2秒→1.3秒後に養育費の画面へ）
       bx.innerHTML=`<div style='font-size:20px;font-weight:900;line-height:1.6;text-align:center;padding:10px 0'>${_T("A child, even though I'm under the Bachelor Pledge… 👦 Should I really pay child support?",'独身宣言中なのに子供できちゃった…👦養育費払うべきなのか？')}</div>`;
-      $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+1300);$('ov').classList.remove('show')}
+      $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+2300);$('ov').classList.remove('show')}
     if(rem){   // 離婚した相手との子供：再婚するかしないかをルーレットで決める（再婚＝親権のある子供／再婚しない＝養育費を払う子供）
       const re=await lampLottery(_T("🎲 Remarry… or not?",'🎲 再婚する？ しない？'),_T("Remarry",'再婚<br>する'),_T("Don't<br>remarry",'再婚<br>しない'),'#c2185b','#555',_T("💍 Remarries!",'💍 再婚する！'),_T("🚫 Doesn't remarry!",'🚫 再婚しない！'),784,330);
       if(re){mine=true;p.fm[sub]=1;p.fwed=1;p.pend.push(sub);log(_TT("💍 {0}: remarries {1}!",[`💍 `,`：離婚した`,`と再婚！`],[(p.n),(FM[sub])]));
@@ -2412,7 +2412,7 @@ async function fuzoku(p,q){
         else if(p.baikin)log(_TT("🦠 {0}: infected with Candida… but as a <b class='pos'>Germ Man</b> it was cured instantly!",[`🦠 `,`：カンジダに感染…しかし<b class='pos'>バイキンマン</b>なので一瞬で治った！`],[(p.n)]));
         else{p.cand=1;(p.hist=p.hist||{}).cand=1;log(_TT("🦠 {0}: infected with <b class='neg'>Candida</b>! (-{1} every turn, permanent / cured by divorce)",[`🦠 `,`：<b class='neg'>カンジダ</b>に感染！（毎ターン-`,`が永続／離婚で治る）`],[(p.n),(yen(500))]));await baikinCheck(p)}}
       else{const bx=$('box');bx.innerHTML=`<div style='font-size:20px;font-weight:900;line-height:1.6;text-align:center;padding:10px 0'>${_T("I won't remarry, but I should at least pay child support 👦",'再婚はしないけど、流石に養育費は払おう👦')}</div>`;
-        $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+1300);$('ov').classList.remove('show')}
+        $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+2300);$('ov').classList.remove('show')}
     }
     else if(!unm)pays=await supLottery(ad?_T("adopted",'養子'):_T("child",'子供'),[_T("😠 Child support dispute…",'😠 養育費で揉める…'),ad?_T("You adopted a child with someone who isn't your spouse… so you'll argue over child support…",'結婚相手ではない相手と養子を迎えました…養育費を出すか出さないかで揉めます…'):_T("A child was born with someone who isn't your spouse… so you'll argue over child support…",'結婚相手ではない相手との間に子供ができました…養育費を出すか出さないかで揉めます…')]);}   // 風俗に3回通ってできた子供は、結婚相手とは別の相手（その店の人）との子供＝親権のない養育費。結婚中・独身宣言中は「払う／払わない」を抽選
     if(mine)p.cc=(p.cc||0)+500;else if(pays){p.sup=(p.sup||0)+800;if(ad)p.adk=(p.adk||0)+1;else p.pk=(p.pk||0)+1}else p.ape=(p.ape||0)+1;   // 養子（売り専）は血のつながりがないので、養育費はかかるが「孕ませマン」の子供の数には数えない（adk）
