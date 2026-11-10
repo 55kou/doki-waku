@@ -2830,7 +2830,7 @@ $('lvx').onclick=()=>$('lv').classList.remove('show');
 $('lv').onclick=e=>{if(e.target===$('lv'))$('lv').classList.remove('show')};
 // ゴール精算の演出：今の資金から前借りが引かれ、続いて各称号が資金の数字に次々アタックして、最終金額を発表する
 async function settleShow(p,gs){
-  let quick=false,lp=0;const z=async ms=>{for(let r=ms;r>0;r-=50)await sleep(quick?8:Math.min(50,r))};   // 早送りは画面の長押しだけ（押している間だけ6倍速・離すと元の速さ。タップでは早送りしない）
+  let quick=false,lp=0;const z=async ms=>{for(let r=ms;r>0;r-=50)await sleep(Math.min(50,r)/(quick?2:1))};   // 早送りは画面の長押しだけ（押している間だけ2倍速・離すと元の速さ。タップでは早送りしない）
   const d=document.createElement('div');d.id='stl';d.style.cssText+=';-webkit-touch-callout:none;-webkit-user-select:none;user-select:none';
   d.addEventListener('pointerdown',e=>{if(e.target.closest('.stb'))return;clearTimeout(lp);lp=setTimeout(()=>{quick=true},350)});
   ['pointerup','pointercancel','pointerleave'].forEach(ty=>d.addEventListener(ty,()=>{clearTimeout(lp);quick=false}));
