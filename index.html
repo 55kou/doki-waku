@@ -2300,7 +2300,9 @@ async function fuzoku(p,q){
   const nv=(p.fv[sub]||0)+1;let led=false;const leadIn=async()=>{led=true;const bx=$('box');   // rem＝離婚歴のある同じ相手との子供   // 養育費の前置き：ふわっと（1.2秒で不透明度0→100%）出して、さらに1.3秒後に本編へ
       bx.innerHTML=`<div style='font-size:20px;font-weight:900;line-height:1.6;text-align:center;padding:10px 0'>${nv===5?_TT("Coming to {0} again — {1} time already…<br>This place is my spiritual home 🏩",[``,`にくるのも`,`回目か…。<br>ここは心の故郷だな🏩`],[(F.n),(nv)]):_TT("Coming to {0} again — {1} time already…<br>Maybe I'll go all out 💪",[``,`にくるのも`,`回目か…。<br>はりきっちゃおうかな💪`],[(F.n),(nv)])}</div>`;
       $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+1800);$('ov').classList.remove('show')};
-  let opt=null;if(F.opt&&Math.random()<.5){if(nv>=3)await leadIn();opt=await menesuOption()}   // メンエス：50%でオプション演出（オプションなら料金に加算＋他の風俗と同じ感染リスク）
+  if(nv>=3)await leadIn();   // 3回目以降：「◯回目か」を最優先で最初に出す
+  const dq=[],dask=(...a)=>{if(nv>=3){dq.push(a);return 0}return ask(...a)};   // 3回目以降は感染ポップアップを子供・称号の後へ回す
+  let opt=null;if(F.opt&&Math.random()<.5)opt=await menesuOption();   // メンエス：50%でオプション演出（オプションなら料金に加算＋他の風俗と同じ感染リスク）
   let free=0;
   if(!F.gain){if(p.grand)free=1;else if(p.tk){free=2;p.tk=0}}
   if(free)log(free===2?_TT("🎫 {0}: used the free nightlife coupon! {1} is free",[`🎫 `,`：次回風俗無料券を使用！ `,`は無料`],[(p.n
@@ -2337,24 +2339,24 @@ async function fuzoku(p,q){
   if(inf&&sg&&!p.baikin&&p.std[inf.k]===undefined){p.it.sagami=0;log(_TT("🛡️ {0}: thanks to the Sagami Original, avoided infection with <b class='pos'>{1}</b>! (the Sagami is used up)",[`🛡️ `,`：サガミオリジナルのおかげで<b class='pos'>`,`</b>への感染を防いだ！（サガミは消失）`],[(p.n
 ),(inf.n
 )]));
-    await ask(`🏮 ${F.n}`,[{l:_TT("🛡️ Blocked {0} with the Sagami Original!",[`🛡️ サガミオリジナルで`,`を防いだ！`],[(inf.n
+    await dask(`🏮 ${F.n}`,[{l:_TT("🛡️ Blocked {0} with the Sagami Original!",[`🛡️ サガミオリジナルで`,`を防いだ！`],[(inf.n
 )]),s:_T("The Sagami Original has been used up",'サガミオリジナルは使用済みで消失しました'),c:'#17a2b8'}])}
   else if(inf&&p.baikin){log(_TT("🦠 {0}: infected with {1}… but as a <b class='pos'>Germ Man</b> it was cured instantly!",[`🦠 `,`：`,`に感染…しかし<b class='pos'>バイキンマン</b>なので一瞬で治った！`],[(p.n
 ),(inf.n
 )]));
-    await ask(`🏮 ${F.n}`,[{l:_TT("🦠 Infected with {0}… but cured instantly!",[`🦠 `,`に感染…でも即・完治！`],[(inf.n
+    await dask(`🏮 ${F.n}`,[{l:_TT("🦠 Infected with {0}… but cured instantly!",[`🦠 `,`に感染…でも即・完治！`],[(inf.n
 )]),s:_T("Germ Man title: every STD you catch is cured on the spot (no divorce either)",'バイキンマンの称号：感染した性病は全てその瞬間に治る（離婚にもならない）'),c:'#1d9e75'}])}
   else if(inf&&p.std[inf.k]===undefined){
     if(p.prep){p.prep=0;log(_TT("💊 {0}: PrEP kept <b class='pos'>{1}</b> away! (the PrEP is used up)",[`💊 `,`：PrEPの効果で<b class='pos'>`,`</b>への感染を回避！（PrEPは消失）`],[(p.n
 ),(inf.n
 )]));
-      await ask(`🏮 ${F.n}`,[{l:_TT("💊 PrEP prevented infection with {0}!",[`💊 PrEPのおかげで`,`への感染を回避！`],[(inf.n
+      await dask(`🏮 ${F.n}`,[{l:_TT("💊 PrEP prevented infection with {0}!",[`💊 PrEPのおかげで`,`への感染を回避！`],[(inf.n
 )]),s:_T("PrEP has been used up",'PrEPは使用済みで消失しました'),c:'#17a2b8'}])}
     else{got=true;p.std[inf.k]=0;(p.hist=p.hist||{})[inf.k]=1;log(_TT("🦠 {0}: infected with <b class='neg'>{1}</b>!",[`🦠 `,`：<b class='neg'>`,`</b>に感染！`],[(p.n
 ),(inf.n
 )]));
       if(await baikinCheck(p))got=false;   // バイキンマン成立なら即治癒＝離婚にならない
-      await ask(`🏮 ${F.n}`,[{l:_TT("🦠 Caught {0}…",[`🦠 `,`に感染してしまった…`],[(inf.n
+      await dask(`🏮 ${F.n}`,[{l:_TT("🦠 Caught {0}…",[`🦠 `,`に感染してしまった…`],[(inf.n
 )]),s:_TT("Every turn: STD cost (¥500 × turns elapsed) / {0} turn(s) until natural recovery / land exactly on the Hospital square for a free cure",[`毎ターン 性病費用（500円×経過ターン）／自然治癒まで`,`ターン／病院マスにピッタリ止まれば無料で完治`],[(inf.t
 )])+(wasM?_T(" / married, so divorce at the end of the turn (alimony -¥10,000)",'／結婚中なのでターン終了時に離婚（慰謝料 -¥10,000）'):''),c:'#c2185b'}])}
   }
@@ -2440,6 +2442,7 @@ async function fuzoku(p,q){
 ),(yen(tt)
 )])+(mine?'':_T(" / a child with someone who isn't your spouse, so child support (no custody)",'／結婚相手ではない相手との子供なので養育費（親権なし）')),c:'#c2185b'}]);
     await kidTitle(p);
+    for(const a of dq.splice(0))await ask(...a);   // 子供→ビッグダディ／ボス猿の演出→性病感染の順
   }
   // 称号「一途」：違う種類を挟まず同じ種類の風俗に3回連続（風俗マス以外は数えない・途切れない）
   p.streak=(p.last===sub)?(p.streak||0)+1:1;p.last=sub;
