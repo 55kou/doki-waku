@@ -1899,7 +1899,7 @@ const SHOP=[
   {k:'sigoro',e:'🎲',n:_T("Shigoro Dice",'シゴロ賽'),pr:3000,d:_T("Guarantees a Shigoro on your next Chinchiro",'次回のチンチロで必ずシゴロが出せる')},
   {k:'news',e:'📰',n:_T("Racing Form",'競馬新聞'),pr:5000,d:_T("3 losing horses are greyed out in your next horse race (can't be picked)",'次回の競馬で外れ馬3頭がグレー表示（選べなくなる）')},
   {k:'sagami',e:'🛡️',n:_T("Sagami Original",'サガミオリジナル'),pr:2000,d:_T("Blocks infection from an STD at your next nightlife square",'次回の風俗で性病に感染しても防げる')},
-  {k:'single',e:'🚫',n:_T("Bachelor Pledge",'独身宣言'),pr:0,d:_T("You can never marry again (and never get Candida). Used while married: divorce with no alimony, and you give up custody of children paid for by child support (random: pays child support / doesn't)",'永続的に結婚できなくなる（カンジダにもならない）。結婚中に使うと慰謝料なしで離婚し、子育て金の子は親権を放棄（養育費を払う／払わないを抽選）')},
+  {k:'single',e:'🚫',n:_T("Bachelor Pledge",'独身宣言'),pr:0,d:_T("You can't marry for 10 turns (and can't get Candida). Used while married: divorce with no alimony, and you give up custody of children paid for by child support (random: pays child support / doesn't)",'10ターンの間、結婚できなくなる（カンジダにもならない）。結婚中に使うと慰謝料なしで離婚し、子育て金の子は親権を放棄（養育費を払う／払わないを抽選）')},
   {k:'dbl',e:'🎟️',n:_T("Double Ticket",'ダブルチケット'),pr:1000,d:_T("Doubles your stake in your next gambling",'次回のギャンブルの掛け金が2倍')},
   {k:'second',e:'🎲',n:_T("Second Dice",'セカンドダイス'),pr:2000,d:_T("Re-roll the dice (you choose whether to use it on each roll / not used up unless you use it)",'サイコロの目をやり直せる（振るたびに使うか選べる・使わなければ消費されない）')},
   {k:'tokusei',e:'📜',n:_T("Personal Bankruptcy",'自己破産'),pr:0,d:_T("Wipes out all negative funds and advances (also zeroes positive funds)",'資金のマイナスも前借りも全て0になる（プラスでも0になる）')}];
@@ -1909,7 +1909,7 @@ const wsample=(arr,k)=>{const a=[...arr],o=[];while(o.length<k&&a.length){const 
 // アイテム入手（購入・無料共通）：独身宣言と自己破産は即時発動、それ以外は使う機会まで保持
 async function giveItem(p,x){
   if(x.k==='single'){
-    p.single=1;log(_TT("🚫 {0}: <b class='neg'>Bachelor Pledge</b>! No more marriage or Candida from now on",[`🚫 `,`：<b class='neg'>独身宣言</b>！今後は結婚もカンジダもなし`],[(p.n
+    p.single=10;p.sgSkip=1;log(_TT("🚫 {0}: <b class='neg'>Bachelor Pledge</b>! No marriage or Candida for the next 10 turns",[`🚫 `,`：<b class='neg'>独身宣言</b>！今後10ターンは結婚もカンジダもなし`],[(p.n
 )]));
     const ws=[...(p.wed?[_T("Spouse",'結婚相手')]:[]),...Object.keys(p.fm).map(k=>FM[k])];
     if(ws.length){   // 結婚中なら慰謝料なしで離婚成立＋親権を放棄（子育て金の子は、50%で養育費を払う子供／50%で養育費も払わない猿の子供になる）。すでにいる養育費の子・猿の子はそのまま
@@ -2116,7 +2116,7 @@ const plHTML=(p,k)=>{
   L.push(`${JE[p.job]||''} ${p.job||'―'}${p.done?' 🏁':''}`);
   if(p.loan)L.push(_T("💳Advance ",'💳前借り ')+yen(p.loan));
   const kd=[...'👶'.repeat(Math.round((p.cc||0)/500)),...'👦'.repeat(p.pk||0),...'🐒'.repeat(p.ape||0),...'👦'.repeat(p.adk||0)],
-    m3=[Object.keys(p.fm).length?'🏩':'',p.wed?'💍':'',p.single?_T("🚫Bachelor Pledge",'🚫独身宣言'):''].filter(Boolean).join(' ');
+    m3=[Object.keys(p.fm).length?'🏩':'',p.wed?'💍':'',p.single?_T("🚫Bachelor Pledge",'🚫独身宣言')+_T(` (${p.single} turns left)`,`(残${p.single})`):''].filter(Boolean).join(' ');
   if(m3||kd.length)L.push(m3+(kd.length?(m3?' ':'')+'<span style="word-break:break-all;line-height:1.25">'+kd.join('')+'</span>':''));
   const stt=[p.prep?'💊':'',p.conf?'💪':'',p.sage?'🧘':'',p.gold?'🌟':'',p.tk?'🎫':''].filter(Boolean).join(' '),
     its=p.it&&(p.it.sigoro||p.it.news||p.it.sagami||p.it.dbl||p.it.second)?'🎒'+[p.it.sigoro?_T("🎲Shigoro Dice",'🎲シゴロ賽'):'',p.it.news?_T("📰Racing Form",'📰競馬新聞'):'',p.it.sagami?_T("🛡️Sagami",'🛡️サガミ'):'',p.it.dbl?_T("🎟️Double",'🎟️ダブル'):'',p.it.second?_T("🎲Second",'🎲セカンド'):''].filter(Boolean).join(' '):'';
@@ -2798,7 +2798,7 @@ $('roll').onclick=async()=>{
     if(!p.boss&&(p.pk||0)>0){const v=-1000*p.pk;add(p,v,_TT("🍼 \"Baby Maker\" title goal bonus ({0} × −¥1,000)",[`🍼 称号「孕ませマン」ゴールボーナス（`,`人×−1,000円）`],[(p.pk)]),true);gsT.push({e:'🍼',t:_T("Baby Maker",'孕ませマン'),v})}
     gs={start:gsS,steps:gsT};
     ps.forEach(q=>q.owner=null);
-  }else{await land(p);stdTick(p);if(!p.done)await birthTick(p);if(p.baikin&&p.bkNew){p.bkNew=0;await baikinSpread(p)}}
+  }else{await land(p);stdTick(p);if(!p.done)await birthTick(p);if(p.single>0){if(p.sgSkip)p.sgSkip=0;else{p.single--;if(!p.single)log(_TT("🚫 {0}: the Bachelor Pledge has expired",[`🚫 `,`：独身宣言の効果が切れた`],[(p.n)]))}}if(p.baikin&&p.bkNew){p.bkNew=0;await baikinSpread(p)}}
   await addictCheck(p);
   while(p.pend.length)await roseScene(p.pend.shift());
   if(p.div){p.div=0;await divorce(p)}
