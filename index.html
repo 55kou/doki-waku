@@ -2409,7 +2409,7 @@ async function fuzoku(p,q){
       $('ov').classList.add('show');bx.animate([{opacity:0},{opacity:1}],{duration:1200,easing:'ease-out'});await sleep(1200+2300);$('ov').classList.remove('show')}
     if(rem){   // 離婚した相手との子供：再婚するかしないかをルーレットで決める（再婚＝親権のある子供／再婚しない＝養育費を払う子供）
       const re=await lampLottery(_T("🎲 Remarry… or not?",'🎲 再婚する？ しない？'),_T("Remarry",'再婚<br>する'),_T("Don't<br>remarry",'再婚<br>しない'),'#c2185b','#555',_T("💍 Remarries!",'💍 再婚する！'),_T("🚫 Doesn't remarry!",'🚫 再婚しない！'),784,330);
-      if(re){mine=true;p.fm[sub]=1;p.fwed=1;p.pend.push(sub);log(_TT("💍 {0}: remarries {1}!",[`💍 `,`：離婚した`,`と再婚！`],[(p.n),(FM[sub])]));
+      if(re){mine=true;p.fm[sub]=1;p.fwed=1;log(_TT("💍 {0}: remarries {1}!",[`💍 `,`：離婚した`,`と再婚！`],[(p.n),(FM[sub])]));await roseScene(sub,true);   // 再婚の演出は、ルーレットの直後に他のポップアップを挟まず出す
         // 再婚は無菌なしで100%：売り専は人工肛門／それ以外はカンジダ（バイキンマンなら即治癒）
         if(sub==='uri'){p.ost=1;log(_TT("🩹 {0}: <b class='neg'>needs a colostomy</b>! (-{1} every turn, permanent / cleared by divorce)",[`🩹 `,`：<b class='neg'>人工肛門</b>が必要に！（毎ターン-`,`が永続／離婚で解消）`],[(p.n),(yen(1500))]))}
         else if(p.baikin)log(_TT("🦠 {0}: infected with Candida… but as a <b class='pos'>Germ Man</b> it was cured instantly!",[`🦠 `,`：カンジダに感染…しかし<b class='pos'>バイキンマン</b>なので一瞬で治った！`],[(p.n)]));
@@ -2618,7 +2618,7 @@ function stdTick(p){
 ),(cured.join(_T(", ",'・'))
 )]));
 }
-async function roseScene(sub){
+async function roseScene(sub,re){   // re＝再婚（離婚した相手との再婚。文言を「再婚しました」にする）
   const ster=sub.endsWith('*');sub=sub.replace('*','');
   const T={pin:_T("Married a Pink salon girl\n(Candida)",'ピンサロ嬢と\n結婚しました（ｶﾝｼﾞﾀﾞ）'),del:_T("Married a Delivery health girl\n(Candida)",'デリヘル嬢と\n結婚しました（ｶﾝｼﾞﾀﾞ）'),soap:_T("Married a Soapland girl\n(Candida)",'ソープ嬢と\n結婚しました（ｶﾝｼﾞﾀﾞ）'),uri:_T("Married a Uri-sen boy\n(Colostomy)",'売り専ボーイと\n結婚しました（ｹﾂｱﾅ）'),men:_T("Married a Men's esthetic girl\n(Candida)",'メンエス嬢と\n結婚しました（ｶﾝｼﾞﾀﾞ）')};
   const f=document.createElement('div');f.id='rose';
@@ -2630,7 +2630,7 @@ async function roseScene(sub){
   const show=async(tx,hold,fs)=>{box.style.fontSize=fs;t.textContent=tx;box.style.animation='rin 1.04s ease-out forwards';await sleep(1040+hold);box.style.animation='rout .72s ease-in forwards';await sleep(720)};
   await show('congratulations!',1040,'clamp(30px,10vw,64px)');
   await show(ster?_TT("Married a new {0}\n(germ-free)",[`新人`,`と\n結婚しました（無菌）`],[(FM[sub]
-)]):T[sub],1840,'clamp(20px,6.2vw,48px)');
+)]):(re?T[sub].replace('結婚しました','再婚しました').replace('Married a','Remarried a'):T[sub]),1840,'clamp(20px,6.2vw,48px)');
   f.style.transition='opacity .48s';f.style.opacity=0;await sleep(520);f.remove();
 }
 const EVT=[
