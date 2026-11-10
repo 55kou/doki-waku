@@ -581,12 +581,13 @@ function mainSeg(j,last){
   if(Math.random()<.5)a[fr[0]]={k:'duel',t:_T("Duel",'直接対決')};
   if(j>0){a[fr[1]]={k:'gov',t:_T("Gov't",'行政')};a[fr[2]]={k:'hosp',t:_T("Hospital",'病院')}}
   if(!last&&Math.random()<.5)a[fr[3]]={k:'shop',t:_T("Shop",'ショップ')};   // ショップ：序盤〜終盤は各区間 平均0.5個（ゴールへは0）
-  if(last){const n=rnd(2,4);for(let i=0;i<n;i++){const x=Math.random();a[fr[3+i]]=gmk(x<.5?'hl':x<.75?'horse':'chin',false)}}   // ゴールへ：2〜4マス（平均3）／ハイロー50%・競馬25%・チンチロ25%
+  if(last){const n=rnd(2,4);for(let i=0;i<n;i++){const x=Math.random();a[fr[3+i]]=gmk(gmr('G'),false)}}   // ゴールへ：2〜4マス（平均3）／ハイロー50%・競馬25%・チンチロ25%
   let rr=limFz(a);   // メイン区間は風俗マスが最低3つ：足りなければ、固定でない緑・赤・アイテムマスを風俗に置き換える
   for(let g=0;g<20&&rr.filter(x=>x&&x.k==='fz').length<3;g++){let cand=[...Array(15).keys()].filter(i=>!fx.has(i)&&rr[i]&&(rr[i].k==='m'||rr[i].k==='item'));if(!cand.length)cand=[...Array(15).keys()].filter(i=>!fx.has(i)&&rr[i]&&(rr[i].k==='ev'||rr[i].k==='gam'));if(!cand.length)break;rr[pick(cand)]=mkFz();rr=limFz(rr)}
   return rr;
 }
 function build(){
+  GBE={};GBC={};
   const S=[],names=[_T("Early",'序盤'),_T("Mid 1",'中盤1'),_T("Mid 2",'中盤2'),_T("Mid 3",'中盤3'),_T("Mid 4",'中盤4'),_T("Late",'終盤'),_T("To the Goal",'ゴールへ')];
   for(let j=0;j<7;j++){
     GP=2*j/12;{NU=(j===0);const c=mainSeg(j,j===6);NU=false;S.push({name:names[j],sp:c.sp,c})}
@@ -843,8 +844,13 @@ const gstake=g=>{const t=GP;if(g==='hl')return 500;
   return wpick([[2000,.2*(1-t)],[3000,.7+.05*t],[5000,.1+.1*t],[8000,.05*t]])};
 const gmk=(g,big)=>({k:'gam',g,t:GT[g],st:gstake(g)});
 // ギャンブルの種類の確率：メイン区間は bj17/hl17/rou17/chin17/horse15/bac17、分岐ルートはA・B別
-const GMW={M:{bj:17,hl:15,rou:17,chin:17,horse:17,bac:17},A:{bj:20,hl:10,rou:20,chin:15,horse:15,bac:20},B:{bj:20,hl:15,rou:15,chin:20,horse:15,bac:15}};
-const gmr=(r='M')=>wpick(Object.entries(GMW[r]));
+const GMW={M:{bj:17,hl:15,rou:17,chin:17,horse:17,bac:17},A:{bj:20,hl:10,rou:20,chin:15,horse:15,bac:20},B:{bj:20,hl:15,rou:17.5,chin:17.5,horse:15,bac:15},G:{bj:10,hl:20,rou:20,chin:20,horse:20,bac:10}};   // G＝ゴールへ
+let GBE={},GBC={};const GBS=.5;   // 盤面全体の偏り補正（0＝完全に独立抽選／1＝袋方式）。GBE＝設定から見た期待個数、GBC＝実際に出た個数
+const gmr=(r='M')=>{   // 設定の確率と「袋方式（不足している種類を優先）」を GBS の割合で混ぜて抽選する
+  const W=GMW[r],ks=Object.keys(W),tw=ks.reduce((a,k)=>a+W[k],0),q={};let qs=0;
+  ks.forEach(k=>{const d=Math.max(0,(GBE[k]||0)+W[k]/tw-(GBC[k]||0));q[k]=d;qs+=d});
+  const k=wpick(ks.map(x=>[x,(1-GBS)*W[x]/tw+GBS*(qs>0?q[x]/qs:W[x]/tw)]));
+  ks.forEach(x=>GBE[x]=(GBE[x]||0)+W[x]/tw);GBC[k]=(GBC[k]||0)+1;return k};
 const gm=(big,r='M')=>gmk(gmr(r),big);
 let CURST=0;   // いまプレイ中のギャンブルの掛け金（0＝非表示）
 const setStk=n=>{CURST=n;const e=$('stk');if(e)e.textContent='💰 '+yen(n)};
