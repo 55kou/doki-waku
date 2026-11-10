@@ -362,7 +362,7 @@ button{box-shadow:0 4px 0 #0006;transition:transform .1s}button:active{transform
 @keyframes bustup{from{opacity:0;transform:translateY(10%) rotate(-8deg) scale(.4)}to{opacity:1;transform:translateY(-50%) rotate(-8deg) scale(1)}}
 @keyframes dl{from{transform:translateY(-120px) rotate(-30deg);opacity:0}}
 .gb button.rec{position:relative;overflow:hidden;box-shadow:0 0 0 2px #fff9,0 0 16px 3px #ffe58a99}
-.gb button.rec::after{content:'';position:absolute;top:-30%;left:-70%;width:38%;height:160%;background:linear-gradient(100deg,transparent,#fffe,transparent);transform:skewX(-20deg);animation:recsh 1.7s ease-in-out infinite;pointer-events:none}
+.gb button.rec::after{content:'';position:absolute;top:0;left:-70%;width:38%;height:100%;background:linear-gradient(100deg,transparent,#fffe,transparent);transform:skewX(-20deg);animation:recsh 1.7s ease-in-out infinite;pointer-events:none}
 @keyframes recsh{0%{left:-70%}55%,100%{left:140%}}
 .gb{position:relative;z-index:1;display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center}.gb button{padding:12px 16px}
 .lab{position:relative;z-index:1;color:#fff;font-weight:800;margin:8px 0 2px;text-shadow:0 2px 0 #000;font-size:13px}
@@ -881,7 +881,7 @@ const betHTML=(amt,pc,tag,col='#ffd23f')=>_TT("<div class='bbet' id='bpn' style=
 const gopen=(c,h)=>{const g=$('gm');g.className='show '+c;g.style.removeProperty('--cs');   // ブラックジャックで縮めたカードの大きさ(--cs)が次のゲームに残らないようにリセット
   g.innerHTML=(CURST>0&&!/賭け /.test(h)?_TT("<div class='stk' id='stk'>💰 {0}</div>",[`<div class='stk' id='stk'>💰 `,`</div>`],[(yen(CURST)
 )]):'')+h;return g};
-const gbtnUI=o=>new Promise(r=>{const d=document.createElement('div');d.className='gb';d.innerHTML=o.map((x,i)=>`<button data-i='${i}' ${x.dis?'disabled':''} ${x.rec?"class='rec'":''} style='background:${x.c||'#7b61ff'}'>${x.l}</button>`).join('');($('cslot')||$('gm')).appendChild(d);d.querySelectorAll('button').forEach(b=>b.onclick=()=>{d.remove();r(+b.dataset.i)})});
+const gbtnUI=o=>new Promise(r=>{const d=document.createElement('div');d.className='gb';d.innerHTML=o.map((x,i)=>`<button data-i='${i}' ${x.dis?'disabled':''} ${x.rec?"class='rec'":''} style='background:${x.c||'#7b61ff'}'>${x.l}</button>`).join('');($('cslot')||$('gm')).appendChild(d);d.querySelectorAll('button').forEach(b=>b.onclick=()=>{d.querySelectorAll('button.rec').forEach(x=>x.classList.remove('rec'));d.style.display='none';d.remove();void document.body.offsetHeight;r(+b.dataset.i)})});   // 押したらおすすめの光を止めてから消す（光の筋が画面に残らないように）
 function coins(n){const g=$('gm');for(let k=0;k<n;k++){const c=document.createElement('span');c.className='coin';c.textContent='🪙';c.style.left=Math.random()*95+'%';c.style.animationDuration=(1+Math.random()*1.3)+'s';c.style.animationDelay=Math.random()*.7+'s';g.appendChild(c)}}
 async function finale(res,st,label,fast,detail,clear){const F=fast?.6:1;
   const g=$('gm'),u=st%100?10:100,v=Math.round(res*st/u)*u;
@@ -2680,7 +2680,7 @@ async function land(p){
   }
   if(q.k==='m'&&q.v<0&&p.m<=-20000&&Math.random()<.5){   // 自己破産：資金（前借りは別）が−20,000円以下で赤マスに止まると50%で、資金と前借りを両方0にする
     const b=p.m,l=p.loan||0;
-    await ask(_T("We can't pile on any more debt!",'これ以上借金を重ねるわけにはいかない！'),[{l:_T("……",'……'),c:'#888'}]);
+    await ask(_T("Landed on a red square…",'赤マスに止まってしまった…'),[{l:_T("We can't pile on any more debt!",'これ以上借金を重ねるわけにはいかない！'),c:'#888'}]);   // タップで進む
     await ask(_T("Unable to stand by, the government accepted your personal bankruptcy!",'見かねた行政が自己破産を受け入れてくれた！'),[{l:_T("Funds and advance both reset to ¥0",'資金と前借りがどちらも0円に！'),s:_TT("Funds {0} / advance {1} → ¥0",[`資金 `,` ／前借り `,` → 0円`],[(yen(b)),(yen(l))]),c:'#1d9e75'}]);
     add(p,-b,_T("🏛️ Personal bankruptcy",'🏛️ 自己破産'),true);p.loan=0;
     log(_TT("🏛️ {0}: personal bankruptcy accepted! Funds {1} / advance {2} all reset to ¥0",[`🏛️ `,`：自己破産が認められた！資金 `,` ／前借り `,` がすべて0円に`],[(p.n),(yen(b)),(yen(l))]));
@@ -2830,8 +2830,11 @@ $('lvx').onclick=()=>$('lv').classList.remove('show');
 $('lv').onclick=e=>{if(e.target===$('lv'))$('lv').classList.remove('show')};
 // ゴール精算の演出：今の資金から前借りが引かれ、続いて各称号が資金の数字に次々アタックして、最終金額を発表する
 async function settleShow(p,gs){
-  let quick=false;const z=ms=>sleep(quick?ms/6:ms);
-  const d=document.createElement('div');d.id='stl';d.addEventListener('pointerup',()=>{quick=true});
+  let quick=false,lp=0;const z=async ms=>{for(let r=ms;r>0;r-=50)await sleep(quick?8:Math.min(50,r))};   // 早送りは画面の長押しだけ（押している間だけ6倍速・離すと元の速さ。タップでは早送りしない）
+  const d=document.createElement('div');d.id='stl';d.style.cssText+=';-webkit-touch-callout:none;-webkit-user-select:none;user-select:none';
+  d.addEventListener('pointerdown',e=>{if(e.target.closest('.stb'))return;clearTimeout(lp);lp=setTimeout(()=>{quick=true},350)});
+  ['pointerup','pointercancel','pointerleave'].forEach(ty=>d.addEventListener(ty,()=>{clearTimeout(lp);quick=false}));
+  d.addEventListener('contextmenu',e=>e.preventDefault());
   d.innerHTML=`<div class='sth'>🏁 ${_TT("{0}'s goal settlement",[``,` のゴール精算`],[(p.n)])}</div><div class='stn' id='stn' style='--pc:${p.c}'><small>${_T("Current funds",'現在の資金')}</small><b id='stv'>${yen(gs.start)}</b></div><div class='sta' id='sta'></div>`;
   document.body.appendChild(d);
   const sv=$('stv'),sn=$('stn');let cur=gs.start;
@@ -2849,7 +2852,7 @@ async function settleShow(p,gs){
     const dl=document.createElement('div');dl.className='std '+(st.v>=0?'p':'n');dl.textContent=(st.v>=0?'+':'−')+yen(Math.abs(st.v));sn.appendChild(dl);
     if(st.v>=0){snd(880,.15,'triangle',.1,0);snd(1319,.25,'triangle',.09,.08)}else{snd(110,.3,'square',.12,0);snd(70,.4,'sawtooth',.1,.05)}
     const nv=cur+st.v;await tween(cur,nv);cur=nv;
-    await z(1300);a.remove();dl.remove();
+    await z(1040);a.remove();dl.remove();   // 称号と称号の間：1.3秒→1.04秒（20%短縮／アタックの速さは変えない）
   }
   sn.classList.remove('hp','hn');void sn.offsetWidth;sn.classList.add('fin');
   const fi=document.createElement('div');fi.className='stfi';fi.textContent=_TT("FINAL {0}!",[`最終 `,`！`],[(yen(cur))]);
