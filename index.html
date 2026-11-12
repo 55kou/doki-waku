@@ -2381,14 +2381,14 @@ async function fuzoku(p,q){
       p.fm[sub]=1;p.fwed=1;
       const ster=Math.random()<.2;   // 20%で「新人〇〇嬢と結婚（無菌）」：結婚してもカンジダ（売り専は人工肛門）にならない
       p.pend.push(ster?sub+'*':sub);
-      log(ster?_TT("💒 {0}: visited the same {1} twice, and <b class='pos'>marries the new {2} (germ-free)</b>!",[`💒 `,`：同じ`,`に通った回数が2回になり、<b class='pos'>新人`,`と結婚（無菌）</b>！`],[(p.n
+      p.mlog=()=>log(ster?_TT("💒 {0}: visited the same {1} twice, and <b class='pos'>marries the new {2} (germ-free)</b>!",[`💒 `,`：同じ`,`に通った回数が2回になり、<b class='pos'>新人`,`と結婚（無菌）</b>！`],[(p.n
 ),(F.n
 ),(FM[sub]
 )]):_TT("💒 {0}: visited the same {1} twice, and is forced to marry {2}!",[`💒 `,`：同じ`,`に通った回数が2回になり、`,`と強制的に結婚！`],[(p.n
 ),(F.n
 ),(FM[sub]
 )]));
-      if(ster)log(_TT("✨ {0}: germ-free, so marriage doesn't bring {1}",[`✨ `,`：無菌なので、結婚しても`,`にはならない`],[(p.n
+      p.mpost=async()=>{if(ster)log(_TT("✨ {0}: germ-free, so marriage doesn't bring {1}",[`✨ `,`：無菌なので、結婚しても`,`にはならない`],[(p.n
 ),(sub==='uri'?_T("Colostomy",'人工肛門'):_T("Candida",'カンジダ')
 )]));
       else if(sub==='uri'){p.ost=1;log(_TT("🩹 {0}: <b class='neg'>needs a colostomy</b>! (-{1} every turn, permanent / cleared by divorce)",[`🩹 `,`：<b class='neg'>人工肛門</b>が必要に！（毎ターン-`,`が永続／離婚で解消）`],[(p.n
@@ -2398,7 +2398,7 @@ async function fuzoku(p,q){
 )]));
       else{p.cand=1;(p.hist=p.hist||{}).cand=1;log(_TT("🦠 {0}: infected with <b class='neg'>Candida</b>! (-{1} every turn, permanent / cured by divorce)",[`🦠 `,`：<b class='neg'>カンジダ</b>に感染！（毎ターン-`,`が永続／離婚で治る）`],[(p.n
 ),(yen(500)
-)]));await baikinCheck(p)}
+)]));await baikinCheck(p)}};
     }
   }
   if(p.fv[sub]>=3){   // 3回目以降は毎回
@@ -2472,6 +2472,9 @@ async function fuzoku(p,q){
 )]));
     await ask(_T("👑 Nightlife Master is born!",'👑 風俗マスター誕生！'),[{l:_T("Earned the Nightlife Master title!",'風俗マスターの称号を獲得！'),s:_T("Your own nightlife (except Uri-sen) is half price. When another player lands on a nightlife square they pay 25% more, and you receive 25% of the regular price",'自分の風俗（売り専を除く）は半額。他のプレイヤーが風俗マスに止まると、その人の支払いが25%増しになり、さらに正規料金の25%を受け取れます'),c:'#c2185b'}]);
   }
+}
+async function pendFlush(p){   // 強制結婚：「結婚した」ログ→結婚の演出→結婚後の感染（カンジダ／人工肛門）の順
+  while(p.pend.length){if(p.mlog){const f=p.mlog;p.mlog=null;f()}await roseScene(p.pend.shift());if(p.mpost){const f=p.mpost;p.mpost=null;await f()}}
 }
 async function divorce(p){p.hdiv=1;
   const ws=[...(p.wed?[_T("Spouse",'結婚相手')]:[]),...Object.keys(p.fm).map(k=>FM[k])],hadC=p.cand,hadO=p.ost,hadI=p.ichizu;
@@ -2806,9 +2809,9 @@ $('roll').onclick=async()=>{
     if(!p.boss&&(p.pk||0)>0){const v=-1000*p.pk;add(p,v,_TT("🍼 \"Baby Maker\" title goal bonus ({0} × −¥1,000)",[`🍼 称号「孕ませマン」ゴールボーナス（`,`人×−1,000円）`],[(p.pk)]),true);gsT.push({e:'🍼',t:_T("Baby Maker",'孕ませマン'),v})}
     gs={start:gsS,steps:gsT};
     ps.forEach(q=>q.owner=null);
-  }else{await land(p);while(p.pend.length)await roseScene(p.pend.shift());stdTick(p);if(!p.done)await birthTick(p);if(p.single>0){if(p.sgSkip)p.sgSkip=0;else{p.single--;if(!p.single)log(_TT("🚫 {0}: the Bachelor Pledge has expired",[`🚫 `,`：独身宣言の効果が切れた`],[(p.n)]))}}if(p.baikin&&p.bkNew){p.bkNew=0;await baikinSpread(p)}}
+  }else{await land(p);await pendFlush(p);stdTick(p);if(!p.done)await birthTick(p);if(p.single>0){if(p.sgSkip)p.sgSkip=0;else{p.single--;if(!p.single)log(_TT("🚫 {0}: the Bachelor Pledge has expired",[`🚫 `,`：独身宣言の効果が切れた`],[(p.n)]))}}if(p.baikin&&p.bkNew){p.bkNew=0;await baikinSpread(p)}}
   await addictCheck(p);
-  while(p.pend.length)await roseScene(p.pend.shift());
+  await pendFlush(p);
   if(p.div){p.div=0;await divorce(p)}
   if(gs)await settleShow(p,gs);else await turnSum(p,m0);
   MH.push(P.map(x=>x.m));ACHscan();
